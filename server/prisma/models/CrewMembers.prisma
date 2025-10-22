@@ -1,0 +1,9 @@
+model Crew {
+  id        String   @id @default(uuid())
+  name      String
+  leadId    String
+  crewType  WorkType
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Users     User[]   @relation("CrewToUser")
+}

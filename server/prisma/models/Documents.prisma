@@ -1,0 +1,23 @@
+model PdfDocument {
+  id           String        @id @default(uuid())
+  qrId         String        @unique
+  fileName     String
+  description  String?
+  fileData     Bytes
+  contentType  String        @default("application/pdf")
+  size         Int
+  isActive     Boolean       @default(true)
+  createdAt    DateTime      @default(now())
+  uploadDate   DateTime      @default(now())
+  DocumentTags DocumentTag[] @relation("DocumentTagToPdfDocument")
+
+  @@index([qrId])
+  @@index([fileName])
+}
+
+model DocumentTag {
+  id        String        @id @default(uuid())
+  tagName   String
+  Equipment Equipment[]   @relation("DocumentTagToEquipment")
+  Documents PdfDocument[] @relation("DocumentTagToPdfDocument")
+}

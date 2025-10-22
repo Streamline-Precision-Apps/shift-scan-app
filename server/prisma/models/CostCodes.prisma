@@ -1,0 +1,18 @@
+model CostCode {
+  id         String      @id @default(uuid())
+  name       String      @unique
+  isActive   Boolean     @default(true)
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @default(now()) @updatedAt
+  code       String?
+  Timesheets TimeSheet[]
+  CCTags     CCTag[]     @relation("CCTagToCostCode")
+}
+
+model CCTag {
+  id          String     @id @default(uuid())
+  name        String     @unique
+  description String?
+  CostCodes   CostCode[] @relation("CCTagToCostCode")
+  Jobsites    Jobsite[]  @relation("CCTagToJobsite")
+}

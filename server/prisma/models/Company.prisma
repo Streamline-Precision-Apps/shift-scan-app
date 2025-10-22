@@ -1,0 +1,12 @@
+model Company {
+  id               String         @id @default(uuid())
+  name             String
+  addressId        String?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  SubscriptionDate DateTime       @default(now())
+  Address          Address?       @relation(fields: [addressId], references: [id])
+  FormTemplates    FormTemplate[]
+  Reports          Report[]
+  Users            User[]
+}

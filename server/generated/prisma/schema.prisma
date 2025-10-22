@@ -1,0 +1,784 @@
+model Company {
+  id               String         @id @default(uuid())
+  name             String
+  addressId        String?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  SubscriptionDate DateTime       @default(now())
+  Address          Address?       @relation(fields: [addressId], references: [id])
+  FormTemplates    FormTemplate[]
+  Reports          Report[]
+  Users            User[]
+}
+
+model CostCode {
+  id         String      @id @default(uuid())
+  name       String      @unique
+  isActive   Boolean     @default(true)
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @default(now()) @updatedAt
+  code       String?
+  Timesheets TimeSheet[]
+  CCTags     CCTag[]     @relation("CCTagToCostCode")
+}
+
+model CCTag {
+  id          String     @id @default(uuid())
+  name        String     @unique
+  description String?
+  CostCodes   CostCode[] @relation("CCTagToCostCode")
+  Jobsites    Jobsite[]  @relation("CCTagToJobsite")
+}
+
+model Crew {
+  id        String   @id @default(uuid())
+  name      String
+  leadId    String
+  crewType  WorkType
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Users     User[]   @relation("CrewToUser")
+}
+
+model PdfDocument {
+  id           String        @id @default(uuid())
+  qrId         String        @unique
+  fileName     String
+  description  String?
+  fileData     Bytes
+  contentType  String        @default("application/pdf")
+  size         Int
+  isActive     Boolean       @default(true)
+  createdAt    DateTime      @default(now())
+  uploadDate   DateTime      @default(now())
+  DocumentTags DocumentTag[] @relation("DocumentTagToPdfDocument")
+
+  @@index([qrId])
+  @@index([fileName])
+}
+
+model DocumentTag {
+  id        String        @id @default(uuid())
+  tagName   String
+  Equipment Equipment[]   @relation("DocumentTagToEquipment")
+  Documents PdfDocument[] @relation("DocumentTagToPdfDocument")
+}
+
+model Equipment {
+  id                     String                 @id @default(uuid())
+  qrId                   String                 @unique
+  name                   String
+  description            String?
+  creationReason         String?
+  equipmentTag           EquipmentTags          @default(EQUIPMENT)
+  state                  EquipmentState         @default(AVAILABLE)
+  approvalStatus         ApprovalStatus         @default(PENDING)
+  createdAt              DateTime               @default(now())
+  updatedAt              DateTime               @updatedAt
+  overWeight             Boolean?               @default(false)
+  currentWeight          Float?                 @default(0)
+  createdById            String?
+  createdVia             CreatedVia             @default(MOBILE)
+  acquiredDate           DateTime?
+  code                   String?
+  color                  String?
+  licensePlate           String?
+  licenseState           String?
+  make                   String?
+  memo                   String?
+  model                  String?
+  ownershipType          OwnershipType?
+  registrationExpiration DateTime?
+  serialNumber           String?
+  year                   String?
+  acquiredCondition      Condition?
+  status                 FormTemplateStatus     @default(ACTIVE)
+  EmployeeEquipmentLogs  EmployeeEquipmentLog[]
+  createdBy              User?                  @relation(fields: [createdById], references: [id])
+  EquipmentHauled        EquipmentHauled[]
+  Maintenances           Maintenance[]
+  TascoLogs              TascoLog[]
+  HauledInLogs           TruckingLog[]          @relation("HauledEquipment")
+  UsedAsTrailer          TruckingLog[]          @relation("TrailerEquipment")
+  UsedAsTruck            TruckingLog[]          @relation("TruckEquipment")
+  Maintenance            mechanicProjects[]
+  DocumentTags           DocumentTag[]          @relation("DocumentTagToEquipment")
+
+  @@index([qrId])
+  @@index([status])
+  @@index([approvalStatus])
+}
+
+model EmployeeEquipmentLog {
+  id            String       @id @default(uuid())
+  equipmentId   String?
+  maintenanceId String?
+  startTime     DateTime     @default(now())
+  endTime       DateTime?
+  comment       String?
+  timeSheetId   Int
+  rental        Boolean      @default(false)
+  Equipment     Equipment?   @relation(fields: [equipmentId], references: [id])
+  Maintenance   Maintenance? @relation(fields: [maintenanceId], references: [id], onDelete: Cascade)
+  TimeSheet     TimeSheet    @relation(fields: [timeSheetId], references: [id], onDelete: Cascade)
+  RefuelLog     RefuelLog?
+
+  @@index([timeSheetId, equipmentId, maintenanceId])
+}
+
+enum Condition {
+  NEW
+  USED
+}
+
+enum EquipmentState {
+  AVAILABLE
+  IN_USE
+  MAINTENANCE
+  NEEDS_REPAIR
+  RETIRED
+}
+
+enum EquipmentTags {
+  TRUCK
+  TRAILER
+  VEHICLE
+  EQUIPMENT
+}
+
+enum OwnershipType {
+  OWNED
+  LEASED
+  RENTAL
+}
+
+model FormTemplate {
+  id                  String               @id @default(uuid())
+  companyId           String
+  name                String
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  isSignatureRequired Boolean              @default(false)
+  description         String?
+  isActive            FormTemplateStatus   @default(DRAFT)
+  formType            FormTemplateCategory @default(GENERAL)
+  isApprovalRequired  Boolean              @default(false)
+  Submissions         FormSubmission[]
+  Company             Company              @relation(fields: [companyId], references: [id])
+  FormGrouping        FormGrouping[]       @relation("FormGroupingToFormTemplate")
+}
+
+model FormGrouping {
+  id           String         @id @default(uuid())
+  title        String?
+  order        Int
+  Fields       FormField[]
+  FormTemplate FormTemplate[] @relation("FormGroupingToFormTemplate")
+}
+
+model FormField {
+  id             String            @id @default(uuid())
+  formGroupingId String
+  label          String
+  type           FieldType
+  required       Boolean           @default(false)
+  order          Int
+  placeholder    String?
+  maxLength      Int?
+  content        String?
+  filter         String?
+  minLength      Int?
+  multiple       Boolean?          @default(false)
+  FormGrouping   FormGrouping      @relation(fields: [formGroupingId], references: [id], onDelete: Cascade)
+  Options        FormFieldOption[]
+}
+
+model FormFieldOption {
+  id      String    @id @default(uuid())
+  fieldId String
+  value   String
+  Field   FormField @relation(fields: [fieldId], references: [id], onDelete: Cascade)
+}
+
+model FormSubmission {
+  title          String?
+  formTemplateId String
+  userId         String
+  formType       String?
+  data           Json?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  submittedAt    DateTime?
+  status         FormStatus     @default(DRAFT)
+  id             Int            @id @default(autoincrement())
+  Approvals      FormApproval[]
+  FormTemplate   FormTemplate   @relation(fields: [formTemplateId], references: [id], onDelete: Cascade)
+  User           User           @relation(fields: [userId], references: [id])
+}
+
+model FormApproval {
+  id               String         @id @default(uuid())
+  signedBy         String?
+  submittedAt      DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  signature        String?
+  comment          String?
+  formSubmissionId Int
+  FormSubmission   FormSubmission @relation(fields: [formSubmissionId], references: [id], onDelete: Cascade)
+  Approver         User?          @relation(fields: [signedBy], references: [id])
+}
+
+model Jobsite {
+  id             String             @id @default(uuid())
+  qrId           String             @unique @default(uuid())
+  name           String
+  description    String
+  creationReason String?
+  approvalStatus ApprovalStatus     @default(PENDING)
+  addressId      String?
+  comment        String?
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  archiveDate    DateTime?
+  createdById    String?
+  createdVia     CreatedVia         @default(ADMIN)
+  code           String?
+  latitude       Float?
+  longitude      Float?
+  radiusMeters   Float?
+  status         FormTemplateStatus @default(ACTIVE)
+  Address        Address?           @relation(fields: [addressId], references: [id])
+  createdBy      User?              @relation(fields: [createdById], references: [id])
+  TimeSheets     TimeSheet[]
+  CCTags         CCTag[]            @relation("CCTagToJobsite")
+
+  @@index([status])
+  @@index([qrId])
+}
+
+model Report {
+  name        String           @unique
+  description String
+  companyId   String
+  createdAt   DateTime         @default(now())
+  createdBy   String
+  updatedAt   DateTime         @updatedAt
+  parameters  Json?
+  visibility  ReportVisibility @default(PRIVATE)
+  tags        String[]
+  id          Int              @id
+  Company     Company          @relation(fields: [companyId], references: [id])
+  ReportRuns  ReportRun[]
+}
+
+model ReportRun {
+  id             String       @id @default(uuid())
+  runAt          DateTime     @default(now())
+  status         ReportStatus
+  results        Json?
+  duration       Int?
+  startDate      DateTime?
+  endDate        DateTime?
+  customParams   Json?
+  exportFormats  String[]
+  lastExportedAt DateTime?
+  reportId       Int
+  Report         Report       @relation(fields: [reportId], references: [id], onDelete: Cascade)
+}
+
+model TimeSheet {
+  date                  DateTime
+  userId                String
+  jobsiteId             String
+  costcode              String
+  nu                    String                 @default("nu")
+  Fp                    String                 @default("fp")
+  startTime             DateTime
+  endTime               DateTime?
+  comment               String?
+  statusComment         String?
+  location              String?
+  status                ApprovalStatus         @default(DRAFT)
+  workType              WorkType
+  editedByUserId        String?
+  newTimeSheetId        String?
+  createdByAdmin        Boolean                @default(false)
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime               @updatedAt
+  clockInLat            Float?
+  clockInLng            Float?
+  clockOutLat           Float?
+  clockOutLng           Float?
+  withinFenceIn         Boolean?
+  withinFenceOut        Boolean?
+  wasInjured            Boolean?               @default(false)
+  id                    Int                    @id @default(autoincrement())
+  EmployeeEquipmentLogs EmployeeEquipmentLog[]
+  MaintenanceLogs       MaintenanceLog[]
+  TascoLogs             TascoLog[]
+  CostCode              CostCode               @relation(fields: [costcode], references: [name])
+  Jobsite               Jobsite                @relation(fields: [jobsiteId], references: [id])
+  User                  User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ChangeLogs            TimeSheetChangeLog[]
+  TruckingLogs          TruckingLog[]
+  Maintenance           mechanicProjects[]
+}
+
+model mechanicProjects {
+  id          Int       @id @default(autoincrement())
+  timeSheetId Int
+  hours       Float?
+  equipmentId String
+  description String?
+  Equipment   Equipment @relation(fields: [equipmentId], references: [id])
+  TimeSheet   TimeSheet @relation(fields: [timeSheetId], references: [id], onDelete: Cascade)
+}
+
+model MaintenanceLog {
+  id            String      @id @default(uuid())
+  userId        String
+  maintenanceId String
+  startTime     DateTime
+  endTime       DateTime?
+  comment       String?
+  timeSheetId   Int
+  Maintenance   Maintenance @relation(fields: [maintenanceId], references: [id])
+  TimeSheet     TimeSheet   @relation(fields: [timeSheetId], references: [id], onDelete: Cascade)
+  User          User        @relation(fields: [userId], references: [id])
+}
+
+model Maintenance {
+  id                     String                 @id @default(uuid())
+  equipmentId            String
+  equipmentIssue         String?
+  employeeEquipmentLogId String?                @unique
+  additionalInfo         String?
+  location               String?
+  problemDiagnosis       String?
+  solution               String?
+  totalHoursLaboured     Float?
+  createdAt              DateTime               @default(now())
+  priority               Priority
+  delay                  DateTime?
+  delayReasoning         String?
+  repaired               Boolean                @default(false)
+  selected               Boolean                @default(false)
+  hasBeenDelayed         Boolean                @default(false)
+  createdBy              String?
+  EmployeeEquipmentLog   EmployeeEquipmentLog[]
+  Equipment              Equipment              @relation(fields: [equipmentId], references: [id])
+  MaintenanceLogs        MaintenanceLog[]
+}
+
+model TascoLog {
+  id                 String              @id @default(uuid())
+  shiftType          String
+  equipmentId        String?
+  laborType          String?
+  materialType       String?
+  LoadQuantity       Int                 @default(0)
+  screenType         LoadType?
+  timeSheetId        Int
+  RefuelLogs         RefuelLog[]
+  Equipment          Equipment?          @relation(fields: [equipmentId], references: [id])
+  TascoMaterialTypes TascoMaterialTypes? @relation(fields: [materialType], references: [name], onDelete: Cascade)
+  TimeSheet          TimeSheet           @relation(fields: [timeSheetId], references: [id], onDelete: Cascade)
+}
+
+model TascoMaterialTypes {
+  id       String     @id @default(uuid())
+  name     String     @unique
+  TascoLog TascoLog[]
+}
+
+model TruckingLog {
+  id              String            @id @default(uuid())
+  laborType       String
+  taskName        String?
+  equipmentId     String?
+  startingMileage Int?
+  endingMileage   Int?
+  truckLaborLogId String?
+  trailerNumber   String?
+  truckNumber     String?
+  timeSheetId     Int
+  EquipmentHauled EquipmentHauled[]
+  Materials       Material[]
+  RefuelLogs      RefuelLog[]
+  StateMileages   StateMileage[]
+  Equipment       Equipment?        @relation("HauledEquipment", fields: [equipmentId], references: [id])
+  TimeSheet       TimeSheet         @relation(fields: [timeSheetId], references: [id], onDelete: Cascade)
+  Trailer         Equipment?        @relation("TrailerEquipment", fields: [trailerNumber], references: [id])
+  Truck           Equipment?        @relation("TruckEquipment", fields: [truckNumber], references: [id])
+}
+
+model StateMileage {
+  id               String      @id @default(uuid())
+  truckingLogId    String
+  state            String?
+  stateLineMileage Int?
+  TruckingLog      TruckingLog @relation(fields: [truckingLogId], references: [id], onDelete: Cascade)
+}
+
+model Material {
+  id                 String        @id @default(uuid())
+  truckingLogId      String
+  LocationOfMaterial String?
+  name               String?
+  quantity           Float?
+  materialWeight     Float?
+  loadType           LoadType?
+  createdAt          DateTime?     @default(now())
+  unit               materialUnit?
+  TruckingLog        TruckingLog   @relation(fields: [truckingLogId], references: [id], onDelete: Cascade)
+}
+
+model RefuelLog {
+  id                     String                @id @default(uuid())
+  employeeEquipmentLogId String?               @unique
+  truckingLogId          String?
+  tascoLogId             String?
+  gallonsRefueled        Float?
+  milesAtFueling         Int?
+  EmployeeEquipmentLog   EmployeeEquipmentLog? @relation(fields: [employeeEquipmentLogId], references: [id])
+  TascoLog               TascoLog?             @relation(fields: [tascoLogId], references: [id])
+  TruckingLog            TruckingLog?          @relation(fields: [truckingLogId], references: [id], onDelete: Cascade)
+}
+
+model EquipmentHauled {
+  id            String       @id @default(uuid())
+  truckingLogId String?
+  equipmentId   String?
+  createdAt     DateTime     @default(now())
+  endMileage    Int?
+  startMileage  Int?
+  destination   String?
+  source        String?
+  Equipment     Equipment?   @relation(fields: [equipmentId], references: [id])
+  TruckingLog   TruckingLog? @relation(fields: [truckingLogId], references: [id], onDelete: Cascade)
+}
+
+model TimeSheetChangeLog {
+  id              String    @id @default(uuid())
+  timeSheetId     Int
+  changedBy       String
+  changedAt       DateTime  @default(now())
+  changeReason    String?
+  changes         Json
+  wasStatusChange Boolean   @default(false)
+  numberOfChanges Int       @default(0)
+  User            User      @relation("ChangedByUser", fields: [changedBy], references: [id])
+  TimeSheet       TimeSheet @relation(fields: [timeSheetId], references: [id], onDelete: Cascade)
+
+  @@index([timeSheetId])
+  @@index([changedBy])
+  @@index([changedAt])
+}
+
+enum materialUnit {
+  TONS
+  YARDS
+}
+
+model User {
+  id                   String                 @id @default(uuid())
+  firstName            String
+  lastName             String
+  username             String                 @unique
+  email                String?                @unique
+  password             String
+  signature            String?
+  DOB                  DateTime?
+  truckView            Boolean
+  tascoView            Boolean
+  laborView            Boolean
+  mechanicView         Boolean
+  permission           Permission             @default(USER)
+  image                String?
+  startDate            DateTime?              @default(now())
+  terminationDate      DateTime?
+  accountSetup         Boolean                @default(false)
+  clockedIn            Boolean                @default(false)
+  companyId            String
+  passwordResetTokenId String?
+  workTypeId           String?
+  middleName           String?
+  secondLastName       String?
+  lastSeen             DateTime?
+  accountSetupToken    AccountSetupToken?
+  Contact              Contacts?
+  Equipment            Equipment[]
+  FCMToken             FCMToken[]
+  FormApprovals        FormApproval[]
+  FormSubmissions      FormSubmission[]
+  Jobsite              Jobsite[]
+  MaintenanceLogs      MaintenanceLog[]
+  NotificationRead     NotificationRead[]
+  NotificationResponse NotificationResponse[]
+  PasswordResetTokens  PasswordResetToken[]
+  TimeSheets           TimeSheet[]
+  TimeSheetChanges     TimeSheetChangeLog[]   @relation("ChangedByUser")
+  topicSubscriptions   TopicSubscription[]
+  Company              Company                @relation(fields: [companyId], references: [id])
+  UserSettings         UserSettings?
+  Crews                Crew[]                 @relation("CrewToUser")
+
+  @@unique([firstName, lastName, username])
+  @@index([email])
+}
+
+model UserSettings {
+  id                String   @id @default(uuid())
+  userId            String   @unique
+  language          String   @default("en")
+  generalReminders  Boolean  @default(false)
+  personalReminders Boolean  @default(false)
+  cameraAccess      Boolean  @default(false)
+  locationAccess    Boolean  @default(false)
+  cookiesAccess     Boolean  @default(false)
+  createdAt         DateTime @default(now())
+  lastUpdated       DateTime @default(now())
+  User              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Contacts {
+  id                     String   @id @default(uuid())
+  userId                 String   @unique @map("employeeId")
+  phoneNumber            String?
+  emergencyContact       String?
+  emergencyContactNumber String?
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+  User                   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model PasswordResetToken {
+  id         String   @id @default(uuid())
+  email      String
+  token      String   @unique
+  expiration DateTime
+  User       User     @relation(fields: [email], references: [email])
+
+  @@unique([email, token])
+}
+
+model AccountSetupToken {
+  id        String   @id @default(uuid())
+  code      String
+  userId    String   @unique
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model Address {
+  id      String    @id @default(uuid())
+  street  String
+  city    String
+  state   String
+  zipCode String
+  country String    @default("US")
+  Company Company[]
+  Jobsite Jobsite[]
+
+  @@unique([street, city, state, zipCode], name: "street_city_state_zipCode")
+}
+
+enum Permission {
+  USER
+  MANAGER
+  ADMIN
+  SUPERADMIN
+}
+
+enum IsActive {
+  ACTIVE
+  INACTIVE
+}
+
+enum WorkType {
+  MECHANIC
+  TRUCK_DRIVER
+  LABOR
+  TASCO
+}
+
+enum Priority {
+  PENDING
+  LOW
+  MEDIUM
+  HIGH
+  TODAY
+}
+
+enum LoadType {
+  UNSCREENED
+  SCREENED
+}
+
+enum EquipmentUsageType {
+  TASCO
+  TRUCKING
+  MAINTENANCE
+  LABOR
+  GENERAL
+}
+
+enum ApprovalStatus {
+  DRAFT
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum ReportStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  FAILED
+  CANCELED
+}
+
+enum ReportVisibility {
+  PRIVATE
+  MANAGEMENT
+  COMPANY
+}
+
+enum FormStatus {
+  DRAFT
+  PENDING
+  APPROVED
+  DENIED
+}
+
+enum FormTemplateStatus {
+  DRAFT
+  ACTIVE
+  ARCHIVED
+}
+
+enum ActiveStatus {
+  ACTIVE
+  ARCHIVED
+}
+
+enum FieldType {
+  TEXT
+  TEXTAREA
+  NUMBER
+  DATE
+  DATE_TIME
+  TIME
+  DROPDOWN
+  CHECKBOX
+  HEADER
+  PARAGRAPH
+  MULTISELECT
+  RADIO
+  SEARCH_PERSON
+  SEARCH_ASSET
+}
+
+enum AssetType {
+  EQUIPMENT
+  JOBSITES
+  COST_CODES
+  CLIENTS
+}
+
+enum FormTemplateCategory {
+  GENERAL
+  MAINTENANCE
+  SAFETY
+  INSPECTION
+  INCIDENT
+  FINANCE
+  OTHER
+  HR
+  OPERATIONS
+  COMPLIANCE
+  CLIENTS
+  IT
+}
+
+enum CreatedVia {
+  ADMIN
+  MOBILE
+}
+
+model FCMToken {
+  id         String    @id @default(cuid())
+  token      String    @unique
+  userId     String
+  platform   String?
+  lastUsedAt DateTime?
+  isValid    Boolean   @default(true)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  user       User      @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([token])
+}
+
+model TopicSubscription {
+  id        String   @id @default(cuid())
+  topic     String
+  createdAt DateTime @default(now())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, topic])
+  @@index([topic])
+}
+
+model Notification {
+  topic        String?
+  title        String
+  body         String?
+  url          String?
+  metadata     Json?
+  createdAt    DateTime              @default(now())
+  pushedAt     DateTime?
+  pushAttempts Int                   @default(0)
+  readAt       DateTime?
+  id           Int                   @id @default(autoincrement())
+  referenceId  String?
+  Reads        NotificationRead[]
+  Response     NotificationResponse?
+
+  @@index([topic, createdAt, referenceId])
+}
+
+model NotificationResponse {
+  id             Int          @id @default(autoincrement())
+  notificationId Int          @unique
+  userId         String
+  response       String?
+  respondedAt    DateTime     @default(now())
+  notification   Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+  user           User         @relation(fields: [userId], references: [id])
+}
+
+model NotificationRead {
+  id             Int          @id @default(autoincrement())
+  notificationId Int
+  userId         String
+  readAt         DateTime     @default(now())
+  notification   Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+  user           User         @relation(fields: [userId], references: [id])
+
+  @@unique([notificationId, userId])
+}
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL")
+  directUrl = env("POSTGRES_URL_NON_POOLING")
+}

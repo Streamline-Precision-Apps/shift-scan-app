@@ -1,0 +1,90 @@
+model User {
+  id                   String                 @id @default(uuid())
+  firstName            String
+  lastName             String
+  username             String                 @unique
+  email                String?                @unique
+  password             String
+  signature            String?
+  DOB                  DateTime?
+  truckView            Boolean
+  tascoView            Boolean
+  laborView            Boolean
+  mechanicView         Boolean
+  permission           Permission             @default(USER)
+  image                String?
+  startDate            DateTime?              @default(now())
+  terminationDate      DateTime?
+  accountSetup         Boolean                @default(false)
+  clockedIn            Boolean                @default(false)
+  companyId            String
+  passwordResetTokenId String?
+  workTypeId           String?
+  middleName           String?
+  secondLastName       String?
+  lastSeen             DateTime?
+  accountSetupToken    AccountSetupToken?
+  Contact              Contacts?
+  Equipment            Equipment[]
+  FCMToken             FCMToken[]
+  FormApprovals        FormApproval[]
+  FormSubmissions      FormSubmission[]
+  Jobsite              Jobsite[]
+  MaintenanceLogs      MaintenanceLog[]
+  NotificationRead     NotificationRead[]
+  NotificationResponse NotificationResponse[]
+  PasswordResetTokens  PasswordResetToken[]
+  TimeSheets           TimeSheet[]
+  TimeSheetChanges     TimeSheetChangeLog[]   @relation("ChangedByUser")
+  topicSubscriptions   TopicSubscription[]
+  Company              Company                @relation(fields: [companyId], references: [id])
+  UserSettings         UserSettings?
+  Crews                Crew[]                 @relation("CrewToUser")
+
+  @@unique([firstName, lastName, username])
+  @@index([email])
+}
+
+model UserSettings {
+  id                String   @id @default(uuid())
+  userId            String   @unique
+  language          String   @default("en")
+  generalReminders  Boolean  @default(false)
+  personalReminders Boolean  @default(false)
+  cameraAccess      Boolean  @default(false)
+  locationAccess    Boolean  @default(false)
+  cookiesAccess     Boolean  @default(false)
+  createdAt         DateTime @default(now())
+  lastUpdated       DateTime @default(now())
+  User              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Contacts {
+  id                     String   @id @default(uuid())
+  userId                 String   @unique @map("employeeId")
+  phoneNumber            String?
+  emergencyContact       String?
+  emergencyContactNumber String?
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+  User                   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model PasswordResetToken {
+  id         String   @id @default(uuid())
+  email      String
+  token      String   @unique
+  expiration DateTime
+  User       User     @relation(fields: [email], references: [email])
+
+  @@unique([email, token])
+}
+
+model AccountSetupToken {
+  id        String   @id @default(uuid())
+  code      String
+  userId    String   @unique
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  user      User     @relation(fields: [userId], references: [id])
+}

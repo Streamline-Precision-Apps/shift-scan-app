@@ -1,0 +1,75 @@
+model FormTemplate {
+  id                  String               @id @default(uuid())
+  companyId           String
+  name                String
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  isSignatureRequired Boolean              @default(false)
+  description         String?
+  isActive            FormTemplateStatus   @default(DRAFT)
+  formType            FormTemplateCategory @default(GENERAL)
+  isApprovalRequired  Boolean              @default(false)
+  Submissions         FormSubmission[]
+  Company             Company              @relation(fields: [companyId], references: [id])
+  FormGrouping        FormGrouping[]       @relation("FormGroupingToFormTemplate")
+}
+
+model FormGrouping {
+  id           String         @id @default(uuid())
+  title        String?
+  order        Int
+  Fields       FormField[]
+  FormTemplate FormTemplate[] @relation("FormGroupingToFormTemplate")
+}
+
+model FormField {
+  id             String            @id @default(uuid())
+  formGroupingId String
+  label          String
+  type           FieldType
+  required       Boolean           @default(false)
+  order          Int
+  placeholder    String?
+  maxLength      Int?
+  content        String?
+  filter         String?
+  minLength      Int?
+  multiple       Boolean?          @default(false)
+  FormGrouping   FormGrouping      @relation(fields: [formGroupingId], references: [id], onDelete: Cascade)
+  Options        FormFieldOption[]
+}
+
+model FormFieldOption {
+  id      String    @id @default(uuid())
+  fieldId String
+  value   String
+  Field   FormField @relation(fields: [fieldId], references: [id], onDelete: Cascade)
+}
+
+model FormSubmission {
+  title          String?
+  formTemplateId String
+  userId         String
+  formType       String?
+  data           Json?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  submittedAt    DateTime?
+  status         FormStatus     @default(DRAFT)
+  id             Int            @id @default(autoincrement())
+  Approvals      FormApproval[]
+  FormTemplate   FormTemplate   @relation(fields: [formTemplateId], references: [id], onDelete: Cascade)
+  User           User           @relation(fields: [userId], references: [id])
+}
+
+model FormApproval {
+  id               String         @id @default(uuid())
+  signedBy         String?
+  submittedAt      DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  signature        String?
+  comment          String?
+  formSubmissionId Int
+  FormSubmission   FormSubmission @relation(fields: [formSubmissionId], references: [id], onDelete: Cascade)
+  Approver         User?          @relation(fields: [signedBy], references: [id])
+}

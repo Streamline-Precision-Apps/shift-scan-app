@@ -1,0 +1,12 @@
+model Address {
+  id      String    @id @default(uuid())
+  street  String
+  city    String
+  state   String
+  zipCode String
+  country String    @default("US")
+  Company Company[]
+  Jobsite Jobsite[]
+
+  @@unique([street, city, state, zipCode], name: "street_city_state_zipCode")
+}

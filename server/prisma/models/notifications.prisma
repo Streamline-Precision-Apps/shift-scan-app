@@ -1,0 +1,64 @@
+model FCMToken {
+  id         String    @id @default(cuid())
+  token      String    @unique
+  userId     String
+  platform   String?
+  lastUsedAt DateTime?
+  isValid    Boolean   @default(true)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  user       User      @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([token])
+}
+
+model TopicSubscription {
+  id        String   @id @default(cuid())
+  topic     String
+  createdAt DateTime @default(now())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, topic])
+  @@index([topic])
+}
+
+model Notification {
+  topic        String?
+  title        String
+  body         String?
+  url          String?
+  metadata     Json?
+  createdAt    DateTime              @default(now())
+  pushedAt     DateTime?
+  pushAttempts Int                   @default(0)
+  readAt       DateTime?
+  id           Int                   @id @default(autoincrement())
+  referenceId  String?
+  Reads        NotificationRead[]
+  Response     NotificationResponse?
+
+  @@index([topic, createdAt, referenceId])
+}
+
+model NotificationResponse {
+  id             Int          @id @default(autoincrement())
+  notificationId Int          @unique
+  userId         String
+  response       String?
+  respondedAt    DateTime     @default(now())
+  notification   Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+  user           User         @relation(fields: [userId], references: [id])
+}
+
+model NotificationRead {
+  id             Int          @id @default(autoincrement())
+  notificationId Int
+  userId         String
+  readAt         DateTime     @default(now())
+  notification   Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+  user           User         @relation(fields: [userId], references: [id])
+
+  @@unique([notificationId, userId])
+}

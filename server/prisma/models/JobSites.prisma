@@ -1,0 +1,27 @@
+model Jobsite {
+  id             String             @id @default(uuid())
+  qrId           String             @unique @default(uuid())
+  name           String
+  description    String
+  creationReason String?
+  approvalStatus ApprovalStatus     @default(PENDING)
+  addressId      String?
+  comment        String?
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  archiveDate    DateTime?
+  createdById    String?
+  createdVia     CreatedVia         @default(ADMIN)
+  code           String?
+  latitude       Float?
+  longitude      Float?
+  radiusMeters   Float?
+  status         FormTemplateStatus @default(ACTIVE)
+  Address        Address?           @relation(fields: [addressId], references: [id])
+  createdBy      User?              @relation(fields: [createdById], references: [id])
+  TimeSheets     TimeSheet[]
+  CCTags         CCTag[]            @relation("CCTagToJobsite")
+
+  @@index([status])
+  @@index([qrId])
+}

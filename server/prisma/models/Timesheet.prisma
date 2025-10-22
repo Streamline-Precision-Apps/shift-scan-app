@@ -1,0 +1,193 @@
+model TimeSheet {
+  date                  DateTime
+  userId                String
+  jobsiteId             String
+  costcode              String
+  nu                    String                 @default("nu")
+  Fp                    String                 @default("fp")
+  startTime             DateTime
+  endTime               DateTime?
+  comment               String?
+  statusComment         String?
+  location              String?
+  status                ApprovalStatus         @default(DRAFT)
+  workType              WorkType
+  editedByUserId        String?
+  newTimeSheetId        String?
+  createdByAdmin        Boolean                @default(false)
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime               @updatedAt
+  clockInLat            Float?
+  clockInLng            Float?
+  clockOutLat           Float?
+  clockOutLng           Float?
+  withinFenceIn         Boolean?
+  withinFenceOut        Boolean?
+  wasInjured            Boolean?               @default(false)
+  id                    Int                    @id @default(autoincrement())
+  EmployeeEquipmentLogs EmployeeEquipmentLog[]
+  MaintenanceLogs       MaintenanceLog[]
+  TascoLogs             TascoLog[]
+  CostCode              CostCode               @relation(fields: [costcode], references: [name])
+  Jobsite               Jobsite                @relation(fields: [jobsiteId], references: [id])
+  User                  User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ChangeLogs            TimeSheetChangeLog[]
+  TruckingLogs          TruckingLog[]
+  Maintenance           mechanicProjects[]
+}
+
+model mechanicProjects {
+  id          Int       @id @default(autoincrement())
+  timeSheetId Int
+  hours       Float?
+  equipmentId String
+  description String?
+  Equipment   Equipment @relation(fields: [equipmentId], references: [id])
+  TimeSheet   TimeSheet @relation(fields: [timeSheetId], references: [id], onDelete: Cascade)
+}
+
+model MaintenanceLog {
+  id            String      @id @default(uuid())
+  userId        String
+  maintenanceId String
+  startTime     DateTime
+  endTime       DateTime?
+  comment       String?
+  timeSheetId   Int
+  Maintenance   Maintenance @relation(fields: [maintenanceId], references: [id])
+  TimeSheet     TimeSheet   @relation(fields: [timeSheetId], references: [id], onDelete: Cascade)
+  User          User        @relation(fields: [userId], references: [id])
+}
+
+model Maintenance {
+  id                     String                 @id @default(uuid())
+  equipmentId            String
+  equipmentIssue         String?
+  employeeEquipmentLogId String?                @unique
+  additionalInfo         String?
+  location               String?
+  problemDiagnosis       String?
+  solution               String?
+  totalHoursLaboured     Float?
+  createdAt              DateTime               @default(now())
+  priority               Priority
+  delay                  DateTime?
+  delayReasoning         String?
+  repaired               Boolean                @default(false)
+  selected               Boolean                @default(false)
+  hasBeenDelayed         Boolean                @default(false)
+  createdBy              String?
+  EmployeeEquipmentLog   EmployeeEquipmentLog[]
+  Equipment              Equipment              @relation(fields: [equipmentId], references: [id])
+  MaintenanceLogs        MaintenanceLog[]
+}
+
+model TascoLog {
+  id                 String              @id @default(uuid())
+  shiftType          String
+  equipmentId        String?
+  laborType          String?
+  materialType       String?
+  LoadQuantity       Int                 @default(0)
+  screenType         LoadType?
+  timeSheetId        Int
+  RefuelLogs         RefuelLog[]
+  Equipment          Equipment?          @relation(fields: [equipmentId], references: [id])
+  TascoMaterialTypes TascoMaterialTypes? @relation(fields: [materialType], references: [name], onDelete: Cascade)
+  TimeSheet          TimeSheet           @relation(fields: [timeSheetId], references: [id], onDelete: Cascade)
+}
+
+model TascoMaterialTypes {
+  id       String     @id @default(uuid())
+  name     String     @unique
+  TascoLog TascoLog[]
+}
+
+model TruckingLog {
+  id              String            @id @default(uuid())
+  laborType       String
+  taskName        String?
+  equipmentId     String?
+  startingMileage Int?
+  endingMileage   Int?
+  truckLaborLogId String?
+  trailerNumber   String?
+  truckNumber     String?
+  timeSheetId     Int
+  EquipmentHauled EquipmentHauled[]
+  Materials       Material[]
+  RefuelLogs      RefuelLog[]
+  StateMileages   StateMileage[]
+  Equipment       Equipment?        @relation("HauledEquipment", fields: [equipmentId], references: [id])
+  TimeSheet       TimeSheet         @relation(fields: [timeSheetId], references: [id], onDelete: Cascade)
+  Trailer         Equipment?        @relation("TrailerEquipment", fields: [trailerNumber], references: [id])
+  Truck           Equipment?        @relation("TruckEquipment", fields: [truckNumber], references: [id])
+}
+
+model StateMileage {
+  id               String      @id @default(uuid())
+  truckingLogId    String
+  state            String?
+  stateLineMileage Int?
+  TruckingLog      TruckingLog @relation(fields: [truckingLogId], references: [id], onDelete: Cascade)
+}
+
+model Material {
+  id                 String        @id @default(uuid())
+  truckingLogId      String
+  LocationOfMaterial String?
+  name               String?
+  quantity           Float?
+  materialWeight     Float?
+  loadType           LoadType?
+  createdAt          DateTime?     @default(now())
+  unit               materialUnit?
+  TruckingLog        TruckingLog   @relation(fields: [truckingLogId], references: [id], onDelete: Cascade)
+}
+
+model RefuelLog {
+  id                     String                @id @default(uuid())
+  employeeEquipmentLogId String?               @unique
+  truckingLogId          String?
+  tascoLogId             String?
+  gallonsRefueled        Float?
+  milesAtFueling         Int?
+  EmployeeEquipmentLog   EmployeeEquipmentLog? @relation(fields: [employeeEquipmentLogId], references: [id])
+  TascoLog               TascoLog?             @relation(fields: [tascoLogId], references: [id])
+  TruckingLog            TruckingLog?          @relation(fields: [truckingLogId], references: [id], onDelete: Cascade)
+}
+
+model EquipmentHauled {
+  id            String       @id @default(uuid())
+  truckingLogId String?
+  equipmentId   String?
+  createdAt     DateTime     @default(now())
+  endMileage    Int?
+  startMileage  Int?
+  destination   String?
+  source        String?
+  Equipment     Equipment?   @relation(fields: [equipmentId], references: [id])
+  TruckingLog   TruckingLog? @relation(fields: [truckingLogId], references: [id], onDelete: Cascade)
+}
+
+model TimeSheetChangeLog {
+  id              String    @id @default(uuid())
+  timeSheetId     Int
+  changedBy       String
+  changedAt       DateTime  @default(now())
+  changeReason    String?
+  changes         Json
+  wasStatusChange Boolean   @default(false)
+  numberOfChanges Int       @default(0)
+  User            User      @relation("ChangedByUser", fields: [changedBy], references: [id])
+  TimeSheet       TimeSheet @relation(fields: [timeSheetId], references: [id], onDelete: Cascade)
+
+  @@index([timeSheetId])
+  @@index([changedBy])
+  @@index([changedAt])
+}
+
+enum materialUnit {
+  TONS
+  YARDS
+}

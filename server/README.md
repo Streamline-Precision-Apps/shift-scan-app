@@ -1,6 +1,6 @@
 # Shift Scan Server
 
-A Node.js server application using Prisma ORM and PostgreSQL.
+A Node.js + Express + Prisma server with MVC architecture, TypeScript, and PostgreSQL.
 
 ## Setup
 

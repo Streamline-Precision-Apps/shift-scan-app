@@ -1,0 +1,122 @@
+enum Permission {
+  USER
+  MANAGER
+  ADMIN
+  SUPERADMIN
+}
+
+enum IsActive {
+  ACTIVE
+  INACTIVE
+}
+
+enum WorkType {
+  MECHANIC
+  TRUCK_DRIVER
+  LABOR
+  TASCO
+}
+
+enum Priority {
+  PENDING
+  LOW
+  MEDIUM
+  HIGH
+  TODAY
+}
+
+enum LoadType {
+  UNSCREENED
+  SCREENED
+}
+
+enum EquipmentUsageType {
+  TASCO
+  TRUCKING
+  MAINTENANCE
+  LABOR
+  GENERAL
+}
+
+enum ApprovalStatus {
+  DRAFT
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum ReportStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  FAILED
+  CANCELED
+}
+
+enum ReportVisibility {
+  PRIVATE
+  MANAGEMENT
+  COMPANY
+}
+
+enum FormStatus {
+  DRAFT
+  PENDING
+  APPROVED
+  DENIED
+}
+
+enum FormTemplateStatus {
+  DRAFT
+  ACTIVE
+  ARCHIVED
+}
+
+enum ActiveStatus {
+  ACTIVE
+  ARCHIVED
+}
+
+enum FieldType {
+  TEXT
+  TEXTAREA
+  NUMBER
+  DATE
+  DATE_TIME
+  TIME
+  DROPDOWN
+  CHECKBOX
+  HEADER
+  PARAGRAPH
+  MULTISELECT
+  RADIO
+  SEARCH_PERSON
+  SEARCH_ASSET
+}
+
+enum AssetType {
+  EQUIPMENT
+  JOBSITES
+  COST_CODES
+  CLIENTS
+}
+
+enum FormTemplateCategory {
+  GENERAL
+  MAINTENANCE
+  SAFETY
+  INSPECTION
+  INCIDENT
+  FINANCE
+  OTHER
+  HR
+  OPERATIONS
+  COMPLIANCE
+  CLIENTS
+  IT
+}
+
+enum CreatedVia {
+  ADMIN
+  MOBILE
+}

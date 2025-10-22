@@ -1,0 +1,29 @@
+model Report {
+  name        String           @unique
+  description String
+  companyId   String
+  createdAt   DateTime         @default(now())
+  createdBy   String
+  updatedAt   DateTime         @updatedAt
+  parameters  Json?
+  visibility  ReportVisibility @default(PRIVATE)
+  tags        String[]
+  id          Int              @id
+  Company     Company          @relation(fields: [companyId], references: [id])
+  ReportRuns  ReportRun[]
+}
+
+model ReportRun {
+  id             String       @id @default(uuid())
+  runAt          DateTime     @default(now())
+  status         ReportStatus
+  results        Json?
+  duration       Int?
+  startDate      DateTime?
+  endDate        DateTime?
+  customParams   Json?
+  exportFormats  String[]
+  lastExportedAt DateTime?
+  reportId       Int
+  Report         Report       @relation(fields: [reportId], references: [id], onDelete: Cascade)
+}
