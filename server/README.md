@@ -5,29 +5,33 @@ A Node.js server application using Prisma ORM and PostgreSQL.
 ## Setup
 
 1. **Install dependencies:**
+
    ```bash
    npm install
    ```
 
 2. **Environment Variables:**
    Make sure your `.env` file contains the DATABASE_URL:
+
    ```
    DATABASE_URL="your-database-connection-string"
    ```
 
 3. **Generate Prisma Client:**
+
    ```bash
    npm run db:generate
    ```
 
 4. **Database Operations:**
+
    ```bash
    # Push schema changes to database (development)
    npm run db:push
-   
+
    # Create and run migrations (production)
    npm run db:migrate
-   
+
    # Open Prisma Studio (database GUI)
    npm run db:studio
    ```
@@ -52,6 +56,7 @@ npm start
 ## Database Schema
 
 The current schema includes example models:
+
 - `User` - Basic user model with email and name
 - `Post` - Blog post model with title, content, and author reference
 
