@@ -1,14 +1,5 @@
 import swaggerJsdoc from "swagger-jsdoc";
 import config from "./config.js";
-// Security schemes definition
-const SECURITY_SCHEMES = {
-    bearerAuth: {
-        type: "http",
-        scheme: "bearer",
-        bearerFormat: "JWT",
-        description: "Enter your bearer token to authorize access to protected routes",
-    },
-};
 const options = {
     definition: {
         openapi: "3.0.0",
@@ -32,10 +23,16 @@ const options = {
             },
         ],
         components: {
-            securitySchemes: SECURITY_SCHEMES,
+            securitySchemes: {
+                BearerAuth: {
+                    type: "http",
+                    scheme: "bearer",
+                },
+            },
         },
+        security: [{ BearerAuth: [] }],
     },
-    apis: ["./src/routes/**/*.ts"],
+    apis: ["./src/routes/*.ts"],
 };
 export const swaggerSpec = swaggerJsdoc(options);
 //# sourceMappingURL=swagger.js.map

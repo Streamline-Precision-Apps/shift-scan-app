@@ -2,17 +2,18 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
+import cookieParser from "cookie-parser";
 import swaggerUi from "swagger-ui-express";
 import prisma from "./lib/prisma.js";
 import config from "./lib/config.js";
 import { swaggerSpec } from "./lib/swagger.js";
-import { verifyToken } from "./middleware/authMiddleware.js";
 import apiRoutes from "./routes/index.js";
 import {
   errorHandler,
   notFoundHandler,
   validateJsonMiddleware,
 } from "./middleware/errorMiddleware.js";
+import authRoutes from "./routes/authRoutes.js";
 
 async function main() {
   console.log("🚀 Server starting...");
@@ -36,6 +37,9 @@ async function main() {
       })
     );
 
+    // Cookie parser (required to read httpOnly cookies)
+    app.use(cookieParser());
+
     // Logging middleware
     app.use(morgan("combined"));
 
@@ -46,23 +50,10 @@ async function main() {
     // JSON validation middleware
     app.use(validateJsonMiddleware);
 
-    app.use(
-      "/api-docs",
-      // require an authenticated user with a valid JWT to view Swagger UI
-      verifyToken,
-      swaggerUi.serve,
-      swaggerUi.setup(swaggerSpec, {
-        customCss:
-          ".swagger-ui .topbar { display: none } .swagger-ui .info .title { font-size: 2.5em; margin: 20px 0; }",
-        customSiteTitle: "Shift Scan API Documentation",
-        swaggerOptions: {
-          persistAuthorization: true,
-          docExpansion: "list",
-          defaultModelsExpandDepth: 1,
-          defaultModelExpandDepth: 1,
-        },
-      })
-    );
+    // Auth middleware
+    app.use("/auth", authRoutes);
+
+    app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
     // Root route
     app.get("/", (req, res) => {

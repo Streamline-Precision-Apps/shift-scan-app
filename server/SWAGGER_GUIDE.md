@@ -3,12 +3,14 @@
 ## Installation Complete! ✅
 
 You've successfully installed Swagger with the following packages:
+
 - `swagger-jsdoc` - Parses JSDoc comments and generates OpenAPI specification
 - `swagger-ui-express` - Serves interactive Swagger UI
 
 ## Accessing the Documentation
 
 Once your server is running (`npm run dev`), visit:
+
 ```
 http://localhost:[PORT]/api-docs
 ```
@@ -55,6 +57,7 @@ router.get("/", getUsersController);
 ## Parameter Documentation Examples
 
 ### Query Parameters
+
 ```typescript
 /**
  * @swagger
@@ -75,6 +78,7 @@ router.get("/", getUsersController);
 ```
 
 ### Path Parameters
+
 ```typescript
 /**
  * @swagger
@@ -91,6 +95,7 @@ router.get("/", getUsersController);
 ```
 
 ### Request Body
+
 ```typescript
 /**
  * @swagger
@@ -121,46 +126,15 @@ router.get("/", getUsersController);
 
 ## Authentication
 
-### Option 1: Use Environment Variable (Recommended for Development)
-
-1. Add your JWT token to your `.env` file:
-```env
-SWAGGER_BEARER_TOKEN="your_jwt_token_here"
-```
-
-2. Restart your dev server (`npm run dev`)
-
-3. The token will be available via the `/api/swagger-token` endpoint
-
-4. To authorize in Swagger UI:
-   - Visit `http://localhost:[PORT]/api-docs`
-   - Click the "Authorize" button
-   - Get your token by visiting `http://localhost:[PORT]/api/swagger-token`
-   - Paste it in the value field as: `Bearer your_token_here`
-   - Click "Authorize"
-
-### Option 2: Manual Authorization
-
-1. Click the "Authorize" button in the Swagger UI
-2. Enter your JWT token in the format: `Bearer YOUR_JWT_TOKEN`
-3. Click "Authorize"
-4. Click "Close"
+Located at `server/src/lib/swagger.ts` file swagger specifies authentication string however I decided to split up swagger routes to show auth routes before the other route to be sure authorized users are using swagger
 
 ### Getting Your Token
 
-If you have a `/api/auth/login` endpoint, you can:
-1. Test it in Swagger (without authorization required)
-2. Copy the token from the response
-3. Use that token to authorize other endpoints
+If you go to swagger docs under`/auth/login` endpoint, you can:
 
-### How Bearer Authentication Works
-
-The Bearer token is added to request headers as:
-```
-Authorization: Bearer YOUR_JWT_TOKEN
-```
-
-This header is automatically included with all requests to authenticated endpoints.
+1. Login into your profile
+2. On success receive a cookie and local storage save
+3. you are now have authentication
 
 ## Tips
 

@@ -1,39 +1,58 @@
 import express from "express";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-dotenv.config();
+import config from "../lib/config.js";
+import type { JwtUserPayload } from "../lib/jwt.js";
 
-// Extend Express Request to include user property
-declare global {
-  namespace Express {
-    interface Request {
-      user?: jwt.JwtPayload | string;
-    }
-  }
+interface AuthenticatedRequest extends express.Request {
+  user?: JwtUserPayload;
 }
 
 export function verifyToken(
-  req: express.Request,
+  req: AuthenticatedRequest,
   res: express.Response,
   next: express.NextFunction
 ) {
-  const authHeader = req.headers.authorization;
-  if (!authHeader)
-    return res.status(401).json({ error: "Authorization header missing" });
+  // Check Authorization header first (Bearer <token>) then fall back to cookie
+  const authHeader = req.headers["authorization"] as string | undefined;
+  let token: string | undefined;
 
-  const token = authHeader.split(" ")[1];
-  if (!token) return res.status(401).json({ error: "Token missing" });
-
-  const jwtSecret = process.env.JWT_SECRET;
-  if (!jwtSecret) {
-    return res.status(500).json({ error: "JWT_SECRET not configured" });
+  if (authHeader && authHeader.startsWith("Bearer ")) {
+    token = authHeader.split(" ")[1];
+  } else if ((req as any).cookies && (req as any).cookies.token) {
+    token = (req as any).cookies.token;
   }
+
+  if (!token) return res.status(401).json({ message: "No token provided" });
 
   try {
-    const decoded = jwt.verify(token, jwtSecret);
-    req.user = decoded; // make user info available in routes
+    const decoded = jwt.verify(token, config.jwtSecret) as JwtUserPayload;
+    req.user = decoded;
     next();
   } catch (err) {
-    return res.status(403).json({ error: "Invalid or expired token" });
+    res.status(403).json({ message: "Invalid or expired token" });
   }
+}
+
+// middleware/authMiddleware.js
+export function authorizeRoles(
+  ...allowedRoles: ("USER" | "MANAGER" | "ADMIN" | "SUPERADMIN")[]
+) {
+  return (
+    req: AuthenticatedRequest,
+    res: express.Response,
+    next: express.NextFunction
+  ) => {
+    if (!req.user) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+
+    if (!allowedRoles.includes(req.user.permission)) {
+      return res
+        .status(403)
+        .json({ message: "Forbidden: insufficient permissions" });
+    }
+
+    next();
+  };
 }

@@ -1,8 +1,9 @@
 import express from "express";
-import bcrypt from "bcryptjs";
+import bcrypt, { compare } from "bcryptjs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import prisma from "../lib/prisma.js";
+import config from "../lib/config.js";
 
 dotenv.config();
 
@@ -28,14 +29,17 @@ export const loginUser = async (
     password: string;
   };
 
+  // 1. Check for missing credentials
   if (!username || !password)
     return res.status(400).json({ error: "Missing credentials" });
 
   try {
+    // 2. Find user by username
     const user = await prisma.user.findUnique({ where: { username } });
     if (!user) return res.status(401).json({ error: "Invalid credentials" });
 
-    const validPassword = await bcrypt.compare(password, user.password);
+    // 3. Verify password
+    const validPassword = await compare(password, user.password);
     if (!validPassword)
       return res.status(401).json({ error: "Invalid credentials" });
 
@@ -51,12 +55,26 @@ export const loginUser = async (
       mechanicView: user.mechanicView,
       accountSetup: user.accountSetup,
     };
-
-    const token = jwt.sign(payload, process.env.JWT_SECRET as string, {
-      expiresIn: "1d",
+    // create JWT token
+    const token = jwt.sign(payload, config.jwtSecret, {
+      expiresIn: config.jwtExpiration, // 30 days
     });
 
-    return res.status(200).json({ message: "Login successful", token });
+    // set token in httpOnly cookie so client can send it with requests
+    const cookieOptions = {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: config.jwtExpiration * 1000, // convert seconds -> ms
+      path: "/",
+    } as const;
+
+    // name the cookie `token`; this allows the middleware to read it as a fallback
+    res.cookie("token", token, cookieOptions);
+
+    return res
+      .status(200)
+      .json({ message: "Login successful", token, user: { user: payload } });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ error: "Internal server error" });

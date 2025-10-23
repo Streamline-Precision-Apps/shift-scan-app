@@ -46,7 +46,7 @@ router.get("/", UserController.getUsers);
  *       404:
  *         description: User not found
  */
-router.get("/:id", UserController.getUserById);
+router.get("/:id", verifyToken, UserController.getUserById);
 
 /**
  * @swagger

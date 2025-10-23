@@ -1,11 +1,9 @@
 import express from "express";
-import jwt from "jsonwebtoken";
-declare global {
-    namespace Express {
-        interface Request {
-            user?: jwt.JwtPayload | string;
-        }
-    }
+import type { JwtUserPayload } from "../lib/jwt.js";
+interface AuthenticatedRequest extends express.Request {
+    user?: JwtUserPayload;
 }
-export declare function verifyToken(req: express.Request, res: express.Response, next: express.NextFunction): express.Response<any, Record<string, any>> | undefined;
+export declare function verifyToken(req: AuthenticatedRequest, res: express.Response, next: express.NextFunction): express.Response<any, Record<string, any>> | undefined;
+export declare function authorizeRoles(...allowedRoles: ("USER" | "MANAGER" | "ADMIN" | "SUPERADMIN")[]): (req: AuthenticatedRequest, res: express.Response, next: express.NextFunction) => express.Response<any, Record<string, any>> | undefined;
+export {};
 //# sourceMappingURL=authMiddleware.d.ts.map

@@ -5,32 +5,28 @@ const router = express.Router();
 
 /**
  * @swagger
- * /api/auth/login:
+ * /auth/login:
  *   post:
- *     tags:
- *       - Authentication
- *     summary: Login user
- *     description: Authenticate user and return JWT token
+ *     summary: Log in to get a JWT token
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - username
+ *               - password
  *             properties:
- *               email:
+ *               username:
  *                 type: string
- *                 example: user@example.com
  *               password:
  *                 type: string
- *                 example: password123
  *     responses:
  *       200:
- *         description: Login successful, returns JWT token
+ *         description: Successful login
  *       401:
  *         description: Invalid credentials
- *       400:
- *         description: Bad request
  */
 router.post("/login", loginUser);
 
