@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { UserController } from "../controllers/UserController.js";
+import * as UserController from "../controllers/userController.js";
 import { verifyToken } from "../middleware/authMiddleware.js";
 
 const router = Router();
@@ -64,11 +64,68 @@ router.get("/:id", verifyToken, UserController.getUserById);
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - firstName
+ *               - lastName
+ *               - username
+ *               - password
+ *               - companyId
+ *               - truckView
+ *               - tascoView
+ *               - laborView
+ *               - mechanicView
  *             properties:
+ *               firstName:
+ *                 type: string
+ *               lastName:
+ *                 type: string
+ *               username:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *               companyId:
+ *                 type: string
  *               email:
  *                 type: string
- *               name:
+ *                 nullable: true
+ *               signature:
  *                 type: string
+ *                 nullable: true
+ *               DOB:
+ *                 type: string
+ *                 format: date-time
+ *                 nullable: true
+ *               truckView:
+ *                 type: boolean
+ *               tascoView:
+ *                 type: boolean
+ *               laborView:
+ *                 type: boolean
+ *               mechanicView:
+ *                 type: boolean
+ *               permission:
+ *                 type: string
+ *                 enum: [USER, ADMIN, SUPERADMIN]
+ *               image:
+ *                 type: string
+ *                 nullable: true
+ *               startDate:
+ *                 type: string
+ *                 format: date-time
+ *                 nullable: true
+ *               terminationDate:
+ *                 type: string
+ *                 format: date-time
+ *                 nullable: true
+ *               workTypeId:
+ *                 type: string
+ *                 nullable: true
+ *               middleName:
+ *                 type: string
+ *                 nullable: true
+ *               secondLastName:
+ *                 type: string
+ *                 nullable: true
  *     responses:
  *       201:
  *         description: User created successfully
@@ -102,10 +159,57 @@ router.post("/", verifyToken, UserController.createUser);
  *           schema:
  *             type: object
  *             properties:
+ *               firstName:
+ *                 type: string
+ *               lastName:
+ *                 type: string
+ *               username:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *               companyId:
+ *                 type: string
  *               email:
  *                 type: string
- *               name:
+ *                 nullable: true
+ *               signature:
  *                 type: string
+ *                 nullable: true
+ *               DOB:
+ *                 type: string
+ *                 format: date-time
+ *                 nullable: true
+ *               truckView:
+ *                 type: boolean
+ *               tascoView:
+ *                 type: boolean
+ *               laborView:
+ *                 type: boolean
+ *               mechanicView:
+ *                 type: boolean
+ *               permission:
+ *                 type: string
+ *                 enum: [USER, ADMIN, SUPERADMIN]
+ *               image:
+ *                 type: string
+ *                 nullable: true
+ *               startDate:
+ *                 type: string
+ *                 format: date-time
+ *                 nullable: true
+ *               terminationDate:
+ *                 type: string
+ *                 format: date-time
+ *                 nullable: true
+ *               workTypeId:
+ *                 type: string
+ *                 nullable: true
+ *               middleName:
+ *                 type: string
+ *                 nullable: true
+ *               secondLastName:
+ *                 type: string
+ *                 nullable: true
  *     responses:
  *       200:
  *         description: User updated successfully

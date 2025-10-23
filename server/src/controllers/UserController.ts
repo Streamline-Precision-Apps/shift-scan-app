@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import type { User, Prisma, Permission } from "../../generated/prisma/index.js";
+import type { User, Prisma } from "../../generated/prisma/index.js";
 import { UserService } from "../services/UserService.js";
 
 // Type the request body for create/update operations
@@ -38,9 +38,11 @@ export class UserController {
   static async getUsers(req: Request, res: Response) {
     try {
       const users = await UserService.getAllUsers();
+      // Remove password from each user object
+      const safeUsers = users.map(({ password, ...rest }) => rest);
       res.status(200).json({
         success: true,
-        data: users,
+        data: safeUsers,
         message: "Users retrieved successfully",
       });
     } catch (error) {
@@ -64,10 +66,11 @@ export class UserController {
         });
       }
       const user = await UserService.getUserById(id);
-
+      // Remove password from user object
+      const { password, ...safeUser } = user || {};
       res.status(200).json({
         success: true,
-        data: user,
+        data: safeUser,
         message: "User retrieved successfully",
       });
     } catch (error) {
@@ -180,4 +183,8 @@ export class UserController {
   }
 }
 
-export default UserController;
+export const getUsers = UserController.getUsers;
+export const getUserById = UserController.getUserById;
+export const createUser = UserController.createUser;
+export const updateUser = UserController.updateUser;
+export const deleteUser = UserController.deleteUser;

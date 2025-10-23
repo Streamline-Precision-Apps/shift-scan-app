@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import config from "../lib/config.js";
 import type { JwtUserPayload } from "../lib/jwt.js";
 
-interface AuthenticatedRequest extends express.Request {
+export interface AuthenticatedRequest extends express.Request {
   user?: JwtUserPayload;
 }
 

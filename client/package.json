@@ -29,6 +29,7 @@
     "@radix-ui/react-popover": "^1.1.15",
     "better-auth": "^1.3.28",
     "clsx": "^2.1.1",
+    "firebase": "^12.4.0",
     "lucide-react": "^0.546.0",
     "next": "16.0.0",
     "next-intl": "^4.4.0",

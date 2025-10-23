@@ -12,6 +12,9 @@ const config: CapacitorConfig = {
     CapacitorCookies: {
       enabled: true,
     },
+    geolocation: {
+      background: true,
+    },
   },
 };
 

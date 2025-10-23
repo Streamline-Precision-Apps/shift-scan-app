@@ -1,5 +1,5 @@
 import express from "express";
-import bcrypt, { compare } from "bcryptjs";
+import { compare } from "bcryptjs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import prisma from "../lib/prisma.js";
@@ -53,4 +53,4 @@ export const loginUser = async (req, res) => {
         return res.status(500).json({ error: "Internal server error" });
     }
 };
-//# sourceMappingURL=AuthController.js.map
+//# sourceMappingURL=authController.js.map

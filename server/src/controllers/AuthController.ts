@@ -1,5 +1,5 @@
 import express from "express";
-import bcrypt, { compare } from "bcryptjs";
+import { compare } from "bcryptjs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import prisma from "../lib/prisma.js";

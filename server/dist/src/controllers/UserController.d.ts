@@ -30,5 +30,10 @@ export declare class UserController {
     static updateUser(req: Request, res: Response): Promise<Response<any, Record<string, any>> | undefined>;
     static deleteUser(req: Request, res: Response): Promise<Response<any, Record<string, any>> | undefined>;
 }
-export default UserController;
-//# sourceMappingURL=UserController.d.ts.map
+export declare const getUsers: typeof UserController.getUsers;
+export declare const getUserById: typeof UserController.getUserById;
+export declare const createUser: typeof UserController.createUser;
+export declare const updateUser: typeof UserController.updateUser;
+export declare const deleteUser: typeof UserController.deleteUser;
+export {};
+//# sourceMappingURL=userController.d.ts.map
