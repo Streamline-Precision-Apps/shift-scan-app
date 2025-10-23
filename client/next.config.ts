@@ -1,11 +1,17 @@
-/** @type {import('next').NextConfig} */
+import createNextIntlPlugin from "next-intl/plugin";
+import type { NextConfig } from "next";
+
 const isMobile = process.env.NEXT_PUBLIC_IS_MOBILE === "true";
-const nextConfig = {
-  ...(isMobile ? { output: "export" } : {}),
+
+const nextConfig: NextConfig = {
+  ...(isMobile ? { output: "export" as const } : {}),
   reactStrictMode: true,
   images: {
     unoptimized: true,
   },
 };
 
-module.exports = nextConfig;
+const withNextIntl = createNextIntlPlugin("./i18n.ts");
+const combinedConfig = withNextIntl(nextConfig);
+
+module.exports = combinedConfig;

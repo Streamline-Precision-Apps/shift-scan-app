@@ -11,7 +11,17 @@ install! 'cocoapods', :disable_input_output_paths => true
 def capacitor_pods
   pod 'Capacitor', :path => '../../node_modules/@capacitor/ios'
   pod 'CapacitorCordova', :path => '../../node_modules/@capacitor/ios'
-
+  pod 'CapacitorBackgroundRunner', :path => '../../node_modules/@capacitor/background-runner'
+  pod 'CapacitorBarcodeScanner', :path => '../../node_modules/@capacitor/barcode-scanner'
+  pod 'CapacitorDevice', :path => '../../node_modules/@capacitor/device'
+  pod 'CapacitorFileTransfer', :path => '../../node_modules/@capacitor/file-transfer'
+  pod 'CapacitorFileViewer', :path => '../../node_modules/@capacitor/file-viewer'
+  pod 'CapacitorGeolocation', :path => '../../node_modules/@capacitor/geolocation'
+  pod 'CapacitorPreferences', :path => '../../node_modules/@capacitor/preferences'
+  pod 'CapacitorPushNotifications', :path => '../../node_modules/@capacitor/push-notifications'
+  pod 'CapacitorScreenOrientation', :path => '../../node_modules/@capacitor/screen-orientation'
+  pod 'CapacitorSplashScreen', :path => '../../node_modules/@capacitor/splash-screen'
+  pod 'CapacitorStatusBar', :path => '../../node_modules/@capacitor/status-bar'
 end
 
 target 'App' do

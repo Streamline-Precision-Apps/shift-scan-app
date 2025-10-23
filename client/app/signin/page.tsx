@@ -1,49 +1,61 @@
 "use client";
 
-import { useState } from "react";
-import { signIn, signUp } from "@/lib/auth-client";
+import { use, useState } from "react";
 import { useRouter } from "next/navigation";
+import { EyeIcon, EyeOff } from "lucide-react";
+import { isMobileOrTablet } from "../lib/utils/isMobileOrTablet";
+import { useTranslations } from "next-intl";
 
 export default function SignInPage() {
-  const [isSignUp, setIsSignUp] = useState(false);
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
+  const t = useTranslations("signIn");
+
+  // helper: returns true for phone/tablet devices
+
+  const redirectAfterAuth = () => {
+    const target = isMobileOrTablet() ? "/v1" : "/dashboard";
+    router.push(target);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
-
     try {
-      if (isSignUp) {
-        const result = await signUp.email({
-          email,
-          password,
-          name,
-        });
-        
-        if (result.error) {
-          setError(result.error.message || "Sign up failed");
-        } else {
-          router.push("/dashboard");
-        }
+      const API_URL =
+        process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+
+      // POST /auth/signin (assumption). Adjust path if your server uses a different route.
+      const res = await fetch(`${API_URL}/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ username, password }),
+      });
+
+      const data = await res.json().catch(() => null);
+
+      if (!res.ok) {
+        setError(
+          (data && (data.error || data.message)) ||
+            res.statusText ||
+            "Sign in failed"
+        );
+      } else if (data && data.error) {
+        setError(data.error || "Sign in failed");
       } else {
-        const result = await signIn.email({
-          email,
-          password,
-        });
-        
-        if (result.error) {
-          setError(result.error.message || "Sign in failed");
-        } else {
-          router.push("/dashboard");
-        }
+        // If server returns a token and you prefer storing it on client
+        // you can do: if (data?.token) localStorage.setItem('token', data.token)
+        redirectAfterAuth();
       }
     } catch (err) {
+      // Network or unexpected errors
+      console.error("auth error:", err);
       setError("An unexpected error occurred");
     } finally {
       setLoading(false);
@@ -51,7 +63,7 @@ export default function SignInPage() {
   };
 
   return (
-    <main className="relative min-h-screen max-h-screen overflow-hidden bg-linear-to-br from-app-dark-blue via-app-blue to-app-blue px-4 py-0 flex flex-col items-center justify-center">
+    <main className="relative min-h-screen max-h-screen overflow-hidden bg-app-gradient bg-to-br from-app-dark-blue via-app-blue to-app-blue px-4 py-0 flex flex-col items-center justify-center">
       {/* Animated Gradient Background Overlay */}
       <div className="pointer-events-none fixed inset-0 z-0">
         <div className="absolute inset-0 bg-linear-to-br from-app-dark-blue via-app-blue to-app-blue animate-gradient-move opacity-80" />
@@ -69,60 +81,64 @@ export default function SignInPage() {
               className="h-16 w-auto mx-auto mb-4 rounded-lg"
             />
             <h1 className="text-2xl font-bold text-app-dark-blue mb-2">
-              {isSignUp ? "Create Account" : "Sign In"}
+              {t("title")}
             </h1>
-            <p className="text-gray-600">
-              {isSignUp ? "Join Shift Scan today" : "Welcome back to Shift Scan"}
-            </p>
+            <p className="text-gray-600">{t("welcome")}</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            {isSignUp && (
-              <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-                  Full Name
-                </label>
-                <input
-                  id="name"
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  required={isSignUp}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-app-blue focus:border-transparent transition-all duration-200"
-                  placeholder="Enter your full name"
-                />
-              </div>
-            )}
-
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                Email Address
+              <label
+                htmlFor="username"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                {t("username")}
               </label>
               <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                id="username"
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-app-blue focus:border-transparent transition-all duration-200"
-                placeholder="Enter your email"
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl text-gray-700 placeholder:text-gray-700 focus:outline-none focus:ring-2 focus:ring-app-blue focus:border-transparent transition-all duration-200"
+                placeholder={t("usernamePlaceholder")}
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                Password
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                {t("password")}
               </label>
-              <input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-app-blue focus:border-transparent transition-all duration-200"
-                placeholder="Enter your password"
-                minLength={6}
-              />
+              <div className="relative">
+                <input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className="w-full px-4 py-3 border border-gray-300 text-gray-700  placeholder:text-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-app-blue focus:border-transparent transition-all duration-200"
+                  placeholder={t("passwordPlaceholder")}
+                  minLength={6}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((s) => !s)}
+                  aria-pressed={showPassword}
+                  aria-label={
+                    showPassword ? t("hidePassword") : t("showPassword")
+                  }
+                  className="absolute inset-y-0 right-2 top-1/2 -translate-y-1/2 text-sm text-app-dark-blue/80 hover:text-app-dark-blue focus:outline-none"
+                >
+                  {showPassword ? (
+                    <EyeIcon className="w-8 h-4" />
+                  ) : (
+                    <EyeOff className="w-8 h-4" />
+                  )}
+                </button>
+              </div>
             </div>
 
             {error && (
@@ -136,26 +152,16 @@ export default function SignInPage() {
               disabled={loading}
               className="w-full bg-app-dark-blue hover:bg-app-dark-blue/80 disabled:bg-app-dark-blue/50 text-white font-bold py-3 px-8 rounded-xl shadow-lg text-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-app-blue"
             >
-              {loading ? "Loading..." : isSignUp ? "Create Account" : "Sign In"}
+              {loading ? t("loading") : t("submit")}
             </button>
           </form>
-
-          <div className="mt-6 text-center">
-            <button
-              type="button"
-              onClick={() => setIsSignUp(!isSignUp)}
-              className="text-app-dark-blue hover:text-app-dark-blue/80 font-medium transition-colors"
-            >
-              {isSignUp ? "Already have an account? Sign in" : "Don't have an account? Sign up"}
-            </button>
-          </div>
 
           <div className="mt-4 text-center">
             <a
               href="/"
               className="text-gray-500 hover:text-gray-700 text-sm transition-colors"
             >
-              ← Back to home
+              ← {t("backToHome")}
             </a>
           </div>
         </div>

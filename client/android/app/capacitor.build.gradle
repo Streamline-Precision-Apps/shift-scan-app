@@ -9,7 +9,17 @@ android {
 
 apply from: "../capacitor-cordova-android-plugins/cordova.variables.gradle"
 dependencies {
-
+    implementation project(':capacitor-background-runner')
+    implementation project(':capacitor-barcode-scanner')
+    implementation project(':capacitor-device')
+    implementation project(':capacitor-file-transfer')
+    implementation project(':capacitor-file-viewer')
+    implementation project(':capacitor-geolocation')
+    implementation project(':capacitor-preferences')
+    implementation project(':capacitor-push-notifications')
+    implementation project(':capacitor-screen-orientation')
+    implementation project(':capacitor-splash-screen')
+    implementation project(':capacitor-status-bar')
 
 }
 

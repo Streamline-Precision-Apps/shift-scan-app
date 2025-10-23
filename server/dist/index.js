@@ -41,8 +41,10 @@ async function main() {
         });
         // API routes
         app.use("/api", apiRoutes);
-        // 404 handler
-        app.use("*", notFoundHandler);
+    // 404 handler
+    // Mount the notFoundHandler without a path so Express doesn't pass an
+    // invalid string ("*") into the path-to-regexp parser at runtime.
+    app.use(notFoundHandler);
         // Error handling middleware (must be last)
         app.use(errorHandler);
         // Start server

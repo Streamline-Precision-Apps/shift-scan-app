@@ -39,12 +39,11 @@ export const loginUser = async (req, res) => {
         const cookieOptions = {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
-            sameSite: "lax",
+            sameSite: "none", // necessary for cross-site cookies with credentials: 'include'
             maxAge: config.jwtExpiration * 1000, // convert seconds -> ms
-            path: "/",
         };
         // name the cookie `token`; this allows the middleware to read it as a fallback
-        res.cookie("token", token, cookieOptions);
+        res.cookie("session", token, cookieOptions);
         return res
             .status(200)
             .json({ message: "Login successful", token, user: { user: payload } });

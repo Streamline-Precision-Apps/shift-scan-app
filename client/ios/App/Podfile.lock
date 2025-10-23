@@ -1,0 +1,107 @@
+PODS:
+  - Capacitor (7.4.4):
+    - CapacitorCordova
+  - CapacitorBackgroundRunner (2.2.0):
+    - Capacitor
+  - CapacitorBarcodeScanner (2.2.0):
+    - Capacitor
+    - OSBarcodeLib (= 2.0.1)
+  - CapacitorCordova (7.4.4)
+  - CapacitorDevice (7.0.2):
+    - Capacitor
+  - CapacitorFileTransfer (1.0.6):
+    - Capacitor
+    - IONFileTransferLib (~> 1.0.1)
+  - CapacitorFileViewer (1.0.5):
+    - Capacitor
+    - IONFileViewerLib (~> 1.0.3)
+  - CapacitorGeolocation (7.1.5):
+    - Capacitor
+    - IONGeolocationLib (= 1.0.1)
+  - CapacitorPreferences (7.0.2):
+    - Capacitor
+  - CapacitorPushNotifications (7.0.3):
+    - Capacitor
+  - CapacitorScreenOrientation (7.0.2):
+    - Capacitor
+  - CapacitorSplashScreen (7.0.3):
+    - Capacitor
+  - CapacitorStatusBar (7.0.3):
+    - Capacitor
+  - IONFileTransferLib (1.0.1)
+  - IONFileViewerLib (1.0.3)
+  - IONGeolocationLib (1.0.1)
+  - OSBarcodeLib (2.0.1)
+
+DEPENDENCIES:
+  - "Capacitor (from `../../node_modules/@capacitor/ios`)"
+  - "CapacitorBackgroundRunner (from `../../node_modules/@capacitor/background-runner`)"
+  - "CapacitorBarcodeScanner (from `../../node_modules/@capacitor/barcode-scanner`)"
+  - "CapacitorCordova (from `../../node_modules/@capacitor/ios`)"
+  - "CapacitorDevice (from `../../node_modules/@capacitor/device`)"
+  - "CapacitorFileTransfer (from `../../node_modules/@capacitor/file-transfer`)"
+  - "CapacitorFileViewer (from `../../node_modules/@capacitor/file-viewer`)"
+  - "CapacitorGeolocation (from `../../node_modules/@capacitor/geolocation`)"
+  - "CapacitorPreferences (from `../../node_modules/@capacitor/preferences`)"
+  - "CapacitorPushNotifications (from `../../node_modules/@capacitor/push-notifications`)"
+  - "CapacitorScreenOrientation (from `../../node_modules/@capacitor/screen-orientation`)"
+  - "CapacitorSplashScreen (from `../../node_modules/@capacitor/splash-screen`)"
+  - "CapacitorStatusBar (from `../../node_modules/@capacitor/status-bar`)"
+
+SPEC REPOS:
+  trunk:
+    - IONFileTransferLib
+    - IONFileViewerLib
+    - IONGeolocationLib
+    - OSBarcodeLib
+
+EXTERNAL SOURCES:
+  Capacitor:
+    :path: "../../node_modules/@capacitor/ios"
+  CapacitorBackgroundRunner:
+    :path: "../../node_modules/@capacitor/background-runner"
+  CapacitorBarcodeScanner:
+    :path: "../../node_modules/@capacitor/barcode-scanner"
+  CapacitorCordova:
+    :path: "../../node_modules/@capacitor/ios"
+  CapacitorDevice:
+    :path: "../../node_modules/@capacitor/device"
+  CapacitorFileTransfer:
+    :path: "../../node_modules/@capacitor/file-transfer"
+  CapacitorFileViewer:
+    :path: "../../node_modules/@capacitor/file-viewer"
+  CapacitorGeolocation:
+    :path: "../../node_modules/@capacitor/geolocation"
+  CapacitorPreferences:
+    :path: "../../node_modules/@capacitor/preferences"
+  CapacitorPushNotifications:
+    :path: "../../node_modules/@capacitor/push-notifications"
+  CapacitorScreenOrientation:
+    :path: "../../node_modules/@capacitor/screen-orientation"
+  CapacitorSplashScreen:
+    :path: "../../node_modules/@capacitor/splash-screen"
+  CapacitorStatusBar:
+    :path: "../../node_modules/@capacitor/status-bar"
+
+SPEC CHECKSUMS:
+  Capacitor: 358dd1c3fdd71d969547b17e159fd8a7736cb45f
+  CapacitorBackgroundRunner: 5e1c8dbb7d2ebb36f6ca2e24c80fb774488ceb06
+  CapacitorBarcodeScanner: 4b6d4ecfff4133af982d09acd423610c14ac0c3f
+  CapacitorCordova: bf648a636f3c153f652d312ae145fb508b6ffced
+  CapacitorDevice: 81ae78d5d1942707caad79276badd458bf6ec603
+  CapacitorFileTransfer: 591bdf4cbb809fbdaf85aba6ddfa93ff1c4c1b2d
+  CapacitorFileViewer: 365f8382725e232f1c3225246fe67b3c90c8ae17
+  CapacitorGeolocation: 84f868bea4c2499aebc3bb3a88fd0a508f87ab87
+  CapacitorPreferences: 65107ed7437d96ee72583df5763985e3c0ff2bc2
+  CapacitorPushNotifications: bdd621fbd562be34a41f4a7b1750efa000447d5a
+  CapacitorScreenOrientation: e0d5b9ef293b269b8f93373355d5b276f50fabea
+  CapacitorSplashScreen: e388b8e0ed0e982a9d3a40417f478e7a018a8763
+  CapacitorStatusBar: 0659ddc7b1713764a05831463d215b177a15d054
+  IONFileTransferLib: b268561ab0ba7f386eea228c4986b55ba0146ca9
+  IONFileViewerLib: 574758ebcaa4b1543669b1c9708f1970e1172b29
+  IONGeolocationLib: 20f9d0248a0b5264511fb57a37e25dd2badf797a
+  OSBarcodeLib: 57987d2eb1f916f701f4554e20e349b3cb83f023
+
+PODFILE CHECKSUM: 4f3c6db01a071e90058a516fa547964a4882c2fb
+
+COCOAPODS: 1.16.2

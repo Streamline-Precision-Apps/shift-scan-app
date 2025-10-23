@@ -1,0 +1,15 @@
+{
+  "signIn": {
+    "title": "Iniciar sesión",
+    "welcome": "Bienvenido de nuevo a Shift Scan",
+    "username": "Usuario",
+    "usernamePlaceholder": "Introduce tu correo electrónico",
+    "password": "Contraseña",
+    "passwordPlaceholder": "Introduce tu contraseña",
+    "submit": "Iniciar sesión",
+    "showPassword": "Mostrar contraseña",
+    "hidePassword": "Ocultar contraseña",
+    "loading": "Cargando...",
+    "backToHome": "Volver al inicio"
+  }
+}
