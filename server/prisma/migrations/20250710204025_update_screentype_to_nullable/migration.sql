@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "TascoLog" ALTER COLUMN "screenType" DROP NOT NULL,
+ALTER COLUMN "screenType" DROP DEFAULT;

@@ -2,8 +2,11 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
+import swaggerUi from "swagger-ui-express";
 import prisma from "./lib/prisma.js";
 import config from "./lib/config.js";
+import { swaggerSpec } from "./lib/swagger.js";
+import { verifyToken } from "./middleware/authMiddleware.js";
 import apiRoutes from "./routes/index.js";
 import {
   errorHandler,
@@ -43,6 +46,24 @@ async function main() {
     // JSON validation middleware
     app.use(validateJsonMiddleware);
 
+    app.use(
+      "/api-docs",
+      // require an authenticated user with a valid JWT to view Swagger UI
+      verifyToken,
+      swaggerUi.serve,
+      swaggerUi.setup(swaggerSpec, {
+        customCss:
+          ".swagger-ui .topbar { display: none } .swagger-ui .info .title { font-size: 2.5em; margin: 20px 0; }",
+        customSiteTitle: "Shift Scan API Documentation",
+        swaggerOptions: {
+          persistAuthorization: true,
+          docExpansion: "list",
+          defaultModelsExpandDepth: 1,
+          defaultModelExpandDepth: 1,
+        },
+      })
+    );
+
     // Root route
     app.get("/", (req, res) => {
       res.json({
@@ -51,6 +72,7 @@ async function main() {
         version: "1.0.0",
         endpoints: {
           users: "/api/users",
+          docs: "/api-docs",
         },
       });
     });
@@ -59,7 +81,7 @@ async function main() {
     app.use("/api", apiRoutes);
 
     // 404 handler
-    app.use("*", notFoundHandler);
+    app.use(notFoundHandler);
 
     // Error handling middleware (must be last)
     app.use(errorHandler);
@@ -68,10 +90,7 @@ async function main() {
     const server = app.listen(config.port, () => {
       console.log(`🌟 Server is running on port ${config.port}`);
       console.log(
-        `📖 API documentation available at http://localhost:${config.port}`
-      );
-      console.log(
-        `🏥 Health check: http://localhost:${config.port}/api/health`
+        `📖 API documentation available at http://localhost:${config.port}/api-docs`
       );
     });
 

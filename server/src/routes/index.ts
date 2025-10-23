@@ -1,18 +1,16 @@
 import { Router } from "express";
 import userRoutes from "./userRoutes.js";
+import authRoutes from "./authRoutes.js";
+import swaggerTokenRoutes from "./swaggerTokenRoutes.js";
 
 const router = Router();
 
-// API health check
-router.get("/health", (req, res) => {
-  res.status(200).json({
-    success: true,
-    message: "API is running",
-    timestamp: new Date().toISOString(),
-  });
-});
-
-// Mount routes
+// auth routes
+router.use("/auth", authRoutes);
+// user routes
 router.use("/users", userRoutes);
+
+// dev-only swagger token route: /api/swagger-token
+router.use("/swagger-token", swaggerTokenRoutes);
 
 export default router;

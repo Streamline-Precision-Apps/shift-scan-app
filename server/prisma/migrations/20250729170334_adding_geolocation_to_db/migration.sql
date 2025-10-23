@@ -1,0 +1,12 @@
+-- AlterTable
+ALTER TABLE "Jobsite" ADD COLUMN     "latitude" DOUBLE PRECISION,
+ADD COLUMN     "longitude" DOUBLE PRECISION,
+ADD COLUMN     "radiusMeters" DOUBLE PRECISION;
+
+-- AlterTable
+ALTER TABLE "TimeSheet" ADD COLUMN     "clockInLat" DOUBLE PRECISION,
+ADD COLUMN     "clockInLng" DOUBLE PRECISION,
+ADD COLUMN     "clockOutLat" DOUBLE PRECISION,
+ADD COLUMN     "clockOutLng" DOUBLE PRECISION,
+ADD COLUMN     "withinFenceIn" BOOLEAN,
+ADD COLUMN     "withinFenceOut" BOOLEAN;
