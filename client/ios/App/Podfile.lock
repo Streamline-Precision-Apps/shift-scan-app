@@ -28,6 +28,8 @@ PODS:
     - Capacitor
   - CapacitorStatusBar (7.0.3):
     - Capacitor
+  - CordovaPlugins (7.4.4):
+    - CapacitorCordova
   - IONFileTransferLib (1.0.1)
   - IONFileViewerLib (1.0.3)
   - IONGeolocationLib (1.0.1)
@@ -47,6 +49,7 @@ DEPENDENCIES:
   - "CapacitorScreenOrientation (from `../../node_modules/@capacitor/screen-orientation`)"
   - "CapacitorSplashScreen (from `../../node_modules/@capacitor/splash-screen`)"
   - "CapacitorStatusBar (from `../../node_modules/@capacitor/status-bar`)"
+  - CordovaPlugins (from `../capacitor-cordova-ios-plugins`)
 
 SPEC REPOS:
   trunk:
@@ -82,6 +85,8 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/@capacitor/splash-screen"
   CapacitorStatusBar:
     :path: "../../node_modules/@capacitor/status-bar"
+  CordovaPlugins:
+    :path: "../capacitor-cordova-ios-plugins"
 
 SPEC CHECKSUMS:
   Capacitor: 358dd1c3fdd71d969547b17e159fd8a7736cb45f
@@ -97,11 +102,12 @@ SPEC CHECKSUMS:
   CapacitorScreenOrientation: e0d5b9ef293b269b8f93373355d5b276f50fabea
   CapacitorSplashScreen: e388b8e0ed0e982a9d3a40417f478e7a018a8763
   CapacitorStatusBar: 0659ddc7b1713764a05831463d215b177a15d054
+  CordovaPlugins: 1bf0751341b4ed675f6f5936ac0a6a57111feeb2
   IONFileTransferLib: b268561ab0ba7f386eea228c4986b55ba0146ca9
   IONFileViewerLib: 574758ebcaa4b1543669b1c9708f1970e1172b29
   IONGeolocationLib: 20f9d0248a0b5264511fb57a37e25dd2badf797a
   OSBarcodeLib: 57987d2eb1f916f701f4554e20e349b3cb83f023
 
-PODFILE CHECKSUM: 4f3c6db01a071e90058a516fa547964a4882c2fb
+PODFILE CHECKSUM: 4a005981a77c7a6c666ef96af824df2ee1519107
 
 COCOAPODS: 1.16.2

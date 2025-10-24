@@ -1,13 +1,35 @@
 import { Geolocation } from "@capacitor/geolocation";
 import { getAuth } from "firebase/auth";
-import { doc, setDoc, serverTimestamp } from "firebase/firestore";
-import { firestore } from "./firebase";
+
+declare const window: any;
+const BackgroundGeolocation = window.BackgroundGeolocation;
+
+export interface LocationLog {
+  coords: {
+    lat: number;
+    lng: number;
+    accuracy?: number;
+    speed?: number | null;
+    heading?: number | null;
+  };
+  device?: {
+    platform?: string | null;
+  };
+}
 
 // Store the watch ID globally (module scope)
 let watchId: string | null = null;
 
-// Start watching position and send updates to Firebase
-export async function startLocationWatch() {
+// add a variable to track the last time a write to FireStore occurred
+let lastFirestoreWriteTime: number = 0;
+const WRITE_INTERVAL_MS = 5 * 60 * 1000; // e.g., 5 mins
+
+// Start foreground or background location tracking
+export async function startLocationWatch({ background = false } = {}) {
+  if (background) {
+    startBackgroundLocationWatch();
+    return;
+  }
   if (watchId) return; // already watching
   watchId = await Geolocation.watchPosition({}, async (pos, err) => {
     if (err) {
@@ -18,14 +40,16 @@ export async function startLocationWatch() {
       console.error("Geolocation watch: position is null");
       return;
     }
+    const currentTime = Date.now();
+    if (currentTime - lastFirestoreWriteTime < WRITE_INTERVAL_MS) {
+      return;
+    }
     try {
       const auth = getAuth();
       const user = auth.currentUser;
       if (!user) throw new Error("No authenticated user");
 
-      const payload = {
-        uid: user.uid,
-        ts: serverTimestamp(),
+      const payload: LocationLog = {
         coords: {
           lat: pos.coords.latitude,
           lng: pos.coords.longitude,
@@ -39,36 +63,94 @@ export async function startLocationWatch() {
         },
       };
 
-      const ref = doc(
-        firestore,
-        `users/${user.uid}/locations/${Date.now().toString()}`
-      );
-      await setDoc(ref, payload);
+      await fetch("/api/location/user", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          // Optionally add auth token if needed
+        },
+        body: JSON.stringify(payload),
+      });
+      lastFirestoreWriteTime = currentTime;
     } catch (err) {
-      console.error("Failed to send watched location to Firebase:", err);
+      console.error("Failed to send watched location to backend:", err);
     }
   });
 }
-// Stop watching position
+
+// Start background location tracking using Cordova plugin
+export function startBackgroundLocationWatch() {
+  if (!BackgroundGeolocation) {
+    console.error("BackgroundGeolocation plugin not available");
+    return;
+  }
+  BackgroundGeolocation.configure({
+    desiredAccuracy: BackgroundGeolocation.HIGH_ACCURACY,
+    stationaryRadius: 50,
+    distanceFilter: 50,
+    debug: false,
+    interval: 300000, // 5 minutes
+    fastestInterval: 120000, // 2 minutes
+    activitiesInterval: 300000, // 5 minutes
+    stopOnTerminate: false,
+    startOnBoot: true,
+  });
+  BackgroundGeolocation.on("location", async function (location: any) {
+    try {
+      const auth = getAuth();
+      const user = auth.currentUser;
+      if (!user) throw new Error("No authenticated user");
+      const payload: LocationLog = {
+        coords: {
+          lat: location.latitude,
+          lng: location.longitude,
+          accuracy: location.accuracy,
+          speed: location.speed ?? null,
+          heading: location.heading ?? null,
+        },
+        device: {
+          platform:
+            typeof navigator !== "undefined" ? navigator.userAgent : null,
+        },
+      };
+      await fetch("/api/location/user", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+    } catch (err) {
+      console.error("Failed to send background location to backend:", err);
+    }
+  });
+  BackgroundGeolocation.start();
+}
+
+// Stop Tracking location (foreground and background)
 export function stopLocationWatch() {
   if (watchId) {
     Geolocation.clearWatch({ id: watchId });
     watchId = null;
+    lastFirestoreWriteTime = 0; // reset for next session
+  }
+  if (BackgroundGeolocation) {
+    BackgroundGeolocation.stop();
+    BackgroundGeolocation.removeAllListeners();
   }
 }
-export async function sendLocationToFirebase() {
+
+// Send location to backend API for one-time updates
+export async function sendLocationToBackend() {
   try {
     const auth = getAuth();
     const user = auth.currentUser;
     if (!user) throw new Error("No authenticated user");
 
-    // Get current geolocation
     const pos = await Geolocation.getCurrentPosition();
     if (!pos) throw new Error("Geolocation position is null");
 
-    const payload = {
-      uid: user.uid,
-      ts: serverTimestamp(),
+    const payload: LocationLog = {
       coords: {
         lat: pos.coords.latitude,
         lng: pos.coords.longitude,
@@ -81,15 +163,24 @@ export async function sendLocationToFirebase() {
       },
     };
 
-    // Write location as a sub-collection or time series doc
-    const ref = doc(
-      firestore,
-      `users/${user.uid}/locations/${Date.now().toString()}`
-    );
-    await setDoc(ref, payload);
+    await fetch("/api/location/user", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        // Optionally add auth token if needed
+      },
+      body: JSON.stringify(payload),
+    });
     return { success: true };
   } catch (err) {
-    console.error("Failed to send location to Firebase:", err);
+    console.error("Failed to send location to backend:", err);
     return { success: false, error: err };
   }
+}
+
+//when the admin wants to look up the latest location of a user
+export async function fetchLatestUserLocation(userId: string) {
+  const res = await fetch(`/api/location/${userId}`);
+  if (!res.ok) return null;
+  return await res.json();
 }
