@@ -1,3 +1,5 @@
+
+!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="1b33ef31-1be4-5cdd-ba21-d074db15fc77")}catch(e){}}();
 import { createNotification, updateNotificationUrl, findTopicSubscription, createTopicSubscription, deleteTopicSubscription, } from "../models/notificationModel.js";
 import { getFirebaseAdmin } from "../lib/firebase.js";
 export async function sendNotificationMulticast(req, res) {
@@ -166,3 +168,4 @@ export async function topics(req, res) {
     });
 }
 //# sourceMappingURL=notificationController.js.map
+//# debugId=1b33ef31-1be4-5cdd-ba21-d074db15fc77

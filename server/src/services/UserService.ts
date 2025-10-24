@@ -1,5 +1,6 @@
 import { UserModel } from "../models/User.js";
 import type { User, Prisma } from "../../generated/prisma/index.js";
+import { hash } from "bcryptjs";
 
 export class UserService {
   // Helper function to create user with companyId
@@ -111,6 +112,10 @@ export class UserService {
     if (!id) {
       throw new Error("User ID is required");
     }
+    //hash the password here
+    if (userData.password) {
+      userData.password = await hash(userData.password as string, 10);
+    }
 
     if (userData.email && typeof userData.email === "string") {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -125,8 +130,17 @@ export class UserService {
       }
     }
 
+    // Support nested updates for Contact and UserSettings
+    const updateData: Prisma.UserUpdateInput = { ...userData };
+    if (userData.Contact) {
+      updateData.Contact = { update: userData.Contact };
+    }
+    if (userData.UserSettings) {
+      updateData.UserSettings = { update: userData.UserSettings };
+    }
+
     try {
-      return await UserModel.update(id, userData);
+      return await UserModel.update(id, updateData);
     } catch (error) {
       throw new Error(
         `Failed to update user: ${

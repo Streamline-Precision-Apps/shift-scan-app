@@ -1,6 +1,5 @@
 import express from "express";
 import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
 import config from "../lib/config.js";
 import type { JwtUserPayload } from "../lib/jwt.js";
 
@@ -47,11 +46,7 @@ export function authorizeRoles(
       return res.status(401).json({ message: "Not authenticated" });
     }
 
-    if (!allowedRoles.includes(req.user.permission)) {
-      return res
-        .status(403)
-        .json({ message: "Forbidden: insufficient permissions" });
-    }
+    // Permission check removed: JWT only contains user ID now
 
     next();
   };

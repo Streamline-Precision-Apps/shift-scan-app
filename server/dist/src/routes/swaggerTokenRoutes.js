@@ -1,3 +1,5 @@
+
+!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="db7837a8-fe75-5f2a-915e-0b43311fc56e")}catch(e){}}();
 import { Router } from "express";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
@@ -28,3 +30,4 @@ router.get("/", (req, res) => {
 });
 export default router;
 //# sourceMappingURL=swaggerTokenRoutes.js.map
+//# debugId=db7837a8-fe75-5f2a-915e-0b43311fc56e

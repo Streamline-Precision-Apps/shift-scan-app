@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { EyeIcon, EyeOff } from "lucide-react";
 import { isMobileOrTablet } from "../lib/utils/isMobileOrTablet";
 import { useTranslations } from "next-intl";
+import { useUserStore } from "../lib/store/userStore";
 
 export default function SignInPage() {
   const [username, setUsername] = useState("");
@@ -51,6 +52,24 @@ export default function SignInPage() {
       } else {
         // If server returns a token and you prefer storing it on client
         // you can do: if (data?.token) localStorage.setItem('token', data.token)
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("userId", data.user.user.id);
+
+        const url = process.env.NEXT_PUBLIC_API_URL || `http://localhost:3001`;
+        const response = await fetch(`${url}/api/v1/init`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({
+            token: data.token,
+            userId: data.user.user.id,
+          }),
+        });
+        const dataJson = await response.json();
+        if (dataJson.user) {
+          useUserStore.getState().setUser(dataJson.user);
+        }
+
         redirectAfterAuth();
       }
     } catch (err) {

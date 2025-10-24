@@ -1,3 +1,5 @@
+
+!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="e851c307-dff6-5ec3-afba-bce4f54c6c57")}catch(e){}}();
 import { createNotification, updateNotificationUrl, findTopicSubscription, createTopicSubscription, deleteTopicSubscription, } from "../models/notificationModel.js";
 export class NotificationService {
     // Create a notification and update its URL
@@ -34,3 +36,4 @@ export class NotificationService {
 }
 export default NotificationService;
 //# sourceMappingURL=notificationService.js.map
+//# debugId=e851c307-dff6-5ec3-afba-bce4f54c6c57

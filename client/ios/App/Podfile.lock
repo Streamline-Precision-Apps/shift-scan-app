@@ -1,11 +1,11 @@
 PODS:
   - Capacitor (7.4.4):
     - CapacitorCordova
-  - CapacitorBackgroundRunner (2.2.0):
-    - Capacitor
   - CapacitorBarcodeScanner (2.2.0):
     - Capacitor
     - OSBarcodeLib (= 2.0.1)
+  - CapacitorCamera (7.0.2):
+    - Capacitor
   - CapacitorCordova (7.4.4)
   - CapacitorDevice (7.0.2):
     - Capacitor
@@ -37,8 +37,8 @@ PODS:
 
 DEPENDENCIES:
   - "Capacitor (from `../../node_modules/@capacitor/ios`)"
-  - "CapacitorBackgroundRunner (from `../../node_modules/@capacitor/background-runner`)"
   - "CapacitorBarcodeScanner (from `../../node_modules/@capacitor/barcode-scanner`)"
+  - "CapacitorCamera (from `../../node_modules/@capacitor/camera`)"
   - "CapacitorCordova (from `../../node_modules/@capacitor/ios`)"
   - "CapacitorDevice (from `../../node_modules/@capacitor/device`)"
   - "CapacitorFileTransfer (from `../../node_modules/@capacitor/file-transfer`)"
@@ -61,10 +61,10 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   Capacitor:
     :path: "../../node_modules/@capacitor/ios"
-  CapacitorBackgroundRunner:
-    :path: "../../node_modules/@capacitor/background-runner"
   CapacitorBarcodeScanner:
     :path: "../../node_modules/@capacitor/barcode-scanner"
+  CapacitorCamera:
+    :path: "../../node_modules/@capacitor/camera"
   CapacitorCordova:
     :path: "../../node_modules/@capacitor/ios"
   CapacitorDevice:
@@ -90,8 +90,8 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Capacitor: 358dd1c3fdd71d969547b17e159fd8a7736cb45f
-  CapacitorBackgroundRunner: 5e1c8dbb7d2ebb36f6ca2e24c80fb774488ceb06
   CapacitorBarcodeScanner: 4b6d4ecfff4133af982d09acd423610c14ac0c3f
+  CapacitorCamera: f9e54db0a18bb218a8dc360907d63aaefe9209ff
   CapacitorCordova: bf648a636f3c153f652d312ae145fb508b6ffced
   CapacitorDevice: 81ae78d5d1942707caad79276badd458bf6ec603
   CapacitorFileTransfer: 591bdf4cbb809fbdaf85aba6ddfa93ff1c4c1b2d
@@ -108,6 +108,6 @@ SPEC CHECKSUMS:
   IONGeolocationLib: 20f9d0248a0b5264511fb57a37e25dd2badf797a
   OSBarcodeLib: 57987d2eb1f916f701f4554e20e349b3cb83f023
 
-PODFILE CHECKSUM: 4a005981a77c7a6c666ef96af824df2ee1519107
+PODFILE CHECKSUM: e8cf335964267c893455697354d83ad15aac6ce4
 
 COCOAPODS: 1.16.2

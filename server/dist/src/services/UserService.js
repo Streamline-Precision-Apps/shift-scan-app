@@ -1,3 +1,5 @@
+
+!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="f2a61630-bc45-5409-a01c-4889e6bb35b0")}catch(e){}}();
 import { UserModel } from "../models/User.js";
 export class UserService {
     // Helper function to create user with companyId
@@ -118,3 +120,4 @@ export class UserService {
 }
 export default UserService;
 //# sourceMappingURL=UserService.js.map
+//# debugId=f2a61630-bc45-5409-a01c-4889e6bb35b0

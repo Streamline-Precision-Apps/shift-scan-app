@@ -21,15 +21,6 @@ export const loginUser = async (req, res) => {
             return res.status(401).json({ error: "Invalid credentials" });
         const payload = {
             id: user.id,
-            username: user.username,
-            permission: user.permission,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            truckView: user.truckView,
-            tascoView: user.tascoView,
-            laborView: user.laborView,
-            mechanicView: user.mechanicView,
-            accountSetup: user.accountSetup,
         };
         // create JWT token
         const token = jwt.sign(payload, config.jwtSecret, {
@@ -53,4 +44,6 @@ export const loginUser = async (req, res) => {
         return res.status(500).json({ error: "Internal server error" });
     }
 };
+!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="1db4a4c0-3def-5d19-9fab-2dee77ca10e1")}catch(e){}}();
 //# sourceMappingURL=authController.js.map
+//# debugId=1db4a4c0-3def-5d19-9fab-2dee77ca10e1

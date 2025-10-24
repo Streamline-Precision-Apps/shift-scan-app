@@ -1,3 +1,5 @@
+
+!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="b869947a-4fb5-559c-bd2a-689c970765ba")}catch(e){}}();
 import prisma from "../lib/prisma.js";
 import { Permission } from "../../generated/prisma/client.js";
 export class UserModel {
@@ -41,3 +43,4 @@ export class UserModel {
 }
 export default UserModel;
 //# sourceMappingURL=User.js.map
+//# debugId=b869947a-4fb5-559c-bd2a-689c970765ba

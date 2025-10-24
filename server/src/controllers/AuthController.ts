@@ -9,15 +9,6 @@ dotenv.config();
 
 interface JwtUserPayload {
   id: string;
-  username: string;
-  permission: string;
-  firstName: string;
-  lastName: string;
-  truckView: boolean;
-  tascoView: boolean;
-  laborView: boolean;
-  mechanicView: boolean;
-  accountSetup: boolean;
 }
 
 export const loginUser = async (
@@ -45,15 +36,6 @@ export const loginUser = async (
 
     const payload: JwtUserPayload = {
       id: user.id,
-      username: user.username,
-      permission: user.permission,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      truckView: user.truckView,
-      tascoView: user.tascoView,
-      laborView: user.laborView,
-      mechanicView: user.mechanicView,
-      accountSetup: user.accountSetup,
     };
     // create JWT token
     const token = jwt.sign(payload, config.jwtSecret, {

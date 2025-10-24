@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import type { User, Prisma } from "../../generated/prisma/index.js";
-import { UserService } from "../services/UserService.js";
+import UserService from "../services/UserService.js";
 
 // Type the request body for create/update operations
 interface CreateUserRequestBody {
@@ -125,8 +125,12 @@ export class UserController {
         });
       }
       const userData = req.body;
+      // Convert string 'true'/'false' to boolean for accountSetup if present in body
+      if (userData.accountSetup !== undefined) {
+        if (userData.accountSetup === 'true') userData.accountSetup = true;
+        else if (userData.accountSetup === 'false') userData.accountSetup = false;
+      }
       const updatedUser = await UserService.updateUser(id, userData);
-
       res.status(200).json({
         success: true,
         data: updatedUser,
@@ -143,7 +147,6 @@ export class UserController {
         )
           statusCode = 400;
       }
-
       res.status(statusCode).json({
         success: false,
         error: error instanceof Error ? error.message : "Unknown error",

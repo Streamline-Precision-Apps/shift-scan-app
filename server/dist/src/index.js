@@ -1,3 +1,7 @@
+
+!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="b9ba4a7a-db7b-507a-b4bc-72eaa803d9ec")}catch(e){}}();
+import "./instrument.mjs";
+import * as Sentry from "@sentry/node";
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
@@ -38,19 +42,13 @@ async function main() {
         app.use("/auth", authRoutes);
         app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
         // Root route
-        app.get("/", (req, res) => {
-            res.json({
-                success: true,
-                message: "Shift Scan Server API",
-                version: "1.0.0",
-                endpoints: {
-                    users: "/api/users",
-                    docs: "/api-docs",
-                },
-            });
+        app.get("/", function rootHandler(req, res) {
+            res.end("Welcome to the Shift Scan API!");
         });
         // API routes
         app.use("/api", apiRoutes);
+        // The error handler must be registered before any other error middleware and after all controllers
+        Sentry.setupExpressErrorHandler(app);
         // 404 handler
         app.use(notFoundHandler);
         // Error handling middleware (must be last)
@@ -84,3 +82,4 @@ main().catch(async (error) => {
     process.exit(1);
 });
 //# sourceMappingURL=index.js.map
+//# debugId=b9ba4a7a-db7b-507a-b4bc-72eaa803d9ec

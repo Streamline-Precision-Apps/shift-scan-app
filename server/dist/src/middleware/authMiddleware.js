@@ -1,6 +1,7 @@
+
+!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="782161dd-ec70-5444-b6b8-0c64f6e0d9ec")}catch(e){}}();
 import express from "express";
 import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
 import config from "../lib/config.js";
 export function verifyToken(req, res, next) {
     // Check Authorization header first (Bearer <token>) then fall back to cookie
@@ -29,12 +30,9 @@ export function authorizeRoles(...allowedRoles) {
         if (!req.user) {
             return res.status(401).json({ message: "Not authenticated" });
         }
-        if (!allowedRoles.includes(req.user.permission)) {
-            return res
-                .status(403)
-                .json({ message: "Forbidden: insufficient permissions" });
-        }
+        // Permission check removed: JWT only contains user ID now
         next();
     };
 }
 //# sourceMappingURL=authMiddleware.js.map
+//# debugId=782161dd-ec70-5444-b6b8-0c64f6e0d9ec

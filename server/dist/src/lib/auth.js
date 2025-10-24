@@ -1,5 +1,7 @@
 // Simple auth utilities for your application
 // You can implement your own JWT or session-based authentication here
+
+!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="087faf5d-939f-5a84-8ce7-a2aff212e162")}catch(e){}}();
 export {};
 // Example: You can add JWT utilities here
 // import jwt from 'jsonwebtoken';
@@ -16,3 +18,4 @@ export {};
 //   }
 // };
 //# sourceMappingURL=auth.js.map
+//# debugId=087faf5d-939f-5a84-8ce7-a2aff212e162

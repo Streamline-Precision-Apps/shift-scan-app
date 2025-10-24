@@ -1,3 +1,5 @@
+
+!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="eb08a7fb-610f-5b5e-9279-c034f4978bad")}catch(e){}}();
 import { UserModel } from '../models/User.js';
 export class UserService {
     // Get all users
@@ -86,3 +88,4 @@ export class UserService {
 }
 export default UserService;
 //# sourceMappingURL=UserService.js.map
+//# debugId=eb08a7fb-610f-5b5e-9279-c034f4978bad

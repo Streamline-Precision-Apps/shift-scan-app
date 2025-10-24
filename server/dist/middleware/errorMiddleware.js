@@ -1,4 +1,6 @@
 // Error handling middleware
+
+!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="534ac338-5c25-5ffe-99f8-02e48a662a48")}catch(e){}}();
 export const errorHandler = (error, req, res, next) => {
     console.error('Error occurred:', {
         message: error.message,
@@ -54,3 +56,4 @@ export const validateJsonMiddleware = (error, req, res, next) => {
     next(error);
 };
 //# sourceMappingURL=errorMiddleware.js.map
+//# debugId=534ac338-5c25-5ffe-99f8-02e48a662a48

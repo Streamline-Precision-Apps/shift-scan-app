@@ -145,4 +145,6 @@ export const getUserById = UserController.getUserById;
 export const createUser = UserController.createUser;
 export const updateUser = UserController.updateUser;
 export const deleteUser = UserController.deleteUser;
+!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="2092e78a-d801-5c51-a52e-aa55ba3e8e8d")}catch(e){}}();
 //# sourceMappingURL=userController.js.map
+//# debugId=2092e78a-d801-5c51-a52e-aa55ba3e8e8d

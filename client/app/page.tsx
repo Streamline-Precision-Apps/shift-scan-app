@@ -1,6 +1,67 @@
+"use client";
+import { useRouter } from "next/navigation";
 import { Popover, PopoverContent, PopoverTrigger } from "./components/popover";
+import { Capacitor } from "@capacitor/core";
+import { useEffect, useState } from "react";
+import { useUserStore } from "./lib/store/userStore";
 
 export default function Home() {
+  const router = useRouter();
+  const [loading, setLoading] = useState(true);
+  const isNative = Capacitor.isNativePlatform();
+
+  useEffect(() => {
+    const redirectIfMobile = async () => {
+      if (isNative) {
+        const token = localStorage.getItem("jwt");
+        const userId = localStorage.getItem("userId");
+        const url = process.env.NEXT_PUBLIC_API_URL || `http://localhost:3001`;
+
+        if (token && userId) {
+          try {
+            const payload = JSON.parse(atob(token.split(".")[1]));
+            if (Date.now() < payload.exp * 1000) {
+              // User logged in → call init API
+              const response = await fetch(`${url}/api/v1/init`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body: JSON.stringify({ token, userId }),
+              });
+              const data = await response.json();
+              if (data.user) {
+                useUserStore.getState().setUser(data.user);
+              }
+              if (useUserStore.getState().user?.accountSetup === false) {
+                router.replace("/signin/signup");
+                return;
+              }
+              router.replace("/v1");
+              return;
+            }
+          } catch {
+            localStorage.removeItem("jwt");
+          }
+        }
+
+        router.replace("/signin"); // not logged in
+      }
+
+      setLoading(false); // web shows landing page
+    };
+
+    redirectIfMobile();
+  }, [router, isNative]);
+
+  if (isNative && loading) return null;
+
+  if (loading)
+    return (
+      <div>
+        <main className="relative min-h-screen max-h-screen overflow-hidden bg-app-gradient bg-to-br from-app-dark-blue via-app-blue to-app-blue px-2 md:px-8 py-0 flex flex-col items-center justify-center"></main>
+      </div>
+    );
+
   return (
     <main className="relative min-h-screen max-h-screen overflow-hidden bg-app-gradient bg-to-br from-app-dark-blue via-app-blue to-app-blue px-2 md:px-8 py-0 flex flex-col items-center justify-center">
       {/* Animated Gradient Background Overlay */}

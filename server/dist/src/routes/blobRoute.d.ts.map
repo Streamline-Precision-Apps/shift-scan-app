@@ -1,1 +1,1 @@
-{"version":3,"file":"blobRoute.d.ts","sourceRoot":"","sources":["../../../src/routes/blobRoute.ts"],"names":[],"mappings":"AAKA,QAAA,MAAM,MAAM,4CAAW,CAAC;AAiFxB,eAAe,MAAM,CAAC"}
+{"version":3,"file":"blobRoute.d.ts","sourceRoot":"/","sources":["src/routes/blobRoute.ts"],"names":[],"mappings":"AAKA,QAAA,MAAM,MAAM,4CAAW,CAAC;AAiFxB,eAAe,MAAM,CAAC"}

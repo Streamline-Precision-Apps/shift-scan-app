@@ -1,23 +1,18 @@
-import {
-  getFirestore,
-  collection,
-  query,
-  orderBy,
-  limit,
-  getDocs,
-  setDoc,
-  doc,
-} from "firebase/firestore";
+import { firestoreDb } from "../lib/firebase.js";
 import type { Location } from "../models/location.js";
 
-const firestore = getFirestore();
+// Helper to get collection reference
+function getLocationsCollection(userId: string) {
+  return firestoreDb.collection(`users/${userId}/locations`);
+}
+
+// No need for getFirestore; using firestoreDb from admin SDK
 
 export async function fetchLatestLocation(
   userId: string
 ): Promise<Location | null> {
-  const locationsRef = collection(firestore, `users/${userId}/locations`);
-  const q = query(locationsRef, orderBy("ts", "desc"), limit(1));
-  const snapshot = await getDocs(q);
+  const locationsRef = getLocationsCollection(userId);
+  const snapshot = await locationsRef.orderBy("ts", "desc").limit(1).get();
   if (snapshot.empty || !snapshot.docs[0]) return null;
   return snapshot.docs[0].data() as Location;
 }
@@ -25,9 +20,8 @@ export async function fetchLatestLocation(
 export async function fetchLocationHistory(
   userId: string
 ): Promise<Location[]> {
-  const locationsRef = collection(firestore, `users/${userId}/locations`);
-  const q = query(locationsRef, orderBy("ts", "desc"));
-  const snapshot = await getDocs(q);
+  const locationsRef = getLocationsCollection(userId);
+  const snapshot = await locationsRef.orderBy("ts", "desc").get();
   return snapshot.docs.map((doc) => doc.data() as Location);
 }
 
@@ -55,8 +49,8 @@ export async function saveUserLocation(
     coords,
     device: device || {},
   };
-  const locationsRef = collection(firestore, `users/${userId}/locations`);
+  const locationsRef = getLocationsCollection(userId);
   const docId = Date.now().toString();
-  await setDoc(doc(locationsRef, docId), payload);
+  await locationsRef.doc(docId).set(payload);
   return true;
 }

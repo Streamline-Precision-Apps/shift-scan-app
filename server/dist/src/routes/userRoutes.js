@@ -1,3 +1,5 @@
+
+!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="b4511ff3-db56-5e1d-827a-bec1bbeedf1b")}catch(e){}}();
 import { Router } from "express";
 import * as UserController from "../controllers/userController.js";
 import { verifyToken } from "../middleware/authMiddleware.js";
@@ -241,3 +243,4 @@ router.put("/:id", verifyToken, UserController.updateUser);
 router.delete("/:id", verifyToken, UserController.deleteUser);
 export default router;
 //# sourceMappingURL=userRoutes.js.map
+//# debugId=b4511ff3-db56-5e1d-827a-bec1bbeedf1b

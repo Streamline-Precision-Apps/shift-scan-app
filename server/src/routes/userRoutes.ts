@@ -143,7 +143,7 @@ router.post("/", verifyToken, UserController.createUser);
  *     tags:
  *       - Users
  *     summary: Update user
- *     description: Update an existing user (requires authentication)
+ *     description: Update an existing user (requires authentication). You must send fields to update in the request body.
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -153,7 +153,7 @@ router.post("/", verifyToken, UserController.createUser);
  *         schema:
  *           type: string
  *     requestBody:
- *       required: true
+ *       required: false
  *       content:
  *         application/json:
  *           schema:

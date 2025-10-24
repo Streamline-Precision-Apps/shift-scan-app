@@ -1,14 +1,15 @@
 "use client";
+import "./globals.css";
+import { AppProviders } from "./providers";
 
-import { ReactNode } from "react";
-
-export default function MobileAppLayout({ children }: { children: ReactNode }) {
+export default async function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Mobile-optimized layout */}
-      <div className=" bg-white dark:bg-gray-800 min-h-screen shadow-lg">
-        {children}
-      </div>
-    </div>
+    <main className="min-h-screen overflow-auto bg-linear-to-b from-app-dark-blue to-app-blue">
+      <AppProviders>{children}</AppProviders>
+    </main>
   );
 }

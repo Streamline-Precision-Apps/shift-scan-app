@@ -1,3 +1,5 @@
+
+!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="42d35097-03a5-5fb8-b9e6-6234af055b72")}catch(e){}}();
 export default function parseEnvSeconds(envValue, fallback) {
     if (!envValue)
         return fallback;
@@ -43,3 +45,4 @@ export default function parseEnvSeconds(envValue, fallback) {
     return fallback;
 }
 //# sourceMappingURL=tokenExpirationParser.js.map
+//# debugId=42d35097-03a5-5fb8-b9e6-6234af055b72

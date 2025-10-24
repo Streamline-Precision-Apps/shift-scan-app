@@ -1,3 +1,5 @@
+
+!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="a71420a3-0198-5730-b3cd-e7a53451b7a9")}catch(e){}}();
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
@@ -77,3 +79,4 @@ main().catch(async (error) => {
     process.exit(1);
 });
 //# sourceMappingURL=index.js.map
+//# debugId=a71420a3-0198-5730-b3cd-e7a53451b7a9

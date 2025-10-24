@@ -7,17 +7,20 @@
     // Environment Settings
     // See also https://aka.ms/tsconfig/module
     "module": "nodenext",
+
     "target": "esnext",
     "lib": ["esnext"],
     "types": ["node"],
 
     // Other Outputs
     "sourceMap": true,
+
     "declaration": true,
     "declarationMap": true,
 
     // Stricter Typechecking Options
     "noUncheckedIndexedAccess": true,
+
     "exactOptionalPropertyTypes": true,
 
     // Style Options
@@ -30,12 +33,19 @@
 
     // Recommended Options
     "strict": true,
+
     "jsx": "react-jsx",
     "verbatimModuleSyntax": true,
     "isolatedModules": true,
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "inlineSources": true,
+
+    // Set `sourceRoot` to  "/" to strip the build path prefix
+    // from generated source code references.
+    // This improves issue grouping in Sentry.
+    "sourceRoot": "/"
   },
   "include": ["src/**/*", "prisma.config.ts"],
   "exclude": ["node_modules", "dist", "generated"]

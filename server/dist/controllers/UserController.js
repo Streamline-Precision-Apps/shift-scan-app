@@ -1,3 +1,5 @@
+
+!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="3dee345e-afdf-5c85-9832-d1a3a8874535")}catch(e){}}();
 import { UserService } from '../services/UserService.js';
 export class UserController {
     // GET /api/users
@@ -130,3 +132,4 @@ export class UserController {
 }
 export default UserController;
 //# sourceMappingURL=UserController.js.map
+//# debugId=3dee345e-afdf-5c85-9832-d1a3a8874535

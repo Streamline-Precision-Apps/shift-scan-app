@@ -11,8 +11,8 @@ install! 'cocoapods', :disable_input_output_paths => true
 def capacitor_pods
   pod 'Capacitor', :path => '../../node_modules/@capacitor/ios'
   pod 'CapacitorCordova', :path => '../../node_modules/@capacitor/ios'
-  pod 'CapacitorBackgroundRunner', :path => '../../node_modules/@capacitor/background-runner'
   pod 'CapacitorBarcodeScanner', :path => '../../node_modules/@capacitor/barcode-scanner'
+  pod 'CapacitorCamera', :path => '../../node_modules/@capacitor/camera'
   pod 'CapacitorDevice', :path => '../../node_modules/@capacitor/device'
   pod 'CapacitorFileTransfer', :path => '../../node_modules/@capacitor/file-transfer'
   pod 'CapacitorFileViewer', :path => '../../node_modules/@capacitor/file-viewer'

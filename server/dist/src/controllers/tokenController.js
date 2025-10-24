@@ -1,3 +1,5 @@
+
+!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="4b0bd67a-77fb-566b-acc5-3e671f4d026a")}catch(e){}}();
 import prisma from "../lib/prisma.js";
 export async function saveFCMToken(req, res) {
     const userId = req.user?.id; // assuming verifyToken middleware sets req.user
@@ -31,3 +33,4 @@ export async function saveFCMToken(req, res) {
     }
 }
 //# sourceMappingURL=tokenController.js.map
+//# debugId=4b0bd67a-77fb-566b-acc5-3e671f4d026a
