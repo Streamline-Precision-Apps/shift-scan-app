@@ -1,7 +1,7 @@
 "use client";
 import { cva, type VariantProps } from "class-variance-authority";
 import { HTMLAttributes, FC } from "react";
-import { cn } from "@/components/(reusable)/utils";
+import { cn } from "@/app/lib/utils/utils";
 import ReactPortal from "./ReactPortal";
 import React, { useEffect } from "react";
 import { Buttons } from "./buttons";
@@ -10,7 +10,7 @@ import { Titles } from "./titles";
 import { Contents } from "./contents";
 import { Bases } from "./bases";
 import { Holds } from "./holds";
-import { signOut } from "next-auth/react";
+import { useSignOut } from "@/app/lib/hooks/useSignOut";
 
 const ModalVariants = cva(
   "", //this applies to all variants
@@ -39,7 +39,7 @@ const ModalVariants = cva(
       position: "center",
       size: "default",
     },
-  },
+  }
 );
 
 interface ModalProps
@@ -85,7 +85,7 @@ const Modals: FC<ModalProps> = ({
           <div className="fixed top-0 left-0 w-screen h-screen bg-neutral-800 opacity-50" />
           <div
             className={cn(
-              ModalVariants({ background, position, size, className }),
+              ModalVariants({ background, position, size, className })
             )}
             {...props}
           >
@@ -94,10 +94,7 @@ const Modals: FC<ModalProps> = ({
               <Buttons
                 onClick={() => {
                   handleClose();
-                  signOut({
-                    redirect: true,
-                    redirectTo: "/signin", // Specify the redirection URL
-                  });
+                  useSignOut();
                 }}
                 className="close-btn"
                 background={"green"}
@@ -126,7 +123,7 @@ const Modals: FC<ModalProps> = ({
           <div className="fixed top-0 left-0 w-screen h-screen bg-neutral-800 opacity-50" />
           <div
             className={cn(
-              ModalVariants({ background, position, size, className }),
+              ModalVariants({ background, position, size, className })
             )}
             {...props}
           >
@@ -158,7 +155,7 @@ const Modals: FC<ModalProps> = ({
       <ReactPortal wrapperId="react-portal-modal-container">
         <div
           className={cn(
-            ModalVariants({ background, position, size, className }),
+            ModalVariants({ background, position, size, className })
           )}
           {...props}
         >
@@ -198,7 +195,7 @@ const Modals: FC<ModalProps> = ({
         <div className="fixed top-0 left-0 w-screen h-screen bg-neutral-800 opacity-50" />
         <div
           className={cn(
-            ModalVariants({ background, position, size, className }),
+            ModalVariants({ background, position, size, className })
           )}
           {...props}
         >
@@ -254,7 +251,7 @@ const Modals: FC<ModalProps> = ({
         >
           <div
             className={cn(
-              ModalVariants({ background, position, size, className }),
+              ModalVariants({ background, position, size, className })
             )}
             {...props}
           >
@@ -289,7 +286,7 @@ const Modals: FC<ModalProps> = ({
         <Bases background={"modal"} position={"start"} size={"screen"}>
           <div
             className={cn(
-              ModalVariants({ background, position, size, className }),
+              ModalVariants({ background, position, size, className })
             )}
             {...props}
           >

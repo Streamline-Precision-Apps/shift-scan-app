@@ -1,6 +1,7 @@
 
-!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="f2a61630-bc45-5409-a01c-4889e6bb35b0")}catch(e){}}();
+!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="3b0446b4-2597-5739-8c1b-b6e45efd00ed")}catch(e){}}();
 import { UserModel } from "../models/User.js";
+import { hash } from "bcryptjs";
 export class UserService {
     // Helper function to create user with companyId
     static createUserWithCompanyId(userData) {
@@ -86,6 +87,10 @@ export class UserService {
         if (!id) {
             throw new Error("User ID is required");
         }
+        //hash the password here
+        if (userData.password) {
+            userData.password = await hash(userData.password, 10);
+        }
         if (userData.email && typeof userData.email === "string") {
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(userData.email)) {
@@ -97,8 +102,16 @@ export class UserService {
                 throw new Error("Email is already taken by another user");
             }
         }
+        // Support nested updates for Contact and UserSettings
+        const updateData = { ...userData };
+        if (userData.Contact) {
+            updateData.Contact = { update: userData.Contact };
+        }
+        if (userData.UserSettings) {
+            updateData.UserSettings = { update: userData.UserSettings };
+        }
         try {
-            return await UserModel.update(id, userData);
+            return await UserModel.update(id, updateData);
         }
         catch (error) {
             throw new Error(`Failed to update user: ${error instanceof Error ? error.message : "Unknown error"}`);
@@ -120,4 +133,4 @@ export class UserService {
 }
 export default UserService;
 //# sourceMappingURL=UserService.js.map
-//# debugId=f2a61630-bc45-5409-a01c-4889e6bb35b0
+//# debugId=3b0446b4-2597-5739-8c1b-b6e45efd00ed

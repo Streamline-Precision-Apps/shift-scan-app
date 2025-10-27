@@ -1,6 +1,6 @@
 import { cva, type VariantProps } from "class-variance-authority";
 import { HTMLAttributes, FC } from "react";
-import { cn } from "@/components/(reusable)/utils";
+import { cn } from "@/app/lib/utils/utils";
 
 //this component determines the size aloted to the content of the page.
 const ContentVariants = cva(
@@ -32,7 +32,7 @@ const ContentVariants = cva(
       width: "responsive",
       height: "page",
     },
-  },
+  }
 );
 
 // this extends the capability of HTMLAttributes or the VariantProps that it can hold, specify your props here

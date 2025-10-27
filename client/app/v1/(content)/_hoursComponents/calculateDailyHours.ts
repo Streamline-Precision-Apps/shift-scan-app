@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { useCalculatePayPeriodStart } from "./calculatePayPeriodStart";
-import { usePayPeriodTimeSheet } from "@/app/context/PayPeriodTimeSheetsContext";
+import { useUserStore } from "@/app/lib/store/userStore";
 
 /**
  * Custom hook to calculate daily hours worked within a pay period
@@ -12,7 +12,7 @@ import { usePayPeriodTimeSheet } from "@/app/context/PayPeriodTimeSheetsContext"
  * const dailyHours = calculateDailyHours();
  */
 export const useCalculateDailyHours = () => {
-  const { payPeriodTimeSheet } = usePayPeriodTimeSheet();
+  const payPeriodTimeSheet = useUserStore((state) => state.payPeriodTimeSheet);
   const calculatePayPeriodStart = useCalculatePayPeriodStart();
 
   return useCallback(() => {

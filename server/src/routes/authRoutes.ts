@@ -1,5 +1,6 @@
 import express from "express";
-import { loginUser } from "../controllers/authController.js";
+import { loginUser, signOutUser } from "../controllers/authController.js";
+import { sign } from "crypto";
 
 const router = express.Router();
 
@@ -29,5 +30,7 @@ const router = express.Router();
  *         description: Invalid credentials
  */
 router.post("/login", loginUser);
+
+router.post("/signout", signOutUser);
 
 export default router;

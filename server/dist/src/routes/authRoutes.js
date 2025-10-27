@@ -1,7 +1,8 @@
 
-!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="5e80a798-c640-5ef1-9895-82bcba2cacc9")}catch(e){}}();
+!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="5940d097-5a6d-5cef-a1bf-0e8098fe7b26")}catch(e){}}();
 import express from "express";
-import { loginUser } from "../controllers/authController.js";
+import { loginUser, signOutUser } from "../controllers/authController.js";
+import { sign } from "crypto";
 const router = express.Router();
 /**
  * @swagger
@@ -29,6 +30,7 @@ const router = express.Router();
  *         description: Invalid credentials
  */
 router.post("/login", loginUser);
+router.post("/signout", signOutUser);
 export default router;
 //# sourceMappingURL=authRoutes.js.map
-//# debugId=5e80a798-c640-5ef1-9895-82bcba2cacc9
+//# debugId=5940d097-5a6d-5cef-a1bf-0e8098fe7b26

@@ -61,3 +61,21 @@ export const loginUser = async (
     return res.status(500).json({ error: "Internal server error" });
   }
 };
+
+export const signOutUser = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    // Clear the session cookie
+    res.clearCookie("session", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "none",
+    });
+    return res.status(200).json({ message: "Sign out successful" });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};

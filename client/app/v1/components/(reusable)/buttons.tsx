@@ -3,7 +3,7 @@ import "@/app/globals.css";
 import { useRouter } from "next/navigation";
 import { cva, type VariantProps } from "class-variance-authority";
 import { ButtonHTMLAttributes, forwardRef, ForwardedRef } from "react";
-import { cn } from "@/components/(reusable)/utils";
+import { cn } from "@/app/lib/utils/utils";
 
 // This determines styles of all buttons
 const ButtonVariants = cva(
@@ -54,7 +54,7 @@ const ButtonVariants = cva(
       size: "full",
       shadow: "yes",
     },
-  },
+  }
 );
 
 interface ButtonProps
@@ -67,7 +67,7 @@ interface ButtonProps
 const Buttons = forwardRef<HTMLButtonElement, ButtonProps>(
   (
     { className, background, position, size, shadow, href, ...props },
-    ref: ForwardedRef<HTMLButtonElement>,
+    ref: ForwardedRef<HTMLButtonElement>
   ) => {
     const router = useRouter();
     const pageAction = () => {
@@ -84,12 +84,12 @@ const Buttons = forwardRef<HTMLButtonElement, ButtonProps>(
           pageAction();
         }}
         className={cn(
-          ButtonVariants({ background, size, position, shadow, className }),
+          ButtonVariants({ background, size, position, shadow, className })
         )}
         {...props}
       />
     );
-  },
+  }
 );
 
 Buttons.displayName = "Buttons";

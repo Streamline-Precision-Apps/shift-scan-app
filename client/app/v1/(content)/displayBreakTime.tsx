@@ -1,13 +1,13 @@
 "use client";
 import { useTranslations } from "next-intl";
-import ViewHoursComponent from "@/app/(content)/hoursControl";
-import { Buttons } from "@/components/(reusable)/buttons";
-import { Texts } from "@/components/(reusable)/texts";
-import { Holds } from "@/components/(reusable)/holds";
-import { Grids } from "@/components/(reusable)/grids";
+import { Buttons } from "../components/(reusable)/buttons";
+import { Texts } from "../components/(reusable)/texts";
+import { Holds } from "../components/(reusable)/holds";
+import { Grids } from "../components/(reusable)/grids";
 import { useEffect, useMemo, useState } from "react";
 import { z } from "zod";
-import Spinner from "@/components/(animations)/spinner";
+import Spinner from "../components/(animations)/spinner";
+import ControlComponent from "./hoursControl";
 
 type BreakTimeProps = {
   display: boolean;
@@ -134,7 +134,7 @@ export default function DisplayBreakTime({
     </>
   ) : (
     <div>
-      <ViewHoursComponent toggle={setToggle} />
+      <ControlComponent toggle={setToggle} />
     </div>
   );
 }

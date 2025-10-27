@@ -2,7 +2,7 @@
 import React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { HTMLAttributes, FC } from "react";
-import { cn } from "@/components/(reusable)/utils";
+import { cn } from "@/app/lib/utils/utils";
 import { min } from "date-fns";
 
 // this extends the capability of HTMLAttributes or the VariantProps that it can hold, specify your props here
@@ -17,7 +17,7 @@ interface EditableFieldsProps
   onChange: (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >,
+    >
   ) => void;
   isChanged: boolean;
   onRevert?: () => void;
@@ -56,7 +56,7 @@ const EditableFieldsVariants = cva(
       variant: "default",
       size: "default",
     },
-  },
+  }
 );
 
 const EditableFields: FC<EditableFieldsProps> = ({
@@ -90,7 +90,7 @@ const EditableFields: FC<EditableFieldsProps> = ({
         <div
           className={cn(
             EditableFieldsVariants({ variant, size, className }),
-            "w-full",
+            "w-full"
           )}
         >
           {/* Input container with flex-1 to take available space */}
@@ -129,7 +129,7 @@ const EditableFields: FC<EditableFieldsProps> = ({
         <div
           className={cn(
             EditableFieldsVariants({ variant, size, className }),
-            "w-full",
+            "w-full"
           )}
         >
           {/* Input container with flex-1 to take available space */}
@@ -172,7 +172,7 @@ const EditableFields: FC<EditableFieldsProps> = ({
       <div
         className={cn(
           EditableFieldsVariants({ variant, size, className }),
-          "w-full",
+          "w-full"
         )}
       >
         {/* Textarea container with flex-1 to take available space */}
@@ -210,7 +210,7 @@ const EditableFields: FC<EditableFieldsProps> = ({
       <div
         className={cn(
           EditableFieldsVariants({ variant, size, className }),
-          "w-full",
+          "w-full"
         )}
       >
         {/* Select container with flex-1 to take available space */}

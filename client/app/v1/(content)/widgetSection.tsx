@@ -6,31 +6,59 @@ import DisplayBreakTime from "./displayBreakTime";
 import { useEffect, useState } from "react";
 import Hours from "./hours";
 import { Holds } from "./../components/(reusable)/holds";
-// import { usePayPeriodTimeSheet } from "../context/PayPeriodTimeSheetsContext";
 import { useRouter } from "next/navigation";
-
-// import { UseTotalPayPeriodHours } from "@/app/(content)/calculateTotal";
-// import { usePayPeriodData } from "@/hooks/(home)/usePayPeriod";
 import WidgetContainer from "./widgetContainer";
 import DisplayBanner from "./displayBanner";
 import DisplayBreakBanner from "./displayBreakBanner";
-// import { usePermissions } from "../context/PermissionsContext";
-import { Texts } from "./../components/(reusable)/texts";
+import { useUserStore } from "@/app/lib/store/userStore";
+import { usePayPeriodData } from "@/app/lib/hooks/usePayPeriodData";
 
-type Props = {
-  session: Session;
-  locale: string;
-  isTerminate: boolean;
-};
-
-export default function WidgetSection({ session, locale, isTerminate }: Props) {
+export default function WidgetSection() {
+  const { user, setUser, setPayPeriodTimeSheets } = useUserStore();
   const router = useRouter();
   const [toggle, setToggle] = useState(true);
 
-  // const { setPayPeriodTimeSheets } = usePayPeriodTimeSheet();
-  // const { payPeriodSheets, pageView, setPageView, loading } = usePayPeriodData(
-  //   setPayPeriodTimeSheets,
-  // );
+  // If no user, refetch from /api/v1/init
+  useEffect(() => {
+    const fetchUser = async () => {
+      if (!user) {
+        try {
+          // Get token and userId from localStorage if available
+          let token = "";
+          let userId = undefined;
+          if (typeof window !== "undefined") {
+            token = localStorage.getItem("token") || "";
+            userId = localStorage.getItem("userId") || undefined;
+            // Fallback to cookie if token not in localStorage
+          }
+          const url =
+            process.env.NEXT_PUBLIC_API_URL || `http://localhost:3001`;
+
+          const res = await fetch(`${url}/api/v1/init`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ token, userId }),
+          });
+          if (res.ok) {
+            const data = await res.json();
+            if (data.user) setUser(data.user);
+          }
+        } catch (e) {
+          // Optionally handle error
+        }
+      }
+    };
+    fetchUser();
+  }, [user, setUser]);
+
+  const accountSetup = user?.accountSetup;
+  const permission = user?.permission;
+  const locale = "en"; // Placeholder until cookies can be used
+  const isTerminate = user?.terminationDate ? true : false;
+
+  const { pageView, setPageView, loading } = usePayPeriodData(
+    setPayPeriodTimeSheets
+  );
 
   // Derived values
   const date = new Date().toLocaleDateString(locale, {
@@ -39,10 +67,11 @@ export default function WidgetSection({ session, locale, isTerminate }: Props) {
     day: "numeric",
     weekday: "long",
   });
-  const permission = session.user?.permission;
-  const accountSetup = session.user?.accountSetup;
-  const user = session.user as Session["user"];
-  const isManager = ["ADMIN", "SUPERADMIN", "MANAGER"].includes(permission);
+
+  // const user = session.user as Session["user"];
+  const isManager = ["ADMIN", "SUPERADMIN", "MANAGER"].includes(
+    permission || ""
+  );
 
   // Custom hooks
   // UseTotalPayPeriodHours(payPeriodSheets);
@@ -51,19 +80,23 @@ export default function WidgetSection({ session, locale, isTerminate }: Props) {
   const handleToggle = () => setToggle(!toggle);
 
   // Handle page redirects in a separate useEffect
-  // useEffect(() => {
-  //   if (pageView === "dashboard") {
-  //     router.push("/dashboard");
-  //   }
-  //   if (pageView === "removeLocalStorage") {
-  //     setPageView("");
-  //   }
-  // }, [pageView, router, accountSetup, setPageView]);
+  useEffect(() => {
+    if (pageView === "dashboard") {
+      router.push("/dashboard");
+    }
+    if (pageView === "removeLocalStorage") {
+      setPageView("");
+    }
+  }, [pageView, router, accountSetup, setPageView]);
 
   // Main render
   return (
     <>
-      <BannerSection pageView={pageView} user={user} date={date} />
+      <BannerSection
+        pageView={pageView}
+        user={user || { firstName: "" }}
+        date={date}
+      />
 
       <MainContentSection
         toggle={toggle}
@@ -76,6 +109,7 @@ export default function WidgetSection({ session, locale, isTerminate }: Props) {
     </>
   );
 }
+// ...existing code...
 
 function BannerSection({
   pageView,
@@ -83,7 +117,10 @@ function BannerSection({
   date,
 }: {
   pageView: string;
-  user: Session["user"];
+  user: {
+    firstName: string;
+  };
+
   date: string;
 }) {
   return (
@@ -95,6 +132,7 @@ function BannerSection({
     </Holds>
   );
 }
+
 function MainContentSection({
   toggle,
   pageView,

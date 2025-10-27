@@ -1,13 +1,13 @@
 "use client";
 import { useTranslations } from "next-intl";
-import ViewHoursComponent from "@/app/(content)/hoursControl";
-import { usePayPeriodHours } from "../context/PayPeriodHoursContext";
-import { Buttons } from "@/components/(reusable)/buttons";
-import { Texts } from "@/components/(reusable)/texts";
-import { Holds } from "@/components/(reusable)/holds";
-import Spinner from "@/components/(animations)/spinner";
-import { Contents } from "@/components/(reusable)/contents";
-import { Grids } from "@/components/(reusable)/grids";
+
+import { useUserStore } from "@/app/lib/store/userStore";
+import { Buttons } from "../components/(reusable)/buttons";
+import { Texts } from "../components/(reusable)/texts";
+import { Holds } from "../components/(reusable)/holds";
+import Spinner from "../components/(animations)/spinner";
+import { Grids } from "../components/(reusable)/grids";
+import ControlComponent from "./hoursControl";
 
 // Assuming User has at least these fields, adjust accordingly
 
@@ -19,7 +19,21 @@ type HoursProps = {
 
 export default function Hours({ setToggle, display, loading }: HoursProps) {
   const t = useTranslations("Home");
-  const { payPeriodHours } = usePayPeriodHours();
+  const payPeriodTimeSheet = useUserStore((state) => state.payPeriodTimeSheet);
+  // Calculate total hours from payPeriodTimeSheet
+  const payPeriodHours = Array.isArray(payPeriodTimeSheet)
+    ? payPeriodTimeSheet.reduce((total, sheet) => {
+        if (sheet.startTime && sheet.endTime) {
+          return (
+            total +
+            (new Date(sheet.endTime).getTime() -
+              new Date(sheet.startTime).getTime()) /
+              (1000 * 60 * 60)
+          );
+        }
+        return total;
+      }, 0)
+    : 0;
 
   const handler = () => {
     setToggle(!display);
@@ -62,6 +76,6 @@ export default function Hours({ setToggle, display, loading }: HoursProps) {
       </Grids>
     </Buttons>
   ) : (
-    <ViewHoursComponent toggle={setToggle} />
+    <ControlComponent toggle={setToggle} />
   );
 }

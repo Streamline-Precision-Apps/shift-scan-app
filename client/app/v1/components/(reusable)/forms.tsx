@@ -1,7 +1,7 @@
 "use client";
 import { cva, type VariantProps } from "class-variance-authority";
 import { FormHTMLAttributes, FC, useRef } from "react";
-import { cn } from "@/components/(reusable)/utils";
+import { cn } from "@/app/lib/utils/utils";
 
 //This determines styles of all forms
 const FormVariants = cva(

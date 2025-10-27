@@ -1,5 +1,5 @@
-import { Holds } from "@/components/(reusable)/holds";
-import { Images } from "@/components/(reusable)/images";
+import { Holds } from "../../components/(reusable)/holds";
+import { Images } from "../../components/(reusable)/images";
 
 export default function EmptyView({
   Children,

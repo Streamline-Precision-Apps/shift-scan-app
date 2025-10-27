@@ -1,7 +1,7 @@
-import { Buttons } from "@/components/(reusable)/buttons";
-import { Holds } from "@/components/(reusable)/holds";
-import { Images } from "@/components/(reusable)/images";
-import { Titles } from "@/components/(reusable)/titles";
+import { Buttons } from "../../components/(reusable)/buttons";
+import { Holds } from "../../components/(reusable)/holds";
+import { Images } from "../../components/(reusable)/images";
+import { Titles } from "../../components/(reusable)/titles";
 import { useTranslations } from "next-intl";
 
 type Props = {

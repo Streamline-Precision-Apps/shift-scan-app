@@ -1,7 +1,8 @@
 import { cva, type VariantProps } from "class-variance-authority";
 import { HTMLAttributes, FC } from "react";
-import { cn } from "@/components/(reusable)/utils";
+
 import { Anton } from "next/font/google";
+import { cn } from "@/app/lib/utils/utils";
 
 const anton = Anton({
   subsets: ["latin"],

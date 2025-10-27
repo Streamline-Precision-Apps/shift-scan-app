@@ -1,6 +1,6 @@
 import { cva, type VariantProps } from "class-variance-authority";
 import { HTMLAttributes, FC } from "react";
-import { cn } from "@/components/(reusable)/utils";
+import { cn } from "@/app/lib/utils/utils";
 
 //This component determines the size aloted to a certain item. Focusing on width.
 //Counterpart to Holds.

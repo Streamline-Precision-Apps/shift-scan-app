@@ -1,6 +1,6 @@
 import { cva, type VariantProps } from "class-variance-authority";
 import { LabelHTMLAttributes, FC } from "react";
-import { cn } from "@/components/(reusable)/utils";
+import { cn } from "@/app/lib/utils/utils";
 import { Titles } from "./titles";
 import { Texts } from "./texts";
 
@@ -38,7 +38,7 @@ const LabelVariants = cva(
       text: "black",
       size: "p2",
     },
-  },
+  }
 );
 
 // this extends the capability of HTMLAttributes or the VariantProps that it can hold, specify your props here

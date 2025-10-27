@@ -5,18 +5,13 @@ import { Grids } from "./components/(reusable)/grids";
 import HamburgerMenuNew from "./components/(animations)/hamburgerMenuNew";
 import WidgetSection from "./(content)/widgetSection";
 import { Suspense } from "react";
-// import { cookies } from "next/headers";
 import { Holds } from "./components/(reusable)/holds";
 import Spinner from "./components/(animations)/spinner";
-import { useSession } from "../lib/context/sessionContext";
-
-// import ContinueTimesheetCheck from "./(content)/ContinueTimesheetCheck";
 
 export default function Home() {
   //------------------------------------------------------------------------
   // Variables needed at all times:
   // Session checker
-  const { locale } = useSession();
 
   return (
     <Bases>
@@ -46,11 +41,7 @@ export default function Home() {
               </>
             }
           >
-            <WidgetSection
-              locale={locale}
-              session={session}
-              isTerminate={isTerminate}
-            />
+            <WidgetSection />
           </Suspense>
         </Grids>
       </Contents>

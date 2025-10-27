@@ -31,7 +31,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
     if (token) {
       setUser(getSession(token));
     } else {
-      router.replace("/signIn");
+      router.replace("/signin");
     }
   }, [router]);
 

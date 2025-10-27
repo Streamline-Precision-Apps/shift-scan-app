@@ -1,15 +1,17 @@
 "use client";
-import { getCookieValue } from "@/utils/getCookie";
-import { Buttons } from "@/components/(reusable)/buttons";
-import { Images } from "@/components/(reusable)/images";
-import { Texts } from "@/components/(reusable)/texts";
+
+import { Buttons } from "../components/(reusable)/buttons";
+import { Images } from "../components/(reusable)/images";
+import { Texts } from "../components/(reusable)/texts";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
-import { Holds } from "@/components/(reusable)/holds";
-import Capitalize from "@/utils/captitalize";
-import CapitalizeAll from "@/utils/capitalizeAll";
-import { Titles } from "@/components/(reusable)/titles";
+import { useUserStore } from "@/app/lib/store/userStore";
+import { Holds } from "../components/(reusable)/holds";
+
+import { Titles } from "../components/(reusable)/titles";
 import { motion, AnimatePresence } from "framer-motion";
+import Capitalize from "@/app/lib/utils/capitalizeFirst";
+import CapitalizeAll from "@/app/lib/utils/capitalizeAll";
 
 export type ViewComponentProps = {
   scrollLeft: () => void;
@@ -30,14 +32,15 @@ export default function ViewComponent({
   currentDate,
   disableInitialAnimation = false,
 }: ViewComponentProps) {
-  const [locale, setLocale] = useState("en-US"); // Default to 'en-US'
+  // Get language from user store, fallback to 'en-US'
+  const userLanguage =
+    useUserStore((state) => state.user?.UserSettings?.language) || "en-US";
+  const [locale, setLocale] = useState(userLanguage);
 
+  // If user language changes, update locale
   useEffect(() => {
-    const localeCookie = getCookieValue("locale");
-    if (localeCookie) {
-      setLocale(localeCookie);
-    }
-  }, []);
+    setLocale(userLanguage);
+  }, [userLanguage]);
 
   const t = useTranslations("Home");
 

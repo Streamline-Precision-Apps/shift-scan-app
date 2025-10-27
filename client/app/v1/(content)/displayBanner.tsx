@@ -1,8 +1,9 @@
-import { Banners } from "@/components/(reusable)/banners";
-import { Texts } from "@/components/(reusable)/texts";
-import { Titles } from "@/components/(reusable)/titles";
-import capitalizeAll from "@/utils/capitalizeAll";
-import Capitalize from "@/utils/captitalize";
+import capitalizeAll from "@/app/lib/utils/capitalizeAll";
+import Capitalize from "@/app/lib/utils/capitalizeFirst";
+import { Banners } from "../components/(reusable)/banners";
+import { Texts } from "../components/(reusable)/texts";
+import { Titles } from "../components/(reusable)/titles";
+
 import { useTranslations } from "next-intl";
 
 export default function DisplayBanner({

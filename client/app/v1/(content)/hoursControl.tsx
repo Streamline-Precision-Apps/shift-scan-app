@@ -1,14 +1,13 @@
 "use client";
 
 import { useState, useEffect, useMemo, useRef, useLayoutEffect } from "react";
-import { Holds } from "@/components/(reusable)/holds";
-import { Grids } from "@/components/(reusable)/grids";
-import ViewComponent from "../(content)/hourView";
+import { Holds } from "../components/(reusable)/holds";
+import { Grids } from "../components/(reusable)/grids";
 import TopControlPanel from "./_hoursComponents/topControlPanel";
 import { useCalculateDailyHours } from "./_hoursComponents/calculateDailyHours";
 import { motion, LayoutGroup } from "framer-motion";
 import Panel, { PanelData } from "./hourViewPanels";
-import HorizontalScrollbar from "@/components/HorizontalScrollbar";
+import HorizontalScrollbar from "../components/HorizontalScrollbar";
 
 // ----------------------------------------
 // Type guard: checks if a data entry is a placeholder (i.e. label like "Start of Pay Period")
@@ -39,11 +38,11 @@ export default function ControlComponent({
   const [currentIndex, setCurrentIndex] = useState(1);
   const [initialIndexSet, setInitialIndexSet] = useState(false); // Track if initial index is set
   const dailyHoursCache = useRef<{ date: string; hours: number }[] | null>(
-    null,
+    null
   ); // caching calculated hours
   const calculateDailyHours = useCalculateDailyHours(); // hook to calculate work hours per day
   const containerRef = useRef<ScrollTimeoutDiv>(
-    null!,
+    null!
   ) as React.MutableRefObject<ScrollTimeoutDiv>; // ref to the scrolling container
   const wasProgrammaticScroll = useRef(false); // flag to distinguish between user and programmatic scroll
 
@@ -82,7 +81,7 @@ export default function ControlComponent({
     // Clamp scrolling within container bounds
     scrollLeft = Math.max(
       0,
-      Math.min(scrollLeft, container.scrollWidth - container.clientWidth),
+      Math.min(scrollLeft, container.scrollWidth - container.clientWidth)
     );
 
     wasProgrammaticScroll.current = true;
@@ -116,14 +115,14 @@ export default function ControlComponent({
 
     // Find the index of today in the normalizedDailyHours
     const todayIndex = normalizedDailyHours.findIndex(
-      (d) => d.date === todayStr,
+      (d) => d.date === todayStr
     );
     if (todayIndex === -1) {
       // eslint-disable-next-line no-console
       console.warn(
         "Today's date not found in dailyHours:",
         todayStr,
-        normalizedDailyHours.map((d) => d.date),
+        normalizedDailyHours.map((d) => d.date)
       );
     }
     // Account for placeholder at the start
@@ -140,7 +139,7 @@ export default function ControlComponent({
     let scrollLeft = (currentIndex - 1) * panelWidth;
     scrollLeft = Math.max(
       0,
-      Math.min(scrollLeft, container.scrollWidth - container.clientWidth),
+      Math.min(scrollLeft, container.scrollWidth - container.clientWidth)
     );
     container.style.scrollBehavior = "auto";
     container.style.scrollSnapType = "none";
@@ -181,7 +180,7 @@ export default function ControlComponent({
     let closestIndex = Math.round(scrollLeft / panelWidth) + 1;
     closestIndex = Math.min(
       Math.max(closestIndex, 1),
-      extendedDailyHours.length - 2,
+      extendedDailyHours.length - 2
     );
     setScrollingIndex(closestIndex); // Only visually highlight, don't setCurrentIndex
   };
@@ -202,7 +201,7 @@ export default function ControlComponent({
     let closestIndex = Math.round(scrollLeft / panelWidth) + 1;
     closestIndex = Math.min(
       Math.max(closestIndex, 1),
-      extendedDailyHours.length - 2,
+      extendedDailyHours.length - 2
     );
     if (closestIndex !== currentIndex) {
       setCurrentIndex(closestIndex);

@@ -9,6 +9,11 @@ export const initHandler = async (
   res: express.Response
 ) => {
   const userId = req.body.userId as string;
+  const token = req.body.token as string;
+
+  if (!token) {
+    return res.status(400).json({ error: "Missing token" });
+  }
   if (!userId) {
     return res.status(400).json({ error: "Missing userId" });
   }

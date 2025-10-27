@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useUserStore } from "@/app/lib/store/userStore";
 import { Buttons } from "../(reusable)/buttons";
 import { Holds } from "../(reusable)/holds";
 
@@ -8,29 +8,7 @@ export default function HamburgerMenuNew({
 }: {
   isHome?: boolean;
 }) {
-  const [image, setImage] = useState("");
-
-  useEffect(() => {
-    const fetchImage = async () => {
-      const CachedImage = localStorage.getItem("userProfileImage");
-      if (CachedImage && CachedImage !== "Updating") {
-        setImage(CachedImage);
-        return;
-      } else {
-        try {
-          const fetched = await fetch("/api/getUserImage");
-          const data = await fetched.json();
-          if (data.image) {
-            setImage(data.image);
-            localStorage.setItem("userProfileImage", data.image);
-          }
-        } catch (error) {
-          console.error("Error fetching image:", error);
-        }
-      }
-    };
-    fetchImage();
-  }, []);
+  const image = useUserStore((state) => state.user?.image || "");
 
   return (
     <Holds

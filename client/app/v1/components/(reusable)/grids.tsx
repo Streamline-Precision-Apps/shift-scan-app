@@ -1,6 +1,6 @@
 import { cva, type VariantProps } from "class-variance-authority";
 import { HTMLAttributes, FC } from "react";
-import { cn } from "./utils";
+import { cn } from "@/app/lib/utils/utils";
 
 const GridVariants = cva(
   "grid h-full", //this applies to all variants

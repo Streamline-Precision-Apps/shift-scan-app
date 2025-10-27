@@ -1,8 +1,8 @@
 "use client";
 import { cva, type VariantProps } from "class-variance-authority";
 import { InputHTMLAttributes, FC } from "react";
-import { cn } from "@/components/(reusable)/utils";
-import React from "react";
+import { cn } from "@/app/lib/utils/utils";
+
 import { Anton } from "next/font/google";
 const anton = Anton({
   subsets: ["latin"],
@@ -30,7 +30,7 @@ const InputVariants = cva(
     defaultVariants: {
       variant: "default",
     },
-  },
+  }
 );
 
 // this extends the capability of HTMLAttributes or the VariantProps that it can hold, specify your props here
@@ -57,10 +57,10 @@ const Inputs: FC<InputProps> = ({
           background === "orange"
             ? "#fb923c" // orange-400 equivalent
             : background === "white"
-              ? "#ffffff"
-              : background === "transparent"
-                ? "transparent"
-                : undefined,
+            ? "#ffffff"
+            : background === "transparent"
+            ? "transparent"
+            : undefined,
       }
     : undefined;
 

@@ -44,6 +44,21 @@ export const loginUser = async (req, res) => {
         return res.status(500).json({ error: "Internal server error" });
     }
 };
-!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="1db4a4c0-3def-5d19-9fab-2dee77ca10e1")}catch(e){}}();
+export const signOutUser = async (req, res) => {
+    try {
+        // Clear the session cookie
+        res.clearCookie("session", {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "none",
+        });
+        return res.status(200).json({ message: "Sign out successful" });
+    }
+    catch (err) {
+        console.error(err);
+        return res.status(500).json({ error: "Internal server error" });
+    }
+};
+!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="1464005a-620e-5661-93c7-a0a984af8a33")}catch(e){}}();
 //# sourceMappingURL=authController.js.map
-//# debugId=1db4a4c0-3def-5d19-9fab-2dee77ca10e1
+//# debugId=1464005a-620e-5661-93c7-a0a984af8a33

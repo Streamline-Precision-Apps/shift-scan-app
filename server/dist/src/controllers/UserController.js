@@ -1,4 +1,4 @@
-import { UserService } from "../services/UserService.js";
+import UserService from "../services/UserService.js";
 export class UserController {
     // GET /api/users
     static async getUsers(req, res) {
@@ -86,6 +86,13 @@ export class UserController {
                 });
             }
             const userData = req.body;
+            // Convert string 'true'/'false' to boolean for accountSetup if present in body
+            if (userData.accountSetup !== undefined) {
+                if (userData.accountSetup === 'true')
+                    userData.accountSetup = true;
+                else if (userData.accountSetup === 'false')
+                    userData.accountSetup = false;
+            }
             const updatedUser = await UserService.updateUser(id, userData);
             res.status(200).json({
                 success: true,
@@ -145,6 +152,6 @@ export const getUserById = UserController.getUserById;
 export const createUser = UserController.createUser;
 export const updateUser = UserController.updateUser;
 export const deleteUser = UserController.deleteUser;
-!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="2092e78a-d801-5c51-a52e-aa55ba3e8e8d")}catch(e){}}();
+!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="9dfd0097-6615-5802-b6e0-c7c32a6af3ee")}catch(e){}}();
 //# sourceMappingURL=userController.js.map
-//# debugId=2092e78a-d801-5c51-a52e-aa55ba3e8e8d
+//# debugId=9dfd0097-6615-5802-b6e0-c7c32a6af3ee

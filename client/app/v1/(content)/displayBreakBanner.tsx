@@ -1,6 +1,6 @@
-import { Banners } from "@/components/(reusable)/banners";
-import { Texts } from "@/components/(reusable)/texts";
-import { Titles } from "@/components/(reusable)/titles";
+import { Banners } from "../components/(reusable)/banners";
+import { Texts } from "../components/(reusable)/texts";
+import { Titles } from "../components/(reusable)/titles";
 import { useTranslations } from "next-intl";
 
 export default function DisplayBreakBanner() {

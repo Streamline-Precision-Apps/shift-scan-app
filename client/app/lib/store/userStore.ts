@@ -1,4 +1,11 @@
+"use client";
+// Pay period timesheet types
 import { create } from "zustand";
+
+export type PayPeriodTimesheets = {
+  startTime: Date;
+  endTime: Date;
+};
 
 type Contact = {
   id: string;
@@ -35,7 +42,7 @@ type User = {
   tascoView: boolean;
   laborView: boolean;
   mechanicView: boolean;
-  permission: string;
+  permission: "USER" | "MANAGER" | "ADMIN" | "SUPERADMIN";
   image: string;
   terminationDate: string | null;
   accountSetup: boolean;
@@ -56,6 +63,10 @@ type UserStore = {
   setLanguage: (language: string) => void;
   setUserSettings: (settings: Partial<UserSettings>) => void;
   setImage: (image: string) => void;
+  payPeriodTimeSheet: PayPeriodTimesheets[] | null;
+  setPayPeriodTimeSheets: (
+    payPeriodTimeSheets: PayPeriodTimesheets[] | null
+  ) => void;
 };
 
 export const useUserStore = create<UserStore>((set, get) => ({
@@ -92,4 +103,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
       });
     }
   },
+  payPeriodTimeSheet: null,
+  setPayPeriodTimeSheets: (payPeriodTimeSheets) =>
+    set({ payPeriodTimeSheet: payPeriodTimeSheets }),
 }));
