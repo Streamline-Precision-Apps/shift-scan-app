@@ -1,20 +1,19 @@
-import { createFormSubmission } from "@/actions/hamburgerActions";
-import Spinner from "@/components/(animations)/spinner";
-import { PullToRefresh } from "@/components/(animations)/pullToRefresh";
-import { Buttons } from "@/components/(reusable)/buttons";
-import { Contents } from "@/components/(reusable)/contents";
-import { Grids } from "@/components/(reusable)/grids";
-import { Holds } from "@/components/(reusable)/holds";
-import { Images } from "@/components/(reusable)/images";
-import { Selects } from "@/components/(reusable)/selects";
-import { Texts } from "@/components/(reusable)/texts";
-import { Titles } from "@/components/(reusable)/titles";
-import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
-import { useSession } from "next-auth/react";
+"use client";
+import Spinner from "@/app/v1/components/(animations)/spinner";
+import { PullToRefresh } from "@/app/v1/components/(animations)/pullToRefresh";
+import { Buttons } from "@/app/v1/components/(reusable)/buttons";
+import { Contents } from "@/app/v1/components/(reusable)/contents";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
+import { Images } from "@/app/v1/components/(reusable)/images";
+import { Selects } from "@/app/v1/components/(reusable)/selects";
+import { Texts } from "@/app/v1/components/(reusable)/texts";
+import { Titles } from "@/app/v1/components/(reusable)/titles";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useCallback, Suspense } from "react";
 import InboxSkeleton from "./inboxSkeleton";
+import { useInfiniteScroll } from "@/app/lib/hooks/useInfiniteScroll";
+import { useUserStore } from "@/app/lib/store/userStore";
 
 type Form = {
   id: string;
@@ -71,8 +70,8 @@ export default function FormSelection({
   const [forms, setForms] = useState<Form[]>([]);
   const [selectedForm, setSelectedForm] = useState<string>("");
   // const [formDrafts, setFormDrafts] = useState<DraftForm[]>([]);
-  const { data: session } = useSession();
-  const userId = session?.user.id;
+  const { user } = useUserStore();
+  const userId = user?.id;
   const router = useRouter();
 
   // Calculate the start date (Monday) and end date (Sunday) of the current week
@@ -105,17 +104,27 @@ export default function FormSelection({
 
   const fetchSentContent = async (
     skip: number,
-    reset?: boolean,
+    reset?: boolean
   ): Promise<SentContent[]> => {
+    const token = localStorage.getItem("token"); // or however you store the JWT
+    const url = process.env.NEXT_PUBLIC_API_URL || `http://localhost:3001`;
     const response = await fetch(
-      `/api/formSubmissions/${selectedFilter}?startDate=${startDate}&endDate=${endDate}&skip=${skip}&take=10`,
+      `${url}/api/v1/forms/${
+        selectedFilter ? selectedFilter : "all"
+      }?startDate=${startDate}&endDate=${endDate}&skip=${skip}&take=10`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
     );
     const data = await response.json();
     // Defensive: filter out any non-object/string results
     return Array.isArray(data)
       ? data.filter(
           (item): item is SentContent =>
-            typeof item === "object" && item !== null && "id" in item,
+            typeof item === "object" && item !== null && "id" in item
         )
       : [];
   };
@@ -140,7 +149,11 @@ export default function FormSelection({
     const fetchForms = async () => {
       try {
         setLoading(true);
-        const response = await fetch("/api/forms");
+        const url = process.env.NEXT_PUBLIC_API_URL || `http://localhost:3001`;
+        const response = await fetch(`${url}/api/v1/forms`, {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        });
         const data: Form[] = await response.json();
         setForms(data);
       } catch (error) {
@@ -158,20 +171,22 @@ export default function FormSelection({
     if (createLoading) return;
     setCreateLoading(true);
     try {
-      const formData = new FormData();
-      formData.append("formTemplateId", selectedForm);
-      if (userId) {
-        formData.append("userId", userId);
-      }
-
-      const submission = await createFormSubmission(formData);
-
+      const url = process.env.NEXT_PUBLIC_API_URL || `http://localhost:3001`;
+      const res = await fetch(`${url}/api/v1/forms/submission`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          formTemplateId: selectedForm,
+          userId: userId,
+        }),
+      });
+      const submission = await res.json();
       if (!submission || !submission.id) {
         setCreateLoading(false);
         return;
       }
       router.push(
-        `/hamburger/inbox/formSubmission/${selectedForm}?submissionId=${submission.id}&status=DRAFT`,
+        `/hamburger/inbox/formSubmission/${selectedForm}?submissionId=${submission.id}&status=DRAFT`
       );
     } catch (error) {
       setCreateLoading(false);
@@ -201,7 +216,7 @@ export default function FormSelection({
                 <Selects
                   value={""}
                   disabled
-                  className="text-center text-sm disabled:bg-white h-full p-2"
+                  className="text-center text-sm text-black disabled:bg-white h-full p-2"
                 >
                   <option value={""}>{t("SelectAForm")}</option>
                 </Selects>
@@ -209,7 +224,7 @@ export default function FormSelection({
                 <Selects
                   value={selectedForm}
                   onChange={(e) => setSelectedForm(e.target.value)}
-                  className="text-center text-sm h-full p-2 "
+                  className="text-center text-sm text-black h-full p-2 "
                 >
                   <option value={""}>{t("SelectAForm")}</option>
                   {forms.map((form) => (
@@ -255,7 +270,7 @@ export default function FormSelection({
           <Selects
             value={selectedFilter}
             onChange={(e) => setSelectedFilter(e.target.value)}
-            className="text-center text-sm justify-center "
+            className="text-center text-black text-sm justify-center "
           >
             <option value="all">{t("SelectAFilter")}</option>
             <option value="draft">{t("Drafts")}</option>
@@ -288,10 +303,10 @@ export default function FormSelection({
                             {selectedFilter === "denied"
                               ? t("NoDeniedFormsSubmitted")
                               : selectedFilter === "pending"
-                                ? t("NoPendingFormsSubmitted")
-                                : selectedFilter === "approved"
-                                  ? t("NoApprovedFormsSubmitted")
-                                  : t("NoFormsSubmitted")}
+                              ? t("NoPendingFormsSubmitted")
+                              : selectedFilter === "approved"
+                              ? t("NoApprovedFormsSubmitted")
+                              : t("NoFormsSubmitted")}
                           </Texts>
                           <Texts size={"sm"} className="italic text-gray-500">
                             {t("GoToFormsSectionToCreateForms")}
@@ -322,14 +337,14 @@ export default function FormSelection({
                                   form.status === "PENDING"
                                     ? "orange"
                                     : form.status === "APPROVED"
-                                      ? "green"
-                                      : form.status === "DENIED"
-                                        ? "red"
-                                        : "lightBlue"
+                                    ? "green"
+                                    : form.status === "DENIED"
+                                    ? "red"
+                                    : "lightBlue"
                                 }
                                 onClick={() => {
                                   router.push(
-                                    `/hamburger/inbox/formSubmission/${form.formTemplateId}?submissionId=${form.id}&status=${form.status}`,
+                                    `/hamburger/inbox/formSubmission/${form.formTemplateId}?submissionId=${form.id}&status=${form.status}`
                                   );
                                 }}
                                 disabled={isLoading}
@@ -343,10 +358,10 @@ export default function FormSelection({
                                       form.status === "PENDING"
                                         ? "/statusOngoingFilled.svg"
                                         : form.status === "APPROVED"
-                                          ? "/statusApprovedFilled.svg"
-                                          : form.status === "DENIED"
-                                            ? "/statusDeniedFilled.svg"
-                                            : "/formSent.svg"
+                                        ? "/statusApprovedFilled.svg"
+                                        : form.status === "DENIED"
+                                        ? "/statusDeniedFilled.svg"
+                                        : "/formSent.svg"
                                     }
                                     className="absolute max-w-8 h-auto object-contain top-[50%] translate-y-[-50%] right-2"
                                   />

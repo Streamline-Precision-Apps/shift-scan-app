@@ -4,11 +4,105 @@ import {
   ServiceCreateFormApproval,
   ServiceCreateFormSubmission,
   ServiceDeleteFormSubmission,
+  ServiceGetForms,
+  ServiceGetUserSubmissions,
   ServiceSaveDraft,
   ServiceSaveDraftToPending,
   ServiceSavePending,
   ServiceUpdateFormApproval,
 } from "../services/formsService.js";
+
+import { ServiceGetEmployeeRequests } from "../services/formsService.js";
+// Fetch employee requests for a manager (with filter, skip, take)
+
+export const getUserSubmissions = async (req: any, res: express.Response) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ error: "Unauthorized User" });
+    }
+    const status = req.query.status as string;
+    const skip = parseInt((req.query.skip as string) || "0");
+    const take = parseInt((req.query.take as string) || "10");
+    const startDateParam = req.query.startDate as string | null;
+    const endDateParam = req.query.endDate as string | null;
+    const weekFilter = req.query.week === "true";
+
+    // Process date filters
+    let startDate: Date | null = null;
+    let endDate: Date | null = null;
+    if (startDateParam) startDate = new Date(startDateParam);
+    if (endDateParam) endDate = new Date(endDateParam);
+    if (weekFilter) {
+      const today = new Date();
+      const firstDay = new Date(today);
+      firstDay.setDate(today.getDate() - today.getDay());
+      firstDay.setHours(0, 0, 0, 0);
+      const lastDay = new Date(today);
+      lastDay.setDate(today.getDate() + (6 - today.getDay()));
+      lastDay.setHours(23, 59, 59, 999);
+      startDate = firstDay;
+      endDate = lastDay;
+    }
+
+    const submissions = await ServiceGetUserSubmissions({
+      userId,
+      status,
+      startDate,
+      endDate,
+      skip,
+      take,
+    });
+    return res.status(200).json(submissions);
+  } catch (error) {
+    console.error("Error fetching user submissions:", error);
+    return res.status(500).json({ error: "Error fetching user submissions" });
+  }
+};
+
+export const getEmployeeRequests = async (req: any, res: express.Response) => {
+  try {
+    // userId and permission should be set by verifyToken middleware
+    const userId = req.user?.id;
+    const permission = req.user?.permission;
+
+    if (!userId) {
+      return res.status(401).json({ error: "Unauthorized User" });
+    }
+    if (permission === "USER") {
+      return res.status(401).json({ error: "Unauthorized User Permission" });
+    }
+
+    const filter = req.query.filter as string;
+    const skip = parseInt((req.query.skip as string) || "0");
+    const take = parseInt((req.query.take as string) || "10");
+
+    const requests = await ServiceGetEmployeeRequests({
+      filter,
+      skip,
+      take,
+      managerId: userId,
+    });
+    return res.status(200).json(requests);
+  } catch (error) {
+    console.error("Error fetching employee requests:", error);
+    return res.status(500).json({ error: "Error fetching employee requests" });
+  }
+};
+
+export const getForms = async (req: express.Request, res: express.Response) => {
+  try {
+    // Logic to get forms (this is a placeholder, replace with actual logic)
+    const forms = await ServiceGetForms();
+    res.status(200).json(forms);
+  } catch (error) {
+    const message =
+      error instanceof Error && error.message
+        ? error.message
+        : "Failed to retrieve forms";
+    res.status(400).json({ message });
+  }
+};
 
 export const createFormSubmission = async (
   req: express.Request,

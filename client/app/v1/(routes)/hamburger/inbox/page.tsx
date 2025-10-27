@@ -1,13 +1,15 @@
-"use server";
-import InboxContent from "@/app/(routes)/hamburger/inbox/_components/inboxContent";
-import { auth } from "@/auth";
-import { Bases } from "@/components/(reusable)/bases";
-import { Contents } from "@/components/(reusable)/contents";
+"use client";
 
-export default async function Inbox() {
-  const session = await auth();
-  if (!session) return null;
-  const isManager = session.user.permission !== "USER";
+import { useUserStore } from "@/app/lib/store/userStore";
+import { Bases } from "@/app/v1/components/(reusable)/bases";
+import { Contents } from "@/app/v1/components/(reusable)/contents";
+import InboxContent from "./_components/inboxContent";
+
+export default function Inbox() {
+  const { user } = useUserStore();
+
+  if (!user) return null;
+  const isManager = user.permission !== "USER";
 
   return (
     <Bases>

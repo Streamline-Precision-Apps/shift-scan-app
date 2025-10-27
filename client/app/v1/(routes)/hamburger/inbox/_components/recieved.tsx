@@ -1,17 +1,18 @@
 "use client";
-import { PullToRefresh } from "@/components/(animations)/pullToRefresh";
-import Spinner from "@/components/(animations)/spinner";
-import { Buttons } from "@/components/(reusable)/buttons";
-import { Contents } from "@/components/(reusable)/contents";
-import { Holds } from "@/components/(reusable)/holds";
-import { Selects } from "@/components/(reusable)/selects";
-import { Texts } from "@/components/(reusable)/texts";
-import { Titles } from "@/components/(reusable)/titles";
-import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
+import { PullToRefresh } from "@/app/v1/components/(animations)/pullToRefresh";
+import Spinner from "@/app/v1/components/(animations)/spinner";
+import { Buttons } from "@/app/v1/components/(reusable)/buttons";
+import { Contents } from "@/app/v1/components/(reusable)/contents";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
+import { Selects } from "@/app/v1/components/(reusable)/selects";
+import { Texts } from "@/app/v1/components/(reusable)/texts";
+import { Titles } from "@/app/v1/components/(reusable)/titles";
+
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import React, { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import RecievedInboxSkeleton from "./recievedInboxSkeleton";
+import { useInfiniteScroll } from "@/app/lib/hooks/useInfiniteScroll";
 
 enum FormStatus {
   PENDING = "PENDING",
@@ -55,14 +56,24 @@ export default function RTab({ isManager }: { isManager: boolean }) {
   const t = useTranslations("Hamburger-Inbox");
   const [selectedFilter, setSelectedFilter] = useState<string>("all");
   const [employeeRequests, setEmployeeRequests] = useState<EmployeeRequests[]>(
-    [],
+    []
   );
 
   const router = useRouter();
 
   const fetchRequests = async (skip: number, reset: boolean = false) => {
+    const url = process.env.NEXT_PUBLIC_API_URL || `http://localhost:3001`;
+    const token =
+      typeof window !== "undefined" ? localStorage.getItem("token") : null;
     const response = await fetch(
-      `/api/employeeRequests/${selectedFilter}?skip=${skip}&take=10`,
+      `${url}/api/v1/forms/employeeRequests/filter=${
+        selectedFilter ? selectedFilter : "all"
+      }&skip=${skip}&take=10`,
+      {
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      }
     );
     return await response.json();
   };
@@ -85,9 +96,16 @@ export default function RTab({ isManager }: { isManager: boolean }) {
   useEffect(() => {
     const fetchEmployeeRequests = async () => {
       try {
-        const response = await fetch(`/api/getEmployees`);
+        const url = process.env.NEXT_PUBLIC_API_URL || `http://localhost:3001`;
+        const token =
+          typeof window !== "undefined" ? localStorage.getItem("token") : null;
+        const response = await fetch(`${url}/api/v1/user`, {
+          headers: {
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+        });
         const data = await response.json();
-        setEmployeeRequests(data);
+        setEmployeeRequests(data as EmployeeRequests[]);
       } catch (err) {
         console.error("Error fetching employee requests:", err);
       }
@@ -96,19 +114,21 @@ export default function RTab({ isManager }: { isManager: boolean }) {
     fetchEmployeeRequests();
   }, []);
 
-  const uniqueEmployees = employeeRequests.reduce((acc, current) => {
-    const x = acc.find((item) => item.User.id === current.User.id);
-    if (!x) {
-      return acc.concat([current]);
-    } else {
-      return acc;
-    }
-  }, [] as EmployeeRequests[]);
+  const uniqueEmployees = Array.isArray(employeeRequests)
+    ? employeeRequests.reduce((acc, current) => {
+        const x = acc.find((item) => item.User.id === current.User.id);
+        if (!x) {
+          return acc.concat([current]);
+        } else {
+          return acc;
+        }
+      }, [] as EmployeeRequests[])
+    : [];
 
   return (
     <>
       <Holds
-        className="h-16 border-b-2  border-neutral-100 flex-shrink-0 rounded-lg sticky top-0 z-10 px-2 gap-x-2"
+        className="h-16 border-b-2  border-neutral-100 shrink-0 rounded-lg sticky top-0 z-10 px-2 gap-x-2"
         position={"row"}
       >
         <Suspense
@@ -126,7 +146,7 @@ export default function RTab({ isManager }: { isManager: boolean }) {
           <Selects
             value={selectedFilter}
             onChange={(e) => setSelectedFilter(e.target.value)}
-            className="text-center justify-center"
+            className="text-center justify-center text-black"
             disabled={isLoading}
           >
             <option value="all">{t("SelectAFilter")}</option>
@@ -161,8 +181,8 @@ export default function RTab({ isManager }: { isManager: boolean }) {
                         {selectedFilter === "all"
                           ? t("NoTeamRequestsSubmittedOrFound")
                           : selectedFilter === "approved"
-                            ? t("NoRecentlyApprovedRequests")
-                            : t("NoRequestsFromSelectedEmployee")}
+                          ? t("NoRecentlyApprovedRequests")
+                          : t("NoRequestsFromSelectedEmployee")}
                       </Texts>
                       <Texts size={"xs"} className="italic text-gray-500">
                         {t("PleaseCheckBackLaterForNewRequests")}
@@ -182,7 +202,7 @@ export default function RTab({ isManager }: { isManager: boolean }) {
                         background={"lightBlue"}
                         onClick={() => {
                           router.push(
-                            `/hamburger/inbox/formSubmission/${form.formTemplateId}?submissionId=${form.id}&status=${form.status}&approvingStatus=${isManager}&formApprover=TRUE`,
+                            `/hamburger/inbox/formSubmission/${form.formTemplateId}?submissionId=${form.id}&status=${form.status}&approvingStatus=${isManager}&formApprover=TRUE`
                           );
                         }}
                         disabled={isLoading}

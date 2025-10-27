@@ -75,7 +75,9 @@ export default function HamburgerMenuNew({
 
       <Holds className="w-24 h-full justify-center">
         <Buttons
-          href={isHome ? "/hamburger/inbox?returnUrl=/v1" : "/hamburger/inbox"}
+          href={
+            isHome ? "/v1/hamburger/inbox?returnUrl=/v1" : "/v1/hamburger/inbox"
+          }
           background={"none"}
           shadow={"none"}
           className=" w-16 h-auto justify-center"

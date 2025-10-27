@@ -1,5 +1,6 @@
+"use client";
+import { usePullToRefresh } from "@/app/lib/hooks/usePullToRefresh";
 import React from "react";
-import { usePullToRefresh } from "@/hooks/usePullToRefresh";
 
 interface PullToRefreshProps {
   children: React.ReactNode;

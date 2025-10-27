@@ -1,6 +1,6 @@
-import Spinner from "@/components/(animations)/spinner";
-import { Contents } from "@/components/(reusable)/contents";
-import { Holds } from "@/components/(reusable)/holds";
+import Spinner from "@/app/v1/components/(animations)/spinner";
+import { Contents } from "@/app/v1/components/(reusable)/contents";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
 
 export default function InboxSkeleton() {
   return (

@@ -1,12 +1,12 @@
 "use client";
-import React, { Suspense, useState } from "react";
-import { Holds } from "@/components/(reusable)/holds";
-import { Titles } from "@/components/(reusable)/titles";
-import { TitleBoxes } from "@/components/(reusable)/titleBoxes";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
+import { Titles } from "@/app/v1/components/(reusable)/titles";
+import { TitleBoxes } from "@/app/v1/components/(reusable)/titleBoxes";
 import { useTranslations } from "next-intl";
 import { useRouter, useSearchParams } from "next/navigation";
-import { NewTab } from "@/components/(reusable)/newTabs";
+import { NewTab } from "@/app/v1/components/(reusable)/newTabs";
 import DynamicInboxContent from "./dynamicInboxContent";
+import { useState } from "react";
 
 export default function InboxContent({ isManager }: { isManager: boolean }) {
   const [activeTab, setActiveTab] = useState(1);
@@ -19,7 +19,7 @@ export default function InboxContent({ isManager }: { isManager: boolean }) {
     <div className="h-full w-full rounded-lg bg-white">
       {/* Static content - header */}
       <TitleBoxes
-        className="h-16 flex-shrink-0 rounded-lg sticky top-0 z-10 bg-white"
+        className="h-16 shrink-0 rounded-lg sticky top-0 z-10 bg-white"
         position={"row"}
         onClick={() => router.push(url)}
       >
