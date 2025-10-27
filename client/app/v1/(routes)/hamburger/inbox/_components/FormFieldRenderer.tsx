@@ -1,13 +1,12 @@
 "use client";
 
-import { FormIndividualTemplate } from "@/app/(routes)/admins/forms/[id]/_component/hooks/types";
 import RenderFields from "./RenderFields";
-import {
-  useDBEquipment,
-  useDBCostcode,
-  useDBJobsite,
-} from "@/app/context/dbCodeContext";
+
 import { useEffect, useState } from "react";
+import { useEquipmentStore } from "@/app/lib/store/equipmentStore";
+import { useProfitStore } from "@/app/lib/store/profitStore";
+import { useCostCodeStore } from "@/app/lib/store/costCodeStore";
+import { FormIndividualTemplate } from "../../../admins/forms/[id]/_component/hooks/types";
 
 // Define FormFieldValue type to match RenderFields expectations
 type FormFieldValue =
@@ -80,42 +79,42 @@ export const FormFieldRenderer: React.FC<FormFieldRendererProps> = ({
   const [costCodeOptions, setCostCodeOptions] = useState<Option[]>([]);
   const [userOptions, setUserOptions] = useState<Option[]>([]);
 
-  const { equipmentResults } = useDBEquipment();
-  const { costcodeResults } = useDBCostcode();
-  const { jobsiteResults } = useDBJobsite();
+  const { costCodes } = useCostCodeStore();
+  const { jobsites } = useProfitStore();
+  const { equipments } = useEquipmentStore();
 
   // Convert equipment data to Option format
   useEffect(() => {
-    if (equipmentResults && Array.isArray(equipmentResults)) {
-      const options = equipmentResults.map((equipment) => ({
+    if (equipments && Array.isArray(equipments)) {
+      const options = equipments.map((equipment) => ({
         value: equipment.id,
         label: equipment.name,
       }));
       setEquipmentOptions(options);
     }
-  }, [equipmentResults]);
+  }, [equipments]);
 
   // Convert jobsite data to Option format
   useEffect(() => {
-    if (jobsiteResults && Array.isArray(jobsiteResults)) {
-      const options = jobsiteResults.map((jobsite) => ({
+    if (jobsites && Array.isArray(jobsites)) {
+      const options = jobsites.map((jobsite) => ({
         value: jobsite.id,
         label: jobsite.name,
       }));
       setJobsiteOptions(options);
     }
-  }, [jobsiteResults]);
+  }, [jobsites]);
 
   // Convert cost code data to Option format
   useEffect(() => {
-    if (costcodeResults && Array.isArray(costcodeResults)) {
-      const options = costcodeResults.map((costcode) => ({
+    if (costCodes && Array.isArray(costCodes)) {
+      const options = costCodes.map((costcode) => ({
         value: costcode.id,
         label: costcode.name,
       }));
       setCostCodeOptions(options);
     }
-  }, [costcodeResults]);
+  }, [costCodes]);
 
   // Fetch user options
   useEffect(() => {
@@ -130,7 +129,7 @@ export const FormFieldRenderer: React.FC<FormFieldRendererProps> = ({
           (user: { id: string; firstName: string; lastName: string }) => ({
             value: user.id,
             label: `${user.firstName} ${user.lastName}`,
-          }),
+          })
         );
         setUserOptions(options);
       } catch (error) {
@@ -142,7 +141,7 @@ export const FormFieldRenderer: React.FC<FormFieldRendererProps> = ({
 
   // Convert FormTemplate to FormIndividualTemplate for RenderFields
   const convertToIndividualTemplate = (
-    template: FormTemplate,
+    template: FormTemplate
   ): FormIndividualTemplate => {
     return {
       id: template.id,
@@ -191,7 +190,7 @@ export const FormFieldRenderer: React.FC<FormFieldRendererProps> = ({
 
   // Convert string values to proper types for RenderFields
   const convertToFormFieldValues = (
-    values: Record<string, string | boolean>,
+    values: Record<string, string | boolean>
   ): Record<string, FormFieldValue> => {
     const result: Record<string, FormFieldValue> = {};
 
@@ -201,7 +200,7 @@ export const FormFieldRenderer: React.FC<FormFieldRendererProps> = ({
       let field = formData.groupings
         ?.flatMap((group: FormGrouping) => group.fields || [])
         .find(
-          (f: FormField) => f.id === key || f.label === key || f.name === key,
+          (f: FormField) => f.id === key || f.label === key || f.name === key
         );
 
       // If no field found and key is numeric, try to find by order
@@ -230,7 +229,9 @@ export const FormFieldRenderer: React.FC<FormFieldRendererProps> = ({
             } else {
               const checkboxValue = value === "true";
               console.log(
-                `Converting checkbox ${field.id}: ${value} (${typeof value}) to ${checkboxValue}`,
+                `Converting checkbox ${
+                  field.id
+                }: ${value} (${typeof value}) to ${checkboxValue}`
               );
               result[field.id] = checkboxValue;
             }
@@ -288,7 +289,7 @@ export const FormFieldRenderer: React.FC<FormFieldRendererProps> = ({
 
   // Convert FormFieldValue back to string for legacy components
   const convertFromFormFieldValue = (
-    value: FormFieldValue,
+    value: FormFieldValue
   ): string | boolean => {
     if (typeof value === "string") {
       return value;
@@ -368,7 +369,7 @@ export const FormFieldRenderer: React.FC<FormFieldRendererProps> = ({
         "Updating field:",
         keyToUpdate,
         "with value:",
-        convertedValue,
+        convertedValue
       );
 
       const newFormValues = {

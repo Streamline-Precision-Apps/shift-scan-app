@@ -1,7 +1,7 @@
 "use client";
-import { SingleCombobox } from "@/components/ui/single-combobox";
-import { Label } from "@/components/ui/label";
-import type { ComboboxOption } from "@/components/ui/single-combobox";
+import { SingleCombobox } from "@/app/v1/components/ui/single-combobox";
+import { Label } from "@/app/v1/components/ui/label";
+import type { ComboboxOption } from "@/app/v1/components/ui/single-combobox";
 export interface Fields {
   id: string;
   formGroupingId: string;
@@ -67,7 +67,7 @@ export default function RenderSearchPersonField({
   value: string;
   handleFieldChange: (
     fieldId: string,
-    value: string | Date | string[] | object | boolean | number | null,
+    value: string | Date | string[] | object | boolean | number | null
   ) => void;
   formData: Record<string, unknown>;
   handleFieldTouch: (id: string) => void;
@@ -80,12 +80,12 @@ export default function RenderSearchPersonField({
     const selectedPeople: Person[] = Array.isArray(formData[field.id])
       ? (formData[field.id] as Person[])
       : formData[field.id]
-        ? [formData[field.id] as Person]
-        : [];
+      ? [formData[field.id] as Person]
+      : [];
 
     // Filter out already selected people from userOptions
     const filteredUserOptions = userOptions.filter(
-      (option) => !selectedPeople.some((p: Person) => p.id === option.value),
+      (option) => !selectedPeople.some((p: Person) => p.id === option.value)
     );
 
     const showError = field.required && selectedPeople.length === 0;
@@ -109,7 +109,7 @@ export default function RenderSearchPersonField({
             if (option) {
               // Check if person is already selected
               const isSelected = selectedPeople.some(
-                (p: Person) => p.id === option.value,
+                (p: Person) => p.id === option.value
               );
 
               if (!isSelected) {
@@ -146,11 +146,11 @@ export default function RenderSearchPersonField({
                   /* Larger X, bold, and better vertical alignment */
                   onClick={() => {
                     const updatedPeople = selectedPeople.filter(
-                      (_: Person, i: number) => i !== idx,
+                      (_: Person, i: number) => i !== idx
                     );
                     handleFieldChange(
                       field.id,
-                      updatedPeople.length ? updatedPeople : null,
+                      updatedPeople.length ? updatedPeople : null
                     );
                   }}
                   aria-label={`Remove ${person.name}`} /* Accessibility improvement */

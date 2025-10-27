@@ -2,7 +2,7 @@
 import prisma from "../lib/prisma.js";
 
 export async function getUserWithSettingsById(userId: string) {
-  return prisma.user.findUnique({
+  const user = await prisma.user.findUnique({
     where: { id: userId },
     select: {
       id: true,
@@ -30,4 +30,55 @@ export async function getUserWithSettingsById(userId: string) {
       UserSettings: true,
     },
   });
+
+  // Jobsites (for profitStore)
+  const jobsites = await prisma.jobsite.findMany({
+    select: {
+      id: true,
+      qrId: true,
+      name: true,
+      approvalStatus: true,
+      archiveDate: true,
+    },
+  });
+
+  // Equipment (for equipmentStore)
+  const equipments = await prisma.equipment.findMany({
+    select: {
+      id: true,
+      name: true,
+      qrId: true,
+      approvalStatus: true,
+      status: true,
+    },
+  });
+
+  // CostCodes (for costCodeStore)
+  const costCodes = await prisma.costCode.findMany({
+    select: {
+      name: true,
+      isActive: true,
+      code: true,
+      CCTags: {
+        select: {
+          id: true,
+          name: true,
+          description: true,
+          Jobsites: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  return {
+    user,
+    jobsites,
+    equipments,
+    costCodes,
+  };
 }

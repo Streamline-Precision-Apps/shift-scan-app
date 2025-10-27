@@ -7,6 +7,9 @@ import { EyeIcon, EyeOff } from "lucide-react";
 import { Capacitor } from "@capacitor/core";
 import { useTranslations } from "next-intl";
 import { useUserStore } from "../lib/store/userStore";
+import { useProfitStore } from "../lib/store/profitStore";
+import { useEquipmentStore } from "../lib/store/equipmentStore";
+import { useCostCodeStore } from "../lib/store/costCodeStore";
 
 export default function SignInPage() {
   const isNative = Capacitor.isNativePlatform();
@@ -45,6 +48,15 @@ export default function SignInPage() {
           if (dataJson.user) {
             useUserStore.getState().setUser(dataJson.user);
             redirectAfterAuth();
+          }
+          if (dataJson.jobsites) {
+            useProfitStore.getState().setJobsites(dataJson.jobsites);
+          }
+          if (dataJson.equipments) {
+            useEquipmentStore.getState().setEquipments(dataJson.equipments);
+          }
+          if (dataJson.costCodes) {
+            useCostCodeStore.getState().setCostCodes(dataJson.costCodes);
           }
         })
         .catch(() => {});
@@ -96,6 +108,15 @@ export default function SignInPage() {
         const dataJson = await response.json();
         if (dataJson.user) {
           useUserStore.getState().setUser(dataJson.user);
+        }
+        if (dataJson.jobsites) {
+          useProfitStore.getState().setJobsites(dataJson.jobsites);
+        }
+        if (dataJson.equipments) {
+          useEquipmentStore.getState().setEquipments(dataJson.equipments);
+        }
+        if (dataJson.costCodes) {
+          useCostCodeStore.getState().setCostCodes(dataJson.costCodes);
         }
 
         redirectAfterAuth();

@@ -1,20 +1,18 @@
-import { Label } from "@/components/ui/label";
-
+import { Label } from "@/app/v1/components/ui/label";
 import { useState } from "react";
-import { SingleCombobox } from "@/components/ui/single-combobox";
-import { FormIndividualTemplate } from "@/app/(routes)/admins/forms/[id]/_component/hooks/types";
-import RenderCheckboxField from "@/app/(routes)/admins/forms/_components/RenderFields/RenderCheckboxField";
-import RenderDateField from "@/app/(routes)/admins/forms/_components/RenderFields/RenderDateField";
-import RenderDropdownField from "@/app/(routes)/admins/forms/_components/RenderFields/RenderDropdownField";
-import RenderInputField from "@/app/(routes)/admins/forms/_components/RenderFields/RenderInputField";
-import RenderMultiselectField from "@/app/(routes)/admins/forms/_components/RenderFields/RenderMultiselectField";
-import RenderNumberField from "@/app/(routes)/admins/forms/_components/RenderFields/RenderNumberField";
-import RenderRadioField from "@/app/(routes)/admins/forms/_components/RenderFields/RenderRadioField";
+import { SingleCombobox } from "@/app/v1/components/ui/single-combobox";
 import RenderSearchPersonField, { Fields } from "./RenderSearchPersonField";
-import RenderTextArea from "@/app/(routes)/admins/forms/_components/RenderFields/RenderTextAreaField";
 import RenderSearchAssetField from "./RenderSearchAssetField";
 import RenderTimeField from "./RenderTimeField";
-import { c } from "framer-motion/dist/types.d-Cjd591yU";
+import { FormIndividualTemplate } from "../../../admins/forms/[id]/_component/hooks/types";
+import RenderInputField from "../../../admins/forms/_components/RenderFields/RenderInputField";
+import RenderTextArea from "../../../admins/forms/_components/RenderFields/RenderTextAreaField";
+import RenderNumberField from "../../../admins/forms/_components/RenderFields/RenderNumberField";
+import RenderDateField from "../../../admins/forms/_components/RenderFields/RenderDateField";
+import RenderDropdownField from "../../../admins/forms/_components/RenderFields/RenderDropdownField";
+import RenderRadioField from "../../../admins/forms/_components/RenderFields/RenderRadioField";
+import RenderCheckboxField from "../../../admins/forms/_components/RenderFields/RenderCheckboxField";
+import RenderMultiselectField from "../../../admins/forms/_components/RenderFields/RenderMultiselectField";
 
 // Define a FormFieldValue type to represent all possible field values
 type FormFieldValue =
@@ -47,7 +45,7 @@ export default function RenderFields({
   userOptions: { value: string; label: string }[];
   submittedBy: { id: string; firstName: string; lastName: string } | null;
   setSubmittedBy: (
-    user: { id: string; firstName: string; lastName: string } | null,
+    user: { id: string; firstName: string; lastName: string } | null
   ) => void;
   submittedByTouched: boolean;
   formData: Record<string, FormFieldValue>;
@@ -61,7 +59,7 @@ export default function RenderFields({
   useNativeInput?: boolean;
 }) {
   const [touchedFields, setTouchedFields] = useState<Record<string, boolean>>(
-    {},
+    {}
   );
 
   const handleFieldTouch = (fieldId: string) => {
@@ -81,7 +79,7 @@ export default function RenderFields({
   // Helper function to get correctly typed value based on field type
   const getTypedValue = (
     field: Fields,
-    rawValue: FormFieldValue,
+    rawValue: FormFieldValue
   ): FormFieldValue => {
     if (rawValue === null || rawValue === undefined) {
       switch (field.type) {
@@ -386,7 +384,7 @@ export default function RenderFields({
                                 | object
                                 | boolean
                                 | number
-                                | null,
+                                | null
                             ) => {
                               handleFieldChange(id, val);
                             }
@@ -417,7 +415,7 @@ export default function RenderFields({
                                 | object
                                 | boolean
                                 | number
-                                | null,
+                                | null
                             ) => {
                               handleFieldChange(id, val);
                             }

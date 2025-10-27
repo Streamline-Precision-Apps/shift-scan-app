@@ -171,10 +171,14 @@ export default function FormSelection({
     if (createLoading) return;
     setCreateLoading(true);
     try {
+      const token = localStorage.getItem("token");
       const url = process.env.NEXT_PUBLIC_API_URL || `http://localhost:3001`;
       const res = await fetch(`${url}/api/v1/forms/submission`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({
           formTemplateId: selectedForm,
           userId: userId,
@@ -186,7 +190,7 @@ export default function FormSelection({
         return;
       }
       router.push(
-        `/hamburger/inbox/formSubmission/${selectedForm}?submissionId=${submission.id}&status=DRAFT`
+        `/v1/hamburger/inbox/formSubmission/${selectedForm}?submissionId=${submission.id}&status=DRAFT`
       );
     } catch (error) {
       setCreateLoading(false);
@@ -344,7 +348,7 @@ export default function FormSelection({
                                 }
                                 onClick={() => {
                                   router.push(
-                                    `/hamburger/inbox/formSubmission/${form.formTemplateId}?submissionId=${form.id}&status=${form.status}`
+                                    `/v1/hamburger/inbox/formSubmission/${form.formTemplateId}?submissionId=${form.id}&status=${form.status}`
                                   );
                                 }}
                                 disabled={isLoading}

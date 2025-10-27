@@ -1,6 +1,6 @@
 "use client";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/app/v1/components/ui/checkbox";
+import { Label } from "@/app/v1/components/ui/label";
 import { useEffect } from "react";
 
 export default function RenderCheckboxField({
@@ -41,7 +41,11 @@ export default function RenderCheckboxField({
           id={`checkbox-${field.id}`}
           onBlur={() => handleFieldTouch(field.id)}
           disabled={disabled}
-          className={`${useNativeInput ? "w-8 h-8 data-[state=checked]:bg-green-500" : "h-4 w-4"} `}
+          className={`${
+            useNativeInput
+              ? "w-8 h-8 data-[state=checked]:bg-green-500"
+              : "h-4 w-4"
+          } `}
         />
         <Label
           className={`${useNativeInput ? "text-base" : "text-sm font-medium"} `}

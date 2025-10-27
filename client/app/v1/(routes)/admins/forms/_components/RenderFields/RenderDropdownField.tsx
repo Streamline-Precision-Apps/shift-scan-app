@@ -5,7 +5,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/app/v1/components/ui/select";
 
 export default function RenderDropdownField({
   field,
@@ -41,7 +41,7 @@ export default function RenderDropdownField({
         {field.label}{" "}
         {field.required && <span className="text-red-500">*</span>}
       </label>
-      
+
       {useNativeInput ? (
         // Native select element
         <select
@@ -84,7 +84,7 @@ export default function RenderDropdownField({
           </SelectContent>
         </Select>
       )}
-      
+
       {error && touchedFields[field.id] && (
         <p className="text-xs text-red-500 mt-1">{error}</p>
       )}

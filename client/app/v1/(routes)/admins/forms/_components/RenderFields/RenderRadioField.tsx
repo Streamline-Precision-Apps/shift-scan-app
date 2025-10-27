@@ -1,6 +1,6 @@
 "use client";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/app/v1/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/app/v1/components/ui/radio-group";
 
 export default function RenderRadioField({
   field,
@@ -55,7 +55,11 @@ export default function RenderRadioField({
             />
 
             <span
-              className={`${useNativeInput ? "text-sm max-w-[200px] break-words" : "text-sm font-medium"} `}
+              className={`${
+                useNativeInput
+                  ? "text-sm max-w-[200px] break-words"
+                  : "text-sm font-medium"
+              } `}
             >
               {opt.value}
             </span>

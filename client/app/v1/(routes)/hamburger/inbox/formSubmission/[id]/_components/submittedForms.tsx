@@ -1,15 +1,15 @@
 "use client";
-import { Buttons } from "@/components/(reusable)/buttons";
-import { Contents } from "@/components/(reusable)/contents";
-import { FormFieldRenderer } from "@/app/(routes)/hamburger/inbox/_components/FormFieldRenderer";
+import { Buttons } from "@/app/v1/components/(reusable)/buttons";
+import { Contents } from "@/app/v1/components/(reusable)/contents";
+
 import { useEffect, useState } from "react";
-import { deleteFormSubmission, savePending } from "@/actions/hamburgerActions";
-import { Titles } from "@/components/(reusable)/titles";
+
+import { Titles } from "@/app/v1/components/(reusable)/titles";
 import { useRouter } from "next/navigation";
-import { Images } from "@/components/(reusable)/images";
+import { Images } from "@/app/v1/components/(reusable)/images";
 import { format } from "date-fns";
-import { useAutoSave } from "@/hooks/(inbox)/useAutoSave";
-import { TitleBoxes } from "@/components/(reusable)/titleBoxes";
+
+import { TitleBoxes } from "@/app/v1/components/(reusable)/titleBoxes";
 import { useTranslations } from "next-intl";
 import {
   AlertDialog,
@@ -20,7 +20,13 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+} from "@/app/v1/components/ui/alert-dialog";
+import { FormFieldRenderer } from "../../../_components/FormFieldRenderer";
+import {
+  deleteFormSubmission,
+  savePending,
+} from "@/app/lib/actions/hamburgerActions";
+import { useAutoSave } from "@/app/lib/hooks/useAutoSave";
 
 interface FormField {
   id: string;
@@ -86,7 +92,7 @@ export default function SubmittedForms({
 
   // Convert mixed values to strings for API
   const convertValuesToString = (
-    values: FormValues,
+    values: FormValues
   ): Record<string, string> => {
     const stringValues: Record<string, string> = {};
     Object.entries(values).forEach(([key, value]) => {
@@ -120,7 +126,7 @@ export default function SubmittedForms({
           userId,
           formData.formType,
           submissionId ? submissionId : undefined,
-          title,
+          title
         );
       } catch (error) {
         console.error("Error saving draft:", error);
@@ -170,7 +176,7 @@ export default function SubmittedForms({
       <div className="flex flex-col h-full bg-white rounded-lg">
         {/* Header */}
         <TitleBoxes
-          className="h-20 border-b-2 pb-2 border-neutral-100 flex-shrink-0 rounded-lg sticky top-0 z-10 bg-white"
+          className="h-20 border-b-2 pb-2 border-neutral-100 shrink-0 rounded-lg sticky top-0 z-10 bg-white"
           onClick={() => {
             router.back();
           }}
@@ -200,7 +206,9 @@ export default function SubmittedForms({
             <div className="py-4 px-1 flex flex-col">
               {/* Submission Details Card */}
               <div
-                className={`bg-white rounded-lg shadow-sm border border-gray-100 p-4 ${formData.isSignatureRequired ? "mb-4" : "mb-40"}`}
+                className={`bg-white rounded-lg shadow-sm border border-gray-100 p-4 ${
+                  formData.isSignatureRequired ? "mb-4" : "mb-40"
+                }`}
               >
                 {/* Status indicator */}
                 <div className="mb-4">
@@ -267,7 +275,7 @@ export default function SubmittedForms({
 
         {/* Footer */}
         {submissionStatus === "PENDING" && (
-          <div className="w-full h-16 flex gap-x-4 flex-shrink-0 rounded-lg sticky bottom-0 z-10 bg-white border-t p-4">
+          <div className="w-full h-16 flex gap-x-4 shrink-0 rounded-lg sticky bottom-0 z-10 bg-white border-t p-4">
             <Buttons
               background={"red"}
               type="button"
@@ -286,7 +294,7 @@ export default function SubmittedForms({
         onOpenChange={setDeleteRequestModal}
       >
         <AlertDialogContent className="w-[90%] bg-white rounded-xl max-w-md mx-auto">
-          <AlertDialogHeader className="flex-grow flex justify-center items-center">
+          <AlertDialogHeader className="grow flex justify-center items-center">
             <AlertDialogTitle className="text-lg font-medium text-gray-700 text-center">
               {t("AreYouSureYouWantToDeleteThisRequest")}
             </AlertDialogTitle>

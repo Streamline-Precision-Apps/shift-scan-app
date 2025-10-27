@@ -1,22 +1,24 @@
 "use client";
 import { FormEvent, use, useEffect, useState, useMemo } from "react";
-import Spinner from "@/components/(animations)/spinner";
+import Spinner from "@/app/v1/components/(animations)/spinner";
 import { useRouter, useSearchParams } from "next/navigation";
 import FormDraft from "./_components/formDraft";
 import ManagerFormApproval from "./_components/managerFormApproval";
 import SubmittedForms from "./_components/submittedForms";
 import ManagerFormEditApproval from "./_components/managerFormEdit";
-import { saveDraftToPending } from "@/actions/hamburgerActions";
-import { useSession } from "next-auth/react";
-import { Bases } from "@/components/(reusable)/bases";
-import { Contents } from "@/components/(reusable)/contents";
-import { Grids } from "@/components/(reusable)/grids";
-import { Holds } from "@/components/(reusable)/holds";
-import { TitleBoxes } from "@/components/(reusable)/titleBoxes";
+
+import { Bases } from "@/app/v1/components/(reusable)/bases";
+import { Contents } from "@/app/v1/components/(reusable)/contents";
+import { Grids } from "@/app/v1/components/(reusable)/grids";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
+import { TitleBoxes } from "@/app/v1/components/(reusable)/titleBoxes";
 import SubmittedFormsApproval from "./_components/SubmittedFormsApproval";
-import { Titles } from "@/components/(reusable)/titles";
+import { Titles } from "@/app/v1/components/(reusable)/titles";
 import { useTranslations } from "next-intl";
-import type { FormIndividualTemplate } from "@/app/(routes)/admins/forms/[id]/_component/hooks/types";
+import { FormIndividualTemplate } from "@/app/v1/(routes)/admins/forms/[id]/_component/hooks/types";
+import { useSession } from "@/app/lib/context/sessionContext";
+import { useUserStore } from "@/app/lib/store/userStore";
+import { saveDraftToPending } from "@/app/lib/actions/hamburgerActions";
 
 // Define FormFieldValue type to match RenderFields expectations
 type FormFieldValue =
@@ -115,7 +117,7 @@ export default function DynamicForm({
   const [formData, setFormData] = useState<FormIndividualTemplate | null>(null);
   const [formTitle, setFormTitle] = useState<string>("");
   const [formValues, setFormValues] = useState<Record<string, FormFieldValue>>(
-    {},
+    {}
   );
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -125,8 +127,8 @@ export default function DynamicForm({
     useState<ManagerFormApprovalSchema | null>(null);
 
   // Get user that is logged in
-  const { data: session } = useSession();
-  const userId = session?.user.id;
+  const { user } = useUserStore();
+  const userId = user?.id;
   const router = useRouter();
 
   // Determine which API endpoints to fetch based on the current state
@@ -191,14 +193,14 @@ export default function DynamicForm({
         for (const response of responses) {
           if (!response.ok) {
             throw new Error(
-              `API request failed with status ${response.status}`,
+              `API request failed with status ${response.status}`
             );
           }
         }
 
         // Parse all responses in parallel
         const [formData, ...otherData] = await Promise.all(
-          responses.map((res) => res.json()),
+          responses.map((res) => res.json())
         );
 
         // Set form data first
@@ -228,7 +230,7 @@ export default function DynamicForm({
           const legacyTemplate = convertToLegacyFormTemplate(formData);
           const convertedValues = convertFormValuesToIdBased(
             submissionData.data,
-            legacyTemplate,
+            legacyTemplate
           );
 
           // Update all related state at once to minimize re-renders
@@ -238,7 +240,7 @@ export default function DynamicForm({
               (submissionData.user?.firstName && submissionData.user?.lastName
                 ? `${submissionData.user.firstName} ${submissionData.user.lastName}`
                 : "") ||
-              "",
+              ""
           );
           setSignature(submissionData.User?.signature || null);
           setSubmittedForm(submissionData.submittedAt || "");
@@ -261,7 +263,7 @@ export default function DynamicForm({
 
   // Legacy method for backward compatibility with existing components
   const updateFormValuesLegacy = (
-    newValues: Record<string, string | boolean>,
+    newValues: Record<string, string | boolean>
   ) => {
     setFormValues((prevValues) => {
       // Convert new values from potentially label-based keys to ID-based keys
@@ -280,7 +282,7 @@ export default function DynamicForm({
 
   // Convert FormFieldValue to string for legacy components
   const convertFormValuesToString = (
-    values: Record<string, FormFieldValue>,
+    values: Record<string, FormFieldValue>
   ): Record<string, string | boolean> => {
     const stringValues: Record<string, string | boolean> = {};
 
@@ -390,7 +392,7 @@ export default function DynamicForm({
 
   // Convert API response to FormTemplate for legacy components
   const convertToLegacyFormTemplate = (
-    template: FormIndividualTemplate | FormTemplate,
+    template: FormIndividualTemplate | FormTemplate
   ): FormTemplate => {
     // Check if the template is already in the correct format from the API
     if ((template as FormTemplate).groupings) {
@@ -426,9 +428,9 @@ export default function DynamicForm({
                   options:
                     field.Options?.map((opt: { value: string }) => opt.value) ||
                     undefined,
-                }),
+                })
               ) || [],
-          }),
+          })
         ) || [],
     };
   };
@@ -436,7 +438,7 @@ export default function DynamicForm({
   // Convert form values from label-based keys to ID-based keys
   const convertFormValuesToIdBased = (
     values: Record<string, FormFieldValue>,
-    template: FormTemplate,
+    template: FormTemplate
   ): Record<string, FormFieldValue> => {
     const result: Record<string, FormFieldValue> = {};
 
@@ -506,7 +508,7 @@ export default function DynamicForm({
         userId,
         formData.formType,
         submissionId,
-        formTitle,
+        formTitle
       );
 
       if (result && formData.isApprovalRequired) {

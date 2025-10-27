@@ -1,6 +1,6 @@
 "use client";
-import { SingleCombobox } from "@/components/ui/single-combobox";
-import { Label } from "@/components/ui/label";
+import { SingleCombobox } from "@/app/v1/components/ui/single-combobox";
+import { Label } from "@/app/v1/components/ui/label";
 export interface Fields {
   id: string;
   formGroupingId: string;
@@ -68,7 +68,7 @@ export default function RenderSearchAssetField({
   value: string;
   handleFieldChange: (
     fieldId: string,
-    value: string | Date | string[] | object | boolean | number | null,
+    value: string | Date | string[] | object | boolean | number | null
   ) => void;
   formData: Record<string, unknown>;
   handleFieldTouch: (fieldId: string) => void;
@@ -103,8 +103,8 @@ export default function RenderSearchAssetField({
     const selectedAssets: Asset[] = Array.isArray(formData[field.id])
       ? (formData[field.id] as Asset[])
       : formData[field.id]
-        ? [formData[field.id] as Asset]
-        : [];
+      ? [formData[field.id] as Asset]
+      : [];
 
     const showError = field.required && selectedAssets.length === 0;
 
@@ -127,7 +127,7 @@ export default function RenderSearchAssetField({
             if (option) {
               // Check if asset is already selected
               const isSelected = selectedAssets.some(
-                (a: Asset) => a.id === option.value,
+                (a: Asset) => a.id === option.value
               );
 
               if (!isSelected) {
@@ -160,11 +160,11 @@ export default function RenderSearchAssetField({
                   className="text-green-800 hover:text-green-900 text-2xl font-bold leading-none"
                   onClick={() => {
                     const updatedAssets = selectedAssets.filter(
-                      (_: Asset, i: number) => i !== idx,
+                      (_: Asset, i: number) => i !== idx
                     );
                     handleFieldChange(
                       field.id,
-                      updatedAssets.length ? updatedAssets : null,
+                      updatedAssets.length ? updatedAssets : null
                     );
                   }}
                   aria-label={`Remove ${asset.name}`}

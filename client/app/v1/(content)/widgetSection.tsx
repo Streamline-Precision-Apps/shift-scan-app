@@ -14,11 +14,17 @@ import { useUserStore } from "@/app/lib/store/userStore";
 import { usePayPeriodData } from "@/app/lib/hooks/usePayPeriodData";
 import Spinner from "../components/(animations)/spinner";
 import { Banners } from "../components/(reusable)/banners";
+import { useProfitStore } from "@/app/lib/store/profitStore";
+import { useEquipmentStore } from "@/app/lib/store/equipmentStore";
+import { useCostCodeStore } from "@/app/lib/store/costCodeStore";
 
 export default function WidgetSection() {
   const [loadingUi, setLoadingUi] = useState(true);
 
   const { user, setUser, setPayPeriodTimeSheets } = useUserStore();
+  const { setJobsites } = useProfitStore();
+  const { setEquipments } = useEquipmentStore();
+  const { setCostCodes } = useCostCodeStore();
   const router = useRouter();
   const [toggle, setToggle] = useState(true);
 
@@ -68,6 +74,9 @@ export default function WidgetSection() {
             if (res.ok) {
               const data = await res.json();
               if (data.user) setUser(data.user);
+              if (data.jobsites) setJobsites(data.jobsites);
+              if (data.equipments) setEquipments(data.equipments);
+              if (data.costCodes) setCostCodes(data.costCodes);
             }
           } catch (e) {
             // Optionally handle error

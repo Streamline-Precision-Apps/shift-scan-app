@@ -1,13 +1,13 @@
 "use client";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Button } from "@/app/v1/components/ui/button";
+import { Calendar } from "@/app/v1/components/ui/calendar";
+import { Input } from "@/app/v1/components/ui/input";
+import { Label } from "@/app/v1/components/ui/label";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from "@/app/v1/components/ui/popover";
 import { format } from "date-fns";
 
 export default function RenderDateField({
@@ -51,7 +51,7 @@ export default function RenderDateField({
               const [year, month, day] = e.target.value.split("-").map(Number);
               // Create date at noon UTC to avoid timezone shifts
               const utcDate = new Date(
-                Date.UTC(year, month - 1, day, 12, 0, 0),
+                Date.UTC(year, month - 1, day, 12, 0, 0)
               );
               // Use the ISO string from our UTC date
               handleFieldChange(field.id, utcDate.toISOString());
@@ -95,7 +95,7 @@ export default function RenderDateField({
 
                   // Create date at noon UTC to avoid timezone shifts
                   const utcDate = new Date(
-                    Date.UTC(year, month, day, 12, 0, 0),
+                    Date.UTC(year, month, day, 12, 0, 0)
                   );
 
                   // Use the ISO string from our UTC date

@@ -1,7 +1,7 @@
 "use client";
+import { cn } from "@/app/lib/utils/utils";
 import { cva, type VariantProps } from "class-variance-authority";
 import { TextareaHTMLAttributes, FC, ChangeEventHandler } from "react";
-import { cn } from "@/components/(reusable)/utils";
 
 const TextAreaVariants = cva(
   "items-center justify-center text-black text-lg rounded-xl ", //this applies to all variants

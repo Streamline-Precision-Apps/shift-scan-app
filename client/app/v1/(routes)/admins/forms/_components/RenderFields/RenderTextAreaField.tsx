@@ -1,6 +1,6 @@
 "use client";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/app/v1/components/ui/label";
+import { Textarea } from "@/app/v1/components/ui/textarea";
 
 export default function RenderTextArea({
   field,

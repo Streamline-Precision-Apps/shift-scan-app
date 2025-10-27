@@ -1,16 +1,19 @@
 "use client";
-import { FormFieldRenderer } from "@/app/(routes)/hamburger/inbox/_components/FormFieldRenderer";
+
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { updateFormApproval } from "@/actions/hamburgerActions";
+
 import { useRouter } from "next/navigation";
-import { TextAreas } from "@/components/(reusable)/textareas";
-import { Titles } from "@/components/(reusable)/titles";
-import { Contents } from "@/components/(reusable)/contents";
-import { Selects } from "@/components/(reusable)/selects";
-import { useAutoSave } from "@/hooks/(inbox)/useAutoSave";
+import { TextAreas } from "@/app/v1/components/(reusable)/textareas";
+import { Titles } from "@/app/v1/components/(reusable)/titles";
+import { Contents } from "@/app/v1/components/(reusable)/contents";
+import { Selects } from "@/app/v1/components/(reusable)/selects";
+
 import { format } from "date-fns";
-import { TitleBoxes } from "@/components/(reusable)/titleBoxes";
+import { TitleBoxes } from "@/app/v1/components/(reusable)/titleBoxes";
 import { useTranslations } from "next-intl";
+import { updateFormApproval } from "@/app/lib/actions/hamburgerActions";
+import { FormFieldRenderer } from "../../../_components/FormFieldRenderer";
+import { useAutoSave } from "@/app/lib/hooks/useAutoSave";
 
 interface FormField {
   id: string;
@@ -107,10 +110,10 @@ export default function ManagerFormEditApproval({
   const t = useTranslations("Hamburger-Inbox");
   const router = useRouter();
   const [comment, setComment] = useState<string>(
-    managerFormApproval?.Approvals?.[0]?.comment || "",
+    managerFormApproval?.Approvals?.[0]?.comment || ""
   );
   const [approvalStatus, setApprovalStatus] = useState<FormStatus>(
-    managerFormApproval?.status || FormStatus.PENDING,
+    managerFormApproval?.status || FormStatus.PENDING
   );
   // Handle comment change
   const handleCommentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -119,7 +122,7 @@ export default function ManagerFormEditApproval({
   };
   // Handle approval status change
   const handleApprovalStatusChange = (
-    e: React.ChangeEvent<HTMLSelectElement>,
+    e: React.ChangeEvent<HTMLSelectElement>
   ) => {
     const newStatus = e.target.value as FormStatus;
     setApprovalStatus(newStatus);
@@ -153,7 +156,7 @@ export default function ManagerFormEditApproval({
     <div className="h-full w-full bg-white flex flex-col rounded-lg ">
       <TitleBoxes
         onClick={() => router.back()}
-        className="h-16 border-b-2 pb-2 rounded-lg border-neutral-100 flex-shrink-0 sticky top-0 z-10 bg-white"
+        className="h-16 border-b-2 pb-2 rounded-lg border-neutral-100 shrink-0 sticky top-0 z-10 bg-white"
       >
         <div className="flex flex-col items-center">
           <Titles size={"h3"} className="text-center">
@@ -162,7 +165,7 @@ export default function ManagerFormEditApproval({
         </div>
       </TitleBoxes>
 
-      <div className="flex-grow flex flex-col overflow-y-auto no-scrollbar">
+      <div className="grow flex flex-col overflow-y-auto no-scrollbar">
         <Contents width={"section"}>
           <div className="h-full overflow-y-auto no-scrollbar py-4 px-1">
             {/* Form Details Card */}
@@ -185,14 +188,14 @@ export default function ManagerFormEditApproval({
                   {`${t("OriginallySubmitted")} ${format(
                     managerFormApproval?.submittedAt?.toString() ||
                       new Date().toISOString(),
-                    "M/dd/yy",
+                    "M/dd/yy"
                   )}`}
                 </p>
                 <p className="text-xs text-gray-500">
                   {`${t("LastEdited")} ${format(
                     managerFormApproval?.Approvals?.[0]?.updatedAt?.toString() ||
                       new Date().toISOString(),
-                    "M/dd/yy",
+                    "M/dd/yy"
                   )}`}
                 </p>
               </div>
@@ -252,7 +255,7 @@ export default function ManagerFormEditApproval({
                     value={comment}
                     onChange={handleCommentChange}
                     maxLength={40}
-                    className="w-full border border-gray-200 rounded-md p-2 min-h-[80px] resize-none"
+                    className="w-full border border-gray-200 rounded-md p-2 min-h-20 resize-none"
                   />
                   <span className="absolute right-2 bottom-2 px-2 py-1 bg-gray-50 rounded-md text-xs text-gray-500">
                     {comment.length} / 40
@@ -265,7 +268,7 @@ export default function ManagerFormEditApproval({
                   {`${t("ApprovalStatusLastUpdated")} ${format(
                     managerFormApproval?.updatedAt?.toString() ||
                       new Date().toISOString(),
-                    "M/dd/yy",
+                    "M/dd/yy"
                   )}`}
                 </p>
               </div>

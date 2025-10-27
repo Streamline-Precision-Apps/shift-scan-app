@@ -4,6 +4,9 @@ import { Popover, PopoverContent, PopoverTrigger } from "./components/popover";
 import { Capacitor } from "@capacitor/core";
 import { useEffect, useState } from "react";
 import { useUserStore } from "./lib/store/userStore";
+import { useProfitStore } from "./lib/store/profitStore";
+import { useEquipmentStore } from "./lib/store/equipmentStore";
+import { useCostCodeStore } from "./lib/store/costCodeStore";
 
 export default function Home() {
   const router = useRouter();
@@ -31,6 +34,15 @@ export default function Home() {
               const data = await response.json();
               if (data.user) {
                 useUserStore.getState().setUser(data.user);
+              }
+              if (data.jobsites) {
+                useProfitStore.getState().setJobsites(data.jobsites);
+              }
+              if (data.equipments) {
+                useEquipmentStore.getState().setEquipments(data.equipments);
+              }
+              if (data.costCodes) {
+                useCostCodeStore.getState().setCostCodes(data.costCodes);
               }
               if (useUserStore.getState().user?.accountSetup === false) {
                 router.replace("/signin/signup");

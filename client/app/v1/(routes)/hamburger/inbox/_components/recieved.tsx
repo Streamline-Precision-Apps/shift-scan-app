@@ -7,7 +7,6 @@ import { Holds } from "@/app/v1/components/(reusable)/holds";
 import { Selects } from "@/app/v1/components/(reusable)/selects";
 import { Texts } from "@/app/v1/components/(reusable)/texts";
 import { Titles } from "@/app/v1/components/(reusable)/titles";
-
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";

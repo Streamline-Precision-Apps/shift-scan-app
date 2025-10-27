@@ -1,17 +1,18 @@
 "use client";
-import { FormFieldRenderer } from "@/app/(routes)/hamburger/inbox/_components/FormFieldRenderer";
+
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { createFormApproval } from "@/actions/hamburgerActions";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
-import { Buttons } from "@/components/(reusable)/buttons";
-import { TextAreas } from "@/components/(reusable)/textareas";
-import { Titles } from "@/components/(reusable)/titles";
-import { Contents } from "@/components/(reusable)/contents";
+import { Buttons } from "@/app/v1/components/(reusable)/buttons";
+import { TextAreas } from "@/app/v1/components/(reusable)/textareas";
+import { Titles } from "@/app/v1/components/(reusable)/titles";
+import { Contents } from "@/app/v1/components/(reusable)/contents";
 import { format } from "date-fns";
-import { TitleBoxes } from "@/components/(reusable)/titleBoxes";
+import { TitleBoxes } from "@/app/v1/components/(reusable)/titleBoxes";
 import { useTranslations } from "next-intl";
-import { Images } from "@/components/(reusable)/images";
+import { Images } from "@/app/v1/components/(reusable)/images";
+import { createFormApproval } from "@/app/lib/actions/hamburgerActions";
+import { useUserStore } from "@/app/lib/store/userStore";
+import { FormFieldRenderer } from "../../../_components/FormFieldRenderer";
 
 interface FormField {
   id: string;
@@ -107,13 +108,13 @@ export default function ManagerFormApproval({
 }) {
   const t = useTranslations("Hamburger-Inbox");
   const router = useRouter();
-  const { data: session } = useSession();
-  const managerName = session?.user.id;
+  const { user } = useUserStore();
+  const managerName = user?.id;
   const [isSignatureShowing, setIsSignatureShowing] = useState<boolean>(false);
   const [managerSignature, setManagerSignature] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [comment, setComment] = useState<string>(
-    managerFormApproval?.Approvals?.[0]?.comment || "",
+    managerFormApproval?.Approvals?.[0]?.comment || ""
   );
   useEffect(() => {
     const fetchSignature = async () => {
@@ -140,7 +141,7 @@ export default function ManagerFormApproval({
 
   // Handle final approval or denial
   const handleApproveOrDeny = async (
-    approval: FormStatus.APPROVED | FormStatus.DENIED,
+    approval: FormStatus.APPROVED | FormStatus.DENIED
   ) => {
     if (!isSignatureShowing) {
       setErrorMessage(t("PleaseProvideASignatureBeforeApproving"));
@@ -171,7 +172,7 @@ export default function ManagerFormApproval({
     <div className="h-full w-full bg-white flex flex-col rounded-lg ">
       <TitleBoxes
         onClick={() => router.back()}
-        className="h-16 border-b-2 pb-2 rounded-lg border-neutral-100 flex-shrink-0 sticky top-0 z-10 bg-white"
+        className="h-16 border-b-2 pb-2 rounded-lg border-neutral-100 shrink-0 sticky top-0 z-10 bg-white"
       >
         <div className="flex flex-col items-center">
           <Titles size={"md"} className="text-center">
@@ -204,14 +205,14 @@ export default function ManagerFormApproval({
                   {`${t("OriginallySubmitted")} ${format(
                     managerFormApproval?.submittedAt?.toString() ||
                       new Date().toISOString(),
-                    "M/dd/yy",
+                    "M/dd/yy"
                   )}`}
                 </p>
                 <p className="text-xs text-gray-500">
                   {`${t("LastEdited")} ${format(
                     managerFormApproval?.Approvals?.[0]?.updatedAt?.toString() ||
                       new Date().toISOString(),
-                    "M/dd/yy",
+                    "M/dd/yy"
                   )}`}
                 </p>
               </div>
@@ -240,7 +241,7 @@ export default function ManagerFormApproval({
                     onChange={handleCommentChange}
                     maxLength={40}
                     rows={4}
-                    className="w-full border border-gray-200 rounded-md p-2 text-sm min-h-[80px] resize-none"
+                    className="w-full border border-gray-200 rounded-md p-2 text-sm min-h-20 resize-none"
                   />
                   <span className="absolute right-2 bottom-2 px-2 py-1 bg-gray-50 rounded-md text-xs text-gray-500">
                     {comment.length} / 40
@@ -298,7 +299,7 @@ export default function ManagerFormApproval({
           </div>
         </Contents>
       </div>
-      <div className="w-full h-20 flex px-2 gap-x-4 flex-shrink-0 sticky bottom-0 z-10 bg-white border-t rounded-lg">
+      <div className="w-full h-20 flex px-2 gap-x-4 shrink-0 sticky bottom-0 z-10 bg-white border-t rounded-lg">
         <div className="flex gap-4 w-full items-center justify-center p-2">
           <Buttons
             background={

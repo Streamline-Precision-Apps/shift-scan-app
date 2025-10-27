@@ -1,6 +1,6 @@
 import * as React from "react";
 import { ChevronsUpDownIcon, CheckIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/app/v1/components/ui/button";
 import {
   Command,
   CommandEmpty,
@@ -8,12 +8,12 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@/components/ui/command";
+} from "@/app/v1/components/ui/command";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from "@/app/v1/components/ui/popover";
 
 export interface ComboboxOption {
   value: string;
@@ -61,7 +61,7 @@ export function SingleCombobox({
             obj && typeof obj === "object"
               ? (obj as Record<string, unknown>)[k]
               : undefined,
-          option,
+          option
         );
       return (value ?? "")
         .toString()

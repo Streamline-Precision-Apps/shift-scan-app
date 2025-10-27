@@ -1,12 +1,13 @@
 "use client";
-import { FormFieldRenderer } from "@/app/(routes)/hamburger/inbox/_components/FormFieldRenderer";
+
 import { Dispatch, SetStateAction } from "react";
 import { useRouter } from "next/navigation";
-import { Titles } from "@/components/(reusable)/titles";
-import { Contents } from "@/components/(reusable)/contents";
+import { Titles } from "@/app/v1/components/(reusable)/titles";
+import { Contents } from "@/app/v1/components/(reusable)/contents";
 import { format } from "date-fns";
-import { TitleBoxes } from "@/components/(reusable)/titleBoxes";
+import { TitleBoxes } from "@/app/v1/components/(reusable)/titleBoxes";
 import { useTranslations } from "next-intl";
+import { FormFieldRenderer } from "../../../_components/FormFieldRenderer";
 
 interface FormField {
   id: string;
@@ -130,7 +131,7 @@ export default function SubmittedFormsApproval({
     <div className="flex flex-col h-full bg-white rounded-lg">
       {/* Header */}
       <TitleBoxes
-        className="h-20 border-b-2 pb-2 border-neutral-100 flex-shrink-0 sticky top-0 z-10 bg-white rounded-lg"
+        className="h-20 border-b-2 pb-2 border-neutral-100 shrink-0 sticky top-0 z-10 bg-white rounded-lg"
         onClick={() => router.back()}
       >
         <div className="flex flex-col items-ends pb-2 ">
@@ -166,14 +167,14 @@ export default function SubmittedFormsApproval({
                     <p className="text-xs italic text-gray-500">
                       {`${t("OriginallySubmitted")} ${
                         isValidDate(
-                          managerFormApproval?.Approvals[0]?.updatedAt?.toString(),
+                          managerFormApproval?.Approvals[0]?.updatedAt?.toString()
                         )
                           ? format(
                               new Date(
                                 managerFormApproval?.Approvals[0]?.updatedAt?.toString() ||
-                                  "",
+                                  ""
                               ),
-                              "M/dd/yy",
+                              "M/dd/yy"
                             )
                           : format(new Date(), "M/dd/yy")
                       }`}
@@ -209,7 +210,11 @@ export default function SubmittedFormsApproval({
 
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-medium text-gray-700">
-                        {`${status === FormStatus.APPROVED ? t("ApprovedBy") : t("DeniedBy")}`}
+                        {`${
+                          status === FormStatus.APPROVED
+                            ? t("ApprovedBy")
+                            : t("DeniedBy")
+                        }`}
                       </span>
                       <span className="text-sm text-gray-700">
                         {managerName ? managerName : "Admin"}
@@ -251,9 +256,9 @@ export default function SubmittedFormsApproval({
                     isValidDate(managerFormApproval?.submittedAt?.toString())
                       ? format(
                           new Date(
-                            managerFormApproval?.submittedAt?.toString() || "",
+                            managerFormApproval?.submittedAt?.toString() || ""
                           ),
-                          "M/dd/yy",
+                          "M/dd/yy"
                         )
                       : format(new Date(), "M/dd/yy")
                   }`}

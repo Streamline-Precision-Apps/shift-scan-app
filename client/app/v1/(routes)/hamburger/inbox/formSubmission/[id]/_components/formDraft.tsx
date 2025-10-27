@@ -1,13 +1,13 @@
 "use client";
 import { useEffect, useState, useCallback } from "react";
-import { FormFieldRenderer } from "@/app/(routes)/hamburger/inbox/_components/FormFieldRenderer";
+import { FormFieldRenderer } from "@/app/v1/(routes)/hamburger/inbox/_components/FormFieldRenderer";
 import { FormEvent } from "react";
-import { deleteFormSubmission, saveDraft } from "@/actions/hamburgerActions";
-import { Buttons } from "@/components/(reusable)/buttons";
-import { Contents } from "@/components/(reusable)/contents";
-import { Inputs } from "@/components/(reusable)/inputs";
-import { TitleBoxes } from "@/components/(reusable)/titleBoxes";
-import { Titles } from "@/components/(reusable)/titles";
+
+import { Buttons } from "@/app/v1/components/(reusable)/buttons";
+import { Contents } from "@/app/v1/components/(reusable)/contents";
+import { Inputs } from "@/app/v1/components/(reusable)/inputs";
+import { TitleBoxes } from "@/app/v1/components/(reusable)/titleBoxes";
+import { Titles } from "@/app/v1/components/(reusable)/titles";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import {
@@ -18,7 +18,11 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+} from "@/app/v1/components/ui/alert-dialog";
+import {
+  deleteFormSubmission,
+  saveDraft,
+} from "@/app/lib/actions/hamburgerActions";
 
 interface FormField {
   id: string;
@@ -125,7 +129,7 @@ export default function FormDraft({
           userId,
           formData.formType,
           submissionId,
-          title,
+          title
         );
       } catch (error) {
         console.error("Error saving draft:", error);
@@ -145,7 +149,7 @@ export default function FormDraft({
   //validation map function to required all fields that are required within form template
   const validateForm = (
     formValues: Record<string, string | boolean>,
-    formData: FormTemplate,
+    formData: FormTemplate
   ): boolean => {
     // Check signature requirement separately
     if (formData.isSignatureRequired && !showSignature) {
@@ -236,7 +240,7 @@ export default function FormDraft({
         className="h-full w-full bg-white flex flex-col rounded-lg "
       >
         <TitleBoxes
-          className="h-16 border-b-2 pb-2 rounded-lg border-neutral-100 flex-shrink-0 sticky top-0 z-10 bg-white"
+          className="h-16 border-b-2 pb-2 rounded-lg border-neutral-100 shrink-0 sticky top-0 z-10 bg-white"
           onClick={async () => {
             // Save draft before navigating back
             await saveFormData();
@@ -272,7 +276,9 @@ export default function FormDraft({
 
               {/* Form fields section */}
               <div
-                className={`bg-white rounded-lg shadow-sm border border-gray-100 p-4 ${formData.isSignatureRequired ? "mb-4" : "mb-40"}`}
+                className={`bg-white rounded-lg shadow-sm border border-gray-100 p-4 ${
+                  formData.isSignatureRequired ? "mb-4" : "mb-40"
+                }`}
               >
                 <div className="mb-3">
                   <h3 className="text-blue-600 font-semibold text-sm">
@@ -328,7 +334,7 @@ export default function FormDraft({
 
         {/* Action buttons */}
 
-        <div className="w-full h-20 flex px-2 gap-x-4 flex-shrink-0 sticky bottom-0 z-10 bg-white border-t rounded-lg">
+        <div className="w-full h-20 flex px-2 gap-x-4 shrink-0 sticky bottom-0 z-10 bg-white border-t rounded-lg">
           <Buttons
             type="button"
             background={"red"}
@@ -356,7 +362,7 @@ export default function FormDraft({
         onOpenChange={setDeleteRequestModal}
       >
         <AlertDialogContent className="w-[90%] bg-white rounded-xl max-w-md mx-auto">
-          <AlertDialogHeader className="flex-grow flex justify-center items-center">
+          <AlertDialogHeader className="grow flex justify-center items-center">
             <AlertDialogTitle className="text-lg font-medium text-gray-700 text-center">
               {t("AreYouSureYouWantToDeleteThisRequest")}
             </AlertDialogTitle>
