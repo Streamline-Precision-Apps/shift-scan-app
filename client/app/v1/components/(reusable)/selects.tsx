@@ -1,7 +1,7 @@
 "use client";
 import { cva, type VariantProps } from "class-variance-authority";
 import { SelectHTMLAttributes, FC, ChangeEventHandler } from "react";
-import { cn } from "@/components/(reusable)/utils";
+import { cn } from "@/app/lib/utils/utils";
 
 const SelectsVariants = cva("text-lg ", {
   variants: {

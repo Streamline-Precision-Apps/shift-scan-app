@@ -1,5 +1,5 @@
 
-!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="76bc9099-c9ab-57a9-a8cc-a07e2a57d8c8")}catch(e){}}();
+!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="d979405b-d012-506e-9ce5-0dac6e2fc569")}catch(e){}}();
 import { Router } from "express";
 import * as UserController from "../controllers/userController.js";
 import { verifyToken } from "../middleware/authMiddleware.js";
@@ -241,6 +241,54 @@ router.put("/:id", verifyToken, UserController.updateUser);
  *         description: User not found
  */
 router.delete("/:id", verifyToken, UserController.deleteUser);
+/**
+ * @swagger
+ * /api/user/settings:
+ *   put:
+ *     tags:
+ *       - Users
+ *     summary: Update user settings
+ *     description: Update the settings of an existing user (requires authentication)
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               userId:
+ *                 type: string
+ *               phoneNumber:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               emergencyContact:
+ *                 type: string
+ *               emergencyContactNumber:
+ *                 type: string
+ *               language:
+ *                 type: string
+ *               generalReminders:
+ *                 type: boolean
+ *               personalReminders:
+ *                 type: boolean
+ *               cameraAccess:
+ *                 type: boolean
+ *               locationAccess:
+ *                 type: boolean
+ *               cookiesAccess:
+ *                 type: boolean
+ *     responses:
+ *       200:
+ *         description: User settings updated successfully
+ *       401:
+ *         description: Unauthorized - invalid or missing bearer token
+ *       400:
+ *         description: Bad request
+ */
+router.put("/user/settings", verifyToken, UserController.updateSettings);
 export default router;
 //# sourceMappingURL=userRoutes.js.map
-//# debugId=76bc9099-c9ab-57a9-a8cc-a07e2a57d8c8
+//# debugId=d979405b-d012-506e-9ce5-0dac6e2fc569

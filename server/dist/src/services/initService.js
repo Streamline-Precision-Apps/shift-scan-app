@@ -1,6 +1,6 @@
 // server/src/services/initService.ts
 
-!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="4e4ff51f-57e0-5b1f-91c2-2986e700371a")}catch(e){}}();
+!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="ef4cd2e1-54a8-565a-b04a-35062590d4cb")}catch(e){}}();
 import prisma from "../lib/prisma.js";
 export async function getUserWithSettingsById(userId) {
     return prisma.user.findUnique({
@@ -19,36 +19,18 @@ export async function getUserWithSettingsById(userId) {
             mechanicView: true,
             permission: true,
             image: true,
-            // startDate: true,
             terminationDate: true,
             accountSetup: true,
             clockedIn: true,
             companyId: true,
-            // passwordResetTokenId: true,
-            // workTypeId: true,
             middleName: true,
             secondLastName: true,
             lastSeen: true,
             accountSetupToken: true,
             Contact: true,
-            // Equipment: true,
-            // FCMToken: true,
-            // FormApprovals: true,
-            // FormSubmissions: true,
-            // Jobsite: true,
-            // MaintenanceLogs: true,
-            // NotificationRead: true,
-            // NotificationResponse: true,
-            // PasswordResetTokens: true,
-            // TimeSheets: true,
-            // TimeSheetChanges: true,
-            // topicSubscriptions: true,
-            // Company: true,
-            UserSettings: true, // includes settings
-            // Crews: true,
-            // password: false // password is excluded by not listing it
+            UserSettings: true,
         },
     });
 }
 //# sourceMappingURL=initService.js.map
-//# debugId=4e4ff51f-57e0-5b1f-91c2-2986e700371a
+//# debugId=ef4cd2e1-54a8-565a-b04a-35062590d4cb

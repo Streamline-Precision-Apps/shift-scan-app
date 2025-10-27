@@ -94,7 +94,7 @@ const ResetPassword = ({
     try {
       const API_URL =
         process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
-      const res = await fetch(`${API_URL}/api/users/${userId}`, {
+      const res = await fetch(`${API_URL}/api/v1/users/${userId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

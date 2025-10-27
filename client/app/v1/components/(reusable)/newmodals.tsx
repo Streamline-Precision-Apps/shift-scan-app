@@ -1,10 +1,11 @@
 "use client";
 import { cva, type VariantProps } from "class-variance-authority";
 import { HTMLAttributes, FC } from "react";
-import { cn } from "@/components/(reusable)/utils";
+
 import ReactPortal from "./ReactPortal";
 import React, { useEffect } from "react";
 import { Bases } from "./bases";
+import { cn } from "@/app/lib/utils/utils";
 
 const NModalVariants = cva("", {
   variants: {
@@ -88,7 +89,7 @@ const NModals: FC<NModalProps> = ({
         <div
           onClick={(e) => e.stopPropagation()}
           className={cn(
-            NModalVariants({ background, position, size, className }),
+            NModalVariants({ background, position, size, className })
           )}
           {...props}
         >

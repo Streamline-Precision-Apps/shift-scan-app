@@ -88,9 +88,9 @@ export class UserController {
             const userData = req.body;
             // Convert string 'true'/'false' to boolean for accountSetup if present in body
             if (userData.accountSetup !== undefined) {
-                if (userData.accountSetup === 'true')
+                if (userData.accountSetup === "true")
                     userData.accountSetup = true;
-                else if (userData.accountSetup === 'false')
+                else if (userData.accountSetup === "false")
                     userData.accountSetup = false;
             }
             const updatedUser = await UserService.updateUser(id, userData);
@@ -146,12 +146,84 @@ export class UserController {
             });
         }
     }
+    // PUT /api/user/settings
+    static async updateSettings(req, res) {
+        try {
+            const { userId, ...settings } = req.body;
+            if (!userId) {
+                return res.status(400).json({
+                    success: false,
+                    error: "User ID is required",
+                    message: "Failed to update user settings",
+                });
+            }
+            // Update User email if provided
+            if (settings.email !== undefined) {
+                await UserService.updateUser(userId, { email: settings.email });
+            }
+            // Update Contacts info if provided
+            if (settings.phoneNumber !== undefined ||
+                settings.emergencyContact !== undefined ||
+                settings.emergencyContactNumber !== undefined) {
+                // Assume UserService.updateContact exists, otherwise implement as needed
+                if (UserService.updateContact) {
+                    await UserService.updateContact(userId, {
+                        phoneNumber: settings.phoneNumber,
+                        emergencyContact: settings.emergencyContact,
+                        emergencyContactNumber: settings.emergencyContactNumber,
+                    });
+                }
+            }
+            // Update UserSettings if any settings provided
+            const userSettingsFields = [
+                "language",
+                "generalReminders",
+                "personalReminders",
+                "cameraAccess",
+                "locationAccess",
+                "cookiesAccess",
+            ];
+            const hasSettings = userSettingsFields.some((key) => settings[key] !== undefined);
+            if (hasSettings && UserService.updateUserSettings) {
+                // Sanitize boolean values
+                const sanitizedSettings = { ...settings };
+                if (sanitizedSettings.cameraAccess !== undefined) {
+                    sanitizedSettings.cameraAccess = Boolean(sanitizedSettings.cameraAccess);
+                }
+                if (sanitizedSettings.locationAccess !== undefined) {
+                    sanitizedSettings.locationAccess = Boolean(sanitizedSettings.locationAccess);
+                }
+                if (sanitizedSettings.personalReminders !== undefined) {
+                    sanitizedSettings.personalReminders = Boolean(sanitizedSettings.personalReminders);
+                }
+                if (sanitizedSettings.generalReminders !== undefined) {
+                    sanitizedSettings.generalReminders = Boolean(sanitizedSettings.generalReminders);
+                }
+                if (sanitizedSettings.cookiesAccess !== undefined) {
+                    sanitizedSettings.cookiesAccess = Boolean(sanitizedSettings.cookiesAccess);
+                }
+                await UserService.updateUserSettings(userId, sanitizedSettings);
+            }
+            res.status(200).json({
+                success: true,
+                message: "User settings updated successfully",
+            });
+        }
+        catch (error) {
+            res.status(500).json({
+                success: false,
+                error: error instanceof Error ? error.message : "Unknown error",
+                message: "Failed to update user settings",
+            });
+        }
+    }
 }
 export const getUsers = UserController.getUsers;
 export const getUserById = UserController.getUserById;
 export const createUser = UserController.createUser;
 export const updateUser = UserController.updateUser;
 export const deleteUser = UserController.deleteUser;
-!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="9dfd0097-6615-5802-b6e0-c7c32a6af3ee")}catch(e){}}();
+export const updateSettings = UserController.updateSettings;
+!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="20e6fd3e-ca10-53ed-aa2d-59f857f2da6a")}catch(e){}}();
 //# sourceMappingURL=userController.js.map
-//# debugId=9dfd0097-6615-5802-b6e0-c7c32a6af3ee
+//# debugId=20e6fd3e-ca10-53ed-aa2d-59f857f2da6a

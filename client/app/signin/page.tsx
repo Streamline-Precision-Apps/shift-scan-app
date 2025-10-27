@@ -1,13 +1,15 @@
 "use client";
 
-import { use, useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { EyeIcon, EyeOff } from "lucide-react";
-import { isMobileOrTablet } from "../lib/utils/isMobileOrTablet";
+
+import { Capacitor } from "@capacitor/core";
 import { useTranslations } from "next-intl";
 import { useUserStore } from "../lib/store/userStore";
 
 export default function SignInPage() {
+  const isNative = Capacitor.isNativePlatform();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -19,9 +21,35 @@ export default function SignInPage() {
   // helper: returns true for phone/tablet devices
 
   const redirectAfterAuth = () => {
-    const target = isMobileOrTablet() ? "/v1" : "/dashboard";
+    const target = isNative ? "/v1" : "/dashboard";
     router.push(target);
   };
+
+  // Auto sign-in if token and userId are in localStorage
+  useEffect(() => {
+    const token =
+      typeof window !== "undefined" ? localStorage.getItem("token") : null;
+    const userId =
+      typeof window !== "undefined" ? localStorage.getItem("userId") : null;
+    if (token && userId) {
+      // Try to fetch user info and set user, then redirect
+      const url = process.env.NEXT_PUBLIC_API_URL || `http://localhost:3001`;
+      fetch(`${url}/api/v1/init`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ token, userId }),
+      })
+        .then((res) => res.json())
+        .then((dataJson) => {
+          if (dataJson.user) {
+            useUserStore.getState().setUser(dataJson.user);
+            redirectAfterAuth();
+          }
+        })
+        .catch(() => {});
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -12,40 +12,72 @@ import DisplayBanner from "./displayBanner";
 import DisplayBreakBanner from "./displayBreakBanner";
 import { useUserStore } from "@/app/lib/store/userStore";
 import { usePayPeriodData } from "@/app/lib/hooks/usePayPeriodData";
+import Spinner from "../components/(animations)/spinner";
+import { Banners } from "../components/(reusable)/banners";
 
 export default function WidgetSection() {
+  const [loadingUi, setLoadingUi] = useState(true);
+
   const { user, setUser, setPayPeriodTimeSheets } = useUserStore();
   const router = useRouter();
   const [toggle, setToggle] = useState(true);
 
-  // If no user, refetch from /api/v1/init
+  // If no user, try to load from localStorage 'user-store' first, then refetch from /api/v1/init if needed
   useEffect(() => {
     const fetchUser = async () => {
-      if (!user) {
-        try {
-          // Get token and userId from localStorage if available
-          let token = "";
-          let userId = undefined;
-          if (typeof window !== "undefined") {
-            token = localStorage.getItem("token") || "";
-            userId = localStorage.getItem("userId") || undefined;
-            // Fallback to cookie if token not in localStorage
+      try {
+        if (!user) {
+          let loadedFromStore = false;
+          console.log("No user in store, attempting to load from localStorage");
+          try {
+            if (typeof window !== "undefined") {
+              // Try to load user from 'user-store' in localStorage
+              const userStoreRaw = localStorage.getItem("user-store");
+              if (userStoreRaw) {
+                try {
+                  const userStoreObj = JSON.parse(userStoreRaw);
+                  if (
+                    userStoreObj &&
+                    userStoreObj.state &&
+                    userStoreObj.state.user
+                  ) {
+                    setUser(userStoreObj.state.user);
+                    loadedFromStore = true;
+                    setLoadingUi(false);
+                    return; // Don't fetch from API if found in localStorage
+                  }
+                } catch (err) {
+                  // Ignore JSON parse errors
+                }
+              }
+            }
+            // Get token and userId from localStorage if available
+            let token = "";
+            let userId = undefined;
+            if (typeof window !== "undefined") {
+              token = localStorage.getItem("token") || "";
+              userId = localStorage.getItem("userId") || undefined;
+            }
+            const url =
+              process.env.NEXT_PUBLIC_API_URL || `http://localhost:3001`;
+            const res = await fetch(`${url}/api/v1/init`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ token, userId }),
+            });
+            if (res.ok) {
+              const data = await res.json();
+              if (data.user) setUser(data.user);
+            }
+          } catch (e) {
+            // Optionally handle error
+            console.error("Error fetching user data:", e);
           }
-          const url =
-            process.env.NEXT_PUBLIC_API_URL || `http://localhost:3001`;
-
-          const res = await fetch(`${url}/api/v1/init`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ token, userId }),
-          });
-          if (res.ok) {
-            const data = await res.json();
-            if (data.user) setUser(data.user);
-          }
-        } catch (e) {
-          // Optionally handle error
         }
+      } catch (e) {
+        console.error("Error in fetchUser:", e);
+      } finally {
+        setLoadingUi(false);
       }
     };
     fetchUser();
@@ -88,6 +120,23 @@ export default function WidgetSection() {
       setPageView("");
     }
   }, [pageView, router, accountSetup, setPageView]);
+
+  if (loadingUi) {
+    // Match the main layout: BannerSection (row-start-2 row-end-4), MainContentSection (row-start-4 row-end-9)
+    return (
+      <>
+        <Holds className="row-start-2 row-end-4 bg-app-blue bg-opacity-20 w-full h-full justify-center items-center rounded-[10px] relative">
+          <Banners />
+        </Holds>
+        <Holds
+          background={"white"}
+          className="row-start-4 row-end-9 w-full h-full rounded-[10px] flex justify-center items-center"
+        >
+          <Spinner size={40} />
+        </Holds>
+      </>
+    );
+  }
 
   // Main render
   return (
@@ -132,7 +181,6 @@ function BannerSection({
     </Holds>
   );
 }
-
 function MainContentSection({
   toggle,
   pageView,

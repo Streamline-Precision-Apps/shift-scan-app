@@ -1,8 +1,11 @@
 
-!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="1e94baae-b188-570b-8f0b-3bfae076ccd7")}catch(e){}}();
+!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="46d7146c-26ad-526a-9277-85159f4ff538")}catch(e){}}();
 import { Router } from "express";
 import { initHandler } from "../controllers/initController.js";
 import { payPeriodSheetsHandler } from "../controllers/payPeriodController.js";
+import { verifyToken } from "../middleware/authMiddleware.js";
+import { createFormApproval, createFormSubmission, deleteFormSubmission, saveDraft, saveDraftToPending, savePending, updateFormApproval, } from "../controllers/formsController.js";
+import { UserController } from "../controllers/userController.js";
 const router = Router();
 // Define your init routes here
 /**
@@ -88,6 +91,301 @@ router.post("/init", initHandler);
  *         description: Server error
  */
 router.post("/pay-period-timesheets", payPeriodSheetsHandler);
+// Form submission
+router.post("/forms/submission", verifyToken, createFormSubmission);
+router.delete("/forms/submission/:id", verifyToken, deleteFormSubmission);
+// Drafts
+router.post("/forms/draft", verifyToken, saveDraft);
+router.post("/forms/draft-to-pending", verifyToken, saveDraftToPending);
+router.post("/forms/pending", verifyToken, savePending);
+// Approvals
+router.post("/forms/approval", verifyToken, createFormApproval);
+router.put("/forms/approval/update", verifyToken, updateFormApproval);
+/**
+ * @swagger
+ * /api/v1/user:
+ *   get:
+ *     tags:
+ *       - Users
+ *     summary: Get all users
+ *     description: Retrieve a list of all users (requires authentication)
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of users retrieved successfully
+ *       401:
+ *         description: Unauthorized - invalid or missing bearer token
+ */
+router.get("/user", UserController.getUsers);
+/**
+ * @swagger
+ * /api/v1/user/{id}:
+ *   get:
+ *     tags:
+ *       - Users
+ *     summary: Get user by ID
+ *     description: Retrieve a specific user by their ID (requires authentication)
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: User retrieved successfully
+ *       401:
+ *         description: Unauthorized - invalid or missing bearer token
+ *       404:
+ *         description: User not found
+ */
+router.get("/user/:id", verifyToken, UserController.getUserById);
+/**
+ * @swagger
+ * /api/v1/user:
+ *   post:
+ *     tags:
+ *       - Users
+ *     summary: Create a new user
+ *     description: Create a new user (requires authentication)
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - firstName
+ *               - lastName
+ *               - username
+ *               - password
+ *               - companyId
+ *               - truckView
+ *               - tascoView
+ *               - laborView
+ *               - mechanicView
+ *             properties:
+ *               firstName:
+ *                 type: string
+ *               lastName:
+ *                 type: string
+ *               username:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *               companyId:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *                 nullable: true
+ *               signature:
+ *                 type: string
+ *                 nullable: true
+ *               DOB:
+ *                 type: string
+ *                 format: date-time
+ *                 nullable: true
+ *               truckView:
+ *                 type: boolean
+ *               tascoView:
+ *                 type: boolean
+ *               laborView:
+ *                 type: boolean
+ *               mechanicView:
+ *                 type: boolean
+ *               permission:
+ *                 type: string
+ *                 enum: [USER, ADMIN, SUPERADMIN]
+ *               image:
+ *                 type: string
+ *                 nullable: true
+ *               startDate:
+ *                 type: string
+ *                 format: date-time
+ *                 nullable: true
+ *               terminationDate:
+ *                 type: string
+ *                 format: date-time
+ *                 nullable: true
+ *               workTypeId:
+ *                 type: string
+ *                 nullable: true
+ *               middleName:
+ *                 type: string
+ *                 nullable: true
+ *               secondLastName:
+ *                 type: string
+ *                 nullable: true
+ *     responses:
+ *       201:
+ *         description: User created successfully
+ *       401:
+ *         description: Unauthorized - invalid or missing bearer token
+ *       400:
+ *         description: Bad request
+ */
+router.post("/user", verifyToken, UserController.createUser);
+/**
+ * @swagger
+ * /api/v1/user/{id}:
+ *   put:
+ *     tags:
+ *       - Users
+ *     summary: Update user
+ *     description: Update an existing user (requires authentication). You must send fields to update in the request body.
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               firstName:
+ *                 type: string
+ *               lastName:
+ *                 type: string
+ *               username:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *               companyId:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *                 nullable: true
+ *               signature:
+ *                 type: string
+ *                 nullable: true
+ *               DOB:
+ *                 type: string
+ *                 format: date-time
+ *                 nullable: true
+ *               truckView:
+ *                 type: boolean
+ *               tascoView:
+ *                 type: boolean
+ *               laborView:
+ *                 type: boolean
+ *               mechanicView:
+ *                 type: boolean
+ *               permission:
+ *                 type: string
+ *                 enum: [USER, ADMIN, SUPERADMIN]
+ *               image:
+ *                 type: string
+ *                 nullable: true
+ *               startDate:
+ *                 type: string
+ *                 format: date-time
+ *                 nullable: true
+ *               terminationDate:
+ *                 type: string
+ *                 format: date-time
+ *                 nullable: true
+ *               workTypeId:
+ *                 type: string
+ *                 nullable: true
+ *               middleName:
+ *                 type: string
+ *                 nullable: true
+ *               secondLastName:
+ *                 type: string
+ *                 nullable: true
+ *     responses:
+ *       200:
+ *         description: User updated successfully
+ *       401:
+ *         description: Unauthorized - invalid or missing bearer token
+ *       404:
+ *         description: User not found
+ */
+router.put("/user/:id", verifyToken, UserController.updateUser);
+/**
+ * @swagger
+ * /api/v1/user/{id}:
+ *   delete:
+ *     tags:
+ *       - Users
+ *     summary: Delete user
+ *     description: Delete a user (requires authentication)
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: User deleted successfully
+ *       401:
+ *         description: Unauthorized - invalid or missing bearer token
+ *       404:
+ *         description: User not found
+ */
+router.delete("/user/:id", verifyToken, UserController.deleteUser);
+/**
+ * @swagger
+ * /api/v1/user/settings:
+ *   put:
+ *     tags:
+ *       - Users
+ *     summary: Update user settings
+ *     description: Update the settings of an existing user (requires authentication)
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               userId:
+ *                 type: string
+ *               phoneNumber:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               emergencyContact:
+ *                 type: string
+ *               emergencyContactNumber:
+ *                 type: string
+ *               language:
+ *                 type: string
+ *               generalReminders:
+ *                 type: boolean
+ *               personalReminders:
+ *                 type: boolean
+ *               cameraAccess:
+ *                 type: boolean
+ *               locationAccess:
+ *                 type: boolean
+ *               cookiesAccess:
+ *                 type: boolean
+ *     responses:
+ *       200:
+ *         description: User settings updated successfully
+ *       401:
+ *         description: Unauthorized - invalid or missing bearer token
+ *       400:
+ *         description: Bad request
+ */
+router.put("/user/settings", verifyToken, UserController.updateSettings);
 export default router;
 //# sourceMappingURL=initRoutes.js.map
-//# debugId=1e94baae-b188-570b-8f0b-3bfae076ccd7
+//# debugId=46d7146c-26ad-526a-9277-85159f4ff538

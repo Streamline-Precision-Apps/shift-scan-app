@@ -1,10 +1,9 @@
 export declare function getUserWithSettingsById(userId: string): Promise<{
     id: string;
-    companyId: string;
-    firstName: string;
-    lastName: string;
     username: string;
     email: string | null;
+    firstName: string;
+    lastName: string;
     signature: string | null;
     DOB: Date | null;
     truckView: boolean;
@@ -16,19 +15,30 @@ export declare function getUserWithSettingsById(userId: string): Promise<{
     terminationDate: Date | null;
     accountSetup: boolean;
     clockedIn: boolean;
+    companyId: string;
     middleName: string | null;
     secondLastName: string | null;
     lastSeen: Date | null;
     accountSetupToken: {
         id: string;
-        code: string;
         userId: string;
+        code: string;
         expiresAt: Date;
         used: boolean;
     } | null;
-    UserSettings: {
-        id: string;
+    Contact: {
         createdAt: Date;
+        id: string;
+        userId: string;
+        updatedAt: Date;
+        phoneNumber: string | null;
+        emergencyContact: string | null;
+        emergencyContactNumber: string | null;
+    } | null;
+    UserSettings: {
+        createdAt: Date;
+        id: string;
+        userId: string;
         language: string;
         generalReminders: boolean;
         personalReminders: boolean;
@@ -36,16 +46,6 @@ export declare function getUserWithSettingsById(userId: string): Promise<{
         locationAccess: boolean;
         cookiesAccess: boolean;
         lastUpdated: Date;
-        userId: string;
-    } | null;
-    Contact: {
-        id: string;
-        createdAt: Date;
-        updatedAt: Date;
-        phoneNumber: string | null;
-        emergencyContact: string | null;
-        emergencyContactNumber: string | null;
-        userId: string;
     } | null;
 } | null>;
 //# sourceMappingURL=initService.d.ts.map

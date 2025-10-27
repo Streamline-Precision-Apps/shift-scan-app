@@ -1,12 +1,12 @@
 "use client";
 
-import { updateUserSignature } from "@/actions/userActions";
-import { Buttons } from "@/components/(reusable)/buttons";
-import { Grids } from "@/components/(reusable)/grids";
-import { Holds } from "@/components/(reusable)/holds";
-import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { useRef, useState, useEffect, Dispatch, SetStateAction } from "react";
+import { Holds } from "../(reusable)/holds";
+import { Grids } from "../(reusable)/grids";
+import { Buttons } from "../(reusable)/buttons";
+import { useSession } from "@/app/lib/context/sessionContext";
+import { updateUserSignature } from "@/app/lib/actions/userActions";
 
 type SignatureProps = {
   setBase64String: Dispatch<SetStateAction<string | null>>;
@@ -57,12 +57,12 @@ export default function SignatureSetUpModal({
     };
   }, []);
 
-  const { data: session } = useSession();
-  if (!session) {
+  const { user } = useSession();
+  if (!user) {
     return null;
   }
 
-  const employee = session?.user?.id;
+  const employee = user?.id;
 
   // 🔹 Convert touch coordinates to match mouse event behavior
   const getTouchPos = (canvas: HTMLCanvasElement, touchEvent: TouchEvent) => {

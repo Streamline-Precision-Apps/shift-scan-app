@@ -1,0 +1,339 @@
+"use client";
+
+// Utility to get API URL
+function getApiUrl() {
+  return process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+}
+
+// Utility to get token from localStorage
+function getToken() {
+  if (typeof window !== "undefined") {
+    return localStorage.getItem("token") || "";
+  }
+  return "";
+}
+
+// Helper for API requests
+async function apiRequest(path: string, method: string, body: any) {
+  const url = `${getApiUrl()}${path}`;
+  const token = getToken();
+  const res = await fetch(url, {
+    method,
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
+}
+
+type Options = {
+  label: string;
+  code: string;
+};
+export async function getCookies({ cookieName }: { cookieName: string }) {
+  try {
+    const res = await apiRequest(
+      `/api/cookies?name=${encodeURIComponent(cookieName)}`,
+      "GET",
+      null
+    );
+    return res.value;
+  } catch (error) {
+    console.error("Failed to get cookie:", error);
+    return null;
+  }
+}
+/*-----------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------
+LOCALE COOKIES
+- setting the cookie for locale to either es or en for spanish or english in app
+-------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------
+*/
+export async function setLocale(isSpanish: boolean) {
+  try {
+    await apiRequest("/api/cookies", "POST", {
+      name: "locale",
+      value: isSpanish ? "es" : "en",
+      options: {
+        path: "/",
+        maxAge: 60 * 60 * 24 * 365,
+      },
+    });
+  } catch (error) {
+    console.error("Failed to set locale cookie:", error);
+  }
+}
+
+/*-----------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------
+
+Dashboard Access COOKIES
+- setting the cookie for workRole to either mechanic, tasco, truck, general
+- deleting the cookie for workRole to either mechanic, tasco, truck, general
+- setting the cookie for dashboard access to true or false
+- cookie for setting job site access
+- cookie for setting cost code access
+- cookie for setting time sheet access
+
+-------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------
+*/
+// setting the cookie for workRole to either mechanic, tasco, truck, general
+export async function setWorkRole(workRole: string) {
+  if (
+    workRole !== "mechanic" &&
+    workRole !== "tasco" &&
+    workRole !== "truck" &&
+    workRole !== "general" &&
+    workRole !== ""
+  ) {
+    throw new Error("Not Authorized - Invalid Work Role");
+  }
+  try {
+    await apiRequest("/api/cookies", "POST", {
+      name: "workRole",
+      value: workRole,
+      options: {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        path: "/",
+        expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      },
+    });
+  } catch (error) {
+    console.error("Failed to set locale cookie:", error);
+  }
+}
+
+export async function setLaborType(laborType: string) {
+  const VALID_LABOR_TYPES = [
+    "truckDriver",
+    "truckEquipmentOperator",
+    "truckLabor",
+    "mechanic",
+    "general",
+    "tascoAbcdLabor",
+    "tascoAbcdEquipment",
+    "tascoEEquipment",
+    "",
+  ];
+  if (!VALID_LABOR_TYPES.includes(laborType)) {
+    throw new Error("Not Authorized - Invalid labor type");
+  }
+  try {
+    await apiRequest("/api/cookies", "POST", {
+      name: "laborType",
+      value: laborType === "tascoEEquipment" ? "" : laborType,
+      options: {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        path: "/",
+        expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      },
+    });
+  } catch (error) {
+    console.error("Failed to set locale cookie:", error);
+  }
+}
+
+// deletes the cookie for workRole to either mechanic, tasco, truck, general
+export async function RemoveWorkRole() {
+  try {
+    await apiRequest(`/api/cookies?name=workRole`, "DELETE", null);
+  } catch (error) {
+    console.error("Failed to delete locale cookie:", error);
+  }
+}
+
+// idea of this cookie is to set it to true if the user has access to the dashboard and false if not
+export async function setCurrentPageView(currentPageView: string) {
+  try {
+    await apiRequest("/api/cookies", "POST", {
+      name: "currentPageView",
+      value: currentPageView,
+      options: {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        path: "/",
+        expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      },
+    });
+  } catch (error) {
+    console.error("Failed to set locale cookie:", error);
+  }
+}
+
+export async function setProfilePicture(profilePicture: string) {
+  try {
+    await apiRequest("/api/cookies", "POST", {
+      name: "profilePicture",
+      value: profilePicture,
+      options: {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        path: "/",
+        expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      },
+    });
+  } catch (error) {
+    console.error("Failed to set locale cookie:", error);
+  }
+}
+
+// cookie for setting job site access
+export async function setJobSite(jobSite: Options | null) {
+  try {
+    await apiRequest("/api/cookies", "POST", {
+      name: "jobSite",
+      value: `${jobSite?.code}|${jobSite?.label}`,
+      options: {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        path: "/",
+        expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      },
+    });
+  } catch (error) {
+    console.error("Failed to set locale cookie:", error);
+  }
+}
+
+export async function setCostCode(costCode: string) {
+  try {
+    await apiRequest("/api/cookies", "POST", {
+      name: "costCode",
+      value: costCode,
+      options: {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        path: "/",
+        expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      },
+    });
+  } catch (error) {
+    console.error("Failed to set locale cookie:", error);
+  }
+}
+
+export async function setEquipment(equipment: string) {
+  try {
+    await apiRequest("/api/cookies", "POST", {
+      name: "equipment",
+      value: equipment,
+      options: {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        path: "/",
+        expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      },
+    });
+  } catch (error) {
+    console.error("Failed to set locale cookie:", error);
+  }
+}
+export async function setTruck(truck: string) {
+  try {
+    await apiRequest("/api/cookies", "POST", {
+      name: "truckId",
+      value: truck,
+      options: {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        path: "/",
+        expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      },
+    });
+  } catch (error) {
+    console.error("Failed to set locale cookie:", error);
+  }
+}
+
+export async function setMechanicProjectID(mechanicProjectID: string) {
+  try {
+    await apiRequest("/api/cookies", "POST", {
+      name: "mechanicProjectID",
+      value: mechanicProjectID,
+      options: {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        path: "/",
+        expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      },
+    });
+  } catch (error) {
+    console.error("Failed to set locale cookie:", error);
+  }
+}
+
+export async function setStartingMileage(startingMileage: string) {
+  try {
+    await apiRequest("/api/cookies", "POST", {
+      name: "startingMileage",
+      value: startingMileage,
+      options: {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        path: "/",
+        expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      },
+    });
+  } catch (error) {
+    console.error("Failed to set locale cookie:", error);
+  }
+}
+
+export async function setPrevTimeSheet(timeSheetId: string) {
+  try {
+    await apiRequest("/api/cookies", "POST", {
+      name: "timeSheetId",
+      value: timeSheetId,
+      options: {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        path: "/",
+        expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      },
+    });
+  } catch (error) {
+    console.error("Failed to set locale cookie:", error);
+  }
+}
+
+/*-----------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------
+
+ADMIN ACCESS COOKIES
+
+-------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------
+*/
+// a function to set the cookie for admin access
+export async function setAdminAccess() {
+  try {
+    await apiRequest("/api/cookies", "POST", {
+      name: "adminAccess",
+      value: "true",
+      options: {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        path: "/",
+        expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      },
+    });
+  } catch (error) {
+    console.error("Failed to set locale cookie:", error);
+  }
+}
+
+// a function to remove the cookie for admin access
+export async function RemoveAdminAccess() {
+  try {
+    await apiRequest(`/api/cookies?name=adminAccess`, "DELETE", null);
+  } catch (error) {
+    console.error("Failed to delete locale cookie:", error);
+  }
+}

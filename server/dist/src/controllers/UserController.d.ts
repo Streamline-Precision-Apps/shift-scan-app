@@ -29,11 +29,13 @@ export declare class UserController {
     static createUser(req: CreateUserRequest, res: Response): Promise<void>;
     static updateUser(req: Request, res: Response): Promise<Response<any, Record<string, any>> | undefined>;
     static deleteUser(req: Request, res: Response): Promise<Response<any, Record<string, any>> | undefined>;
+    static updateSettings(req: Request, res: Response): Promise<Response<any, Record<string, any>> | undefined>;
 }
 export declare const getUsers: typeof UserController.getUsers;
 export declare const getUserById: typeof UserController.getUserById;
 export declare const createUser: typeof UserController.createUser;
 export declare const updateUser: typeof UserController.updateUser;
 export declare const deleteUser: typeof UserController.deleteUser;
+export declare const updateSettings: typeof UserController.updateSettings;
 export {};
 //# sourceMappingURL=userController.d.ts.map

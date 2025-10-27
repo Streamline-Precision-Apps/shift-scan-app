@@ -1,6 +1,7 @@
 "use client";
 // Pay period timesheet types
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 export type PayPeriodTimesheets = {
   startTime: Date;
@@ -69,41 +70,58 @@ type UserStore = {
   ) => void;
 };
 
-export const useUserStore = create<UserStore>((set, get) => ({
-  user: null,
-  setUser: (user) => set({ user }),
-  clearUser: () => set({ user: null }),
-  setLanguage: (language) => {
-    const user = get().user;
-    if (user) {
-      set({
-        user: { ...user, UserSettings: { ...user.UserSettings, language } },
-      });
+export const useUserStore = create(
+  persist<UserStore>(
+    (set, get) => ({
+      user: null,
+      setUser: (user) => set({ user }),
+      clearUser: () => set({ user: null }),
+      setLanguage: (language) => {
+        const user = get().user;
+        if (user) {
+          set({
+            user: { ...user, UserSettings: { ...user.UserSettings, language } },
+          });
+        }
+      },
+      setUserSettings: (settings) => {
+        const user = get().user;
+        if (user) {
+          set({
+            user: {
+              ...user,
+              UserSettings: { ...user.UserSettings, ...settings },
+            },
+          });
+        }
+      },
+      setImage: (image) => {
+        const user = get().user;
+        if (user) {
+          set({
+            user: {
+              ...user,
+              image,
+            },
+          });
+        }
+      },
+      payPeriodTimeSheet: null,
+      setPayPeriodTimeSheets: (payPeriodTimeSheets) =>
+        set({ payPeriodTimeSheet: payPeriodTimeSheets }),
+    }),
+    {
+      name: "user-store", // storage key
+      partialize: (state: UserStore): UserStore => ({
+        user: state.user,
+        payPeriodTimeSheet: state.payPeriodTimeSheet,
+        setUser: () => {},
+        clearUser: () => {},
+        setLanguage: () => {},
+        setUserSettings: () => {},
+        setImage: () => {},
+        setPayPeriodTimeSheets: () => {},
+      }),
     }
-  },
-  setUserSettings: (settings) => {
-    const user = get().user;
-    if (user) {
-      set({
-        user: {
-          ...user,
-          UserSettings: { ...user.UserSettings, ...settings },
-        },
-      });
-    }
-  },
-  setImage: (image) => {
-    const user = get().user;
-    if (user) {
-      set({
-        user: {
-          ...user,
-          image,
-        },
-      });
-    }
-  },
-  payPeriodTimeSheet: null,
-  setPayPeriodTimeSheets: (payPeriodTimeSheets) =>
-    set({ payPeriodTimeSheet: payPeriodTimeSheets }),
-}));
+  )
+);
