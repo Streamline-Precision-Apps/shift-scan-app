@@ -10,7 +10,8 @@
     "showPassword": "Mostrar contraseña",
     "hidePassword": "Ocultar contraseña",
     "loading": "Cargando...",
-    "backToHome": "Volver al inicio"
+    "backToHome": "Volver al inicio",
+    "forgotPassword": "¿Olvidaste tu contraseña?"
   },
   "Settings": {
     "Camera": "Acceso a la cámara",
@@ -32,6 +33,7 @@
   },
 
   "ForgotPassword": {
+    "ForgotPasswordTitle": "¿Has olvidado tu contraseña?",
     "RecoveryPageTitle": "Ingrese su correo electrónico y le enviaremos un enlace para restablecer su contraseña.",
     "SendEmail": "Enviar correo electrónico",
     "Email": "Correo electrónico",
@@ -40,6 +42,14 @@
   },
 
   "PasswordReset": {
+    "ExpiredTokenTitle": "Token caducado",
+    "ExpiredTokenMessage": "Este enlace para restablecer tu contraseña ha expirado. Solicita uno nuevo.",
+    "ReturnToSignIn": "Volver a iniciar sesión",
+    "RequestNewReset": "Solicitar un nuevo restablecimiento de contraseña",
+    "InvalidTokenTitle": "Token inválido",
+    "InvalidTokenMessage": "Este enlace de restablecimiento de contraseña no es válido o ya ha sido utilizado.",
+    "Verifying": "Verificando",
+    "Loading": "Cargando...",
     "ChangePasswordTitle": "Ingrese en su nueva contraseña",
     "ChooseNewPassword": "¡Elija una nueva contraseña! ",
     "PasswordRequirements": "La contraseña debe incluir:",
@@ -1175,6 +1185,8 @@
     "TagUpdatedSuccessfully": "Etiqueta actualizada con éxito."
   },
   "Hamburger-Profile": {
+    "NewPassword": "Nueva contraseña",
+    "ConfirmPassword": "confirmar Contraseña",
     "SelectFromGallery": "Seleccionar de la galería",
     "Saving": "Guardando...",
     "Signature": "Firma",

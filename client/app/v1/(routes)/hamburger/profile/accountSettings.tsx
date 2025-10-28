@@ -137,7 +137,7 @@ export default function ProfilePage({ userId }: { userId: string }) {
     fetchEmployee();
   }, [userId]);
 
-  // Fetch settings and synchronize with permission status
+  // Fetch settings on component mount (userId changes)
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -161,12 +161,9 @@ export default function ProfilePage({ userId }: { userId: string }) {
                 settings = userData.UserSettings;
                 const validatedSettings = userSettingsSchema.parse(settings);
 
-                // Sync with permission status from context
                 const updatedSettings = {
                   ...validatedSettings,
                   userId,
-                  cameraAccess: permissionStatus.camera === "granted",
-                  locationAccess: permissionStatus.location === "granted",
                 };
 
                 setData(updatedSettings);
@@ -193,12 +190,9 @@ export default function ProfilePage({ userId }: { userId: string }) {
         settings = res.data;
         const validatedSettings = userSettingsSchema.parse(settings);
 
-        // Use permissionStatus from context: only true if 'granted'
         const updatedSettings = {
           ...validatedSettings,
           userId,
-          cameraAccess: permissionStatus.camera === "granted",
-          locationAccess: permissionStatus.location === "granted",
         };
 
         setData(updatedSettings);
@@ -209,11 +203,11 @@ export default function ProfilePage({ userId }: { userId: string }) {
       }
     };
 
-    // Only fetch when permissionStatus is available
-    if (permissionStatus) {
+    // Only fetch when userId changes
+    if (userId) {
       fetchData();
     }
-  }, [userId, permissionStatus]);
+  }, [userId]);
 
   // Automatically save settings when updated
   useEffect(() => {

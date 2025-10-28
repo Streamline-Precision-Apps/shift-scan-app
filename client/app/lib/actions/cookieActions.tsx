@@ -24,6 +24,7 @@ async function apiRequest(path: string, method: string, body: any) {
       Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(body),
+    credentials: "include", // ✅ CRITICAL: Allow cookies to be sent and received
   });
   if (!res.ok) throw new Error(await res.text());
   return res.json();
@@ -55,16 +56,37 @@ LOCALE COOKIES
 */
 export async function setLocale(isSpanish: boolean) {
   try {
-    await apiRequest("/api/cookies", "POST", {
+    const localeValue = isSpanish ? "es" : "en";
+    console.log("📝 setLocale API call - setting to:", localeValue);
+
+    const response = await apiRequest("/api/cookies", "POST", {
       name: "locale",
-      value: isSpanish ? "es" : "en",
+      value: localeValue,
       options: {
         path: "/",
-        maxAge: 60 * 60 * 24 * 365,
+        maxAge: 60 * 60 * 24 * 365, // 1 year
+        sameSite: "lax",
+        secure: process.env.NODE_ENV === "production",
       },
     });
+
+    console.log("✅ setLocale API response:", response);
+
+    // Verify cookie was actually set in the browser
+    if (typeof window !== "undefined") {
+      const locale = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("locale="));
+      console.log(
+        "🔍 Locale cookie in browser after set:",
+        locale || "(not found yet)"
+      );
+    }
+
+    return response;
   } catch (error) {
-    console.error("Failed to set locale cookie:", error);
+    console.error("❌ Failed to set locale cookie:", error);
+    throw error;
   }
 }
 

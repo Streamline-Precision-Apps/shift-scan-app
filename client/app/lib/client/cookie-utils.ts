@@ -1,7 +1,6 @@
 // client/app/lib/client/cookie-utils.ts
 import { CapacitorCookies } from "@capacitor/core";
 import { Preferences } from "@capacitor/preferences";
-
 const COOKIE_KEY = "locale";
 
 // Read cookies using CapacitorCookies when available, otherwise document.cookie

@@ -10,7 +10,8 @@
     "showPassword": "Show password",
     "hidePassword": "Hide password",
     "loading": "Loading...",
-    "backToHome": "Back to home"
+    "backToHome": "Back to home",
+    "forgotPassword": "Forgot password?"
   },
   "Settings": {
     "Camera": "Camera Access",
@@ -31,6 +32,7 @@
     "LogoAlt": "Streamline Precision Logo"
   },
   "ForgotPassword": {
+    "ForgotPasswordTitle": "Forgot Password?",
     "RecoveryPageTitle": "Enter your email and we will send you a link to reset your password.",
     "SendEmail": "Send Email",
     "Email": "Email",
@@ -38,6 +40,14 @@
     "Back": "Back"
   },
   "PasswordReset": {
+    "ExpiredTokenTitle": "Expired Token",
+    "ExpiredTokenMessage": "This password reset link has expired. Please request a new one.",
+    "ReturnToSignIn": "Return to Sign In",
+    "RequestNewReset": "Request New Password Reset",
+    "InvalidTokenTitle": "Invalid Token",
+    "InvalidTokenMessage": "This password reset link is invalid or has already been used.",
+    "Verifying": "Verifying",
+    "Loading": "Loading...",
     "ChangePasswordTitle": "Enter in your new password",
     "ChooseNewPassword": "Choose a new password! Make sure to follow the strength requirements!",
     "PasswordRequirements": "Password must include:",
@@ -1184,6 +1194,8 @@
     "TagUpdatedSuccessfully": "Tag updated successfully."
   },
   "Hamburger-Profile": {
+    "NewPassword": "New Password",
+    "ConfirmPassword": "Confirm Password",
     "SelectFromGallery": "Select from Gallery",
     "Saving": "Saving...",
     "Signature": "Signature",

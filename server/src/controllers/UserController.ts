@@ -324,12 +324,39 @@ export async function getUserSettings(req: Request, res: Response) {
 // PUT /api/user/settings
 export async function updateSettings(req: Request, res: Response) {
   try {
+    // Extract userId from authenticated token (req.user set by verifyToken middleware)
+    const authenticatedUserId = (req as any).user?.id;
+    console.log("🔍 updateSettings called - authenticatedUserId:", authenticatedUserId);
+    console.log("📝 Request body:", JSON.stringify(req.body, null, 2));
+
+    // Verify user is authenticated
+    if (!authenticatedUserId) {
+      console.error("❌ No authenticated user found");
+      return res.status(401).json({
+        success: false,
+        error: "Unauthorized",
+        message: "Authentication required",
+      });
+    }
+
     const { userId, ...settings } = req.body;
     if (!userId) {
       return res.status(400).json({
         success: false,
         error: "User ID is required",
         message: "Failed to update user settings",
+      });
+    }
+
+    // Verify user is only updating their own settings
+    if (userId !== authenticatedUserId) {
+      console.warn(
+        `❌ Unauthorized update attempt: user ${authenticatedUserId} tried to update settings for user ${userId}`
+      );
+      return res.status(403).json({
+        success: false,
+        error: "Forbidden",
+        message: "Cannot update other users' settings",
       });
     }
 

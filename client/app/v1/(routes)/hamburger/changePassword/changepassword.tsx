@@ -1,21 +1,20 @@
 "use client";
 import { useTranslations } from "next-intl";
-import { Grids } from "@/components/(reusable)/grids";
-import { Holds } from "@/components/(reusable)/holds";
-import { Buttons } from "@/components/(reusable)/buttons";
-import { Inputs } from "@/components/(reusable)/inputs";
-import { Labels } from "@/components/(reusable)/labels";
-import { Forms } from "@/components/(reusable)/forms";
+import { Grids } from "@/app/v1/components/(reusable)/grids";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
+import { Buttons } from "@/app/v1/components/(reusable)/buttons";
+import { Inputs } from "@/app/v1/components/(reusable)/inputs";
+import { Labels } from "@/app/v1/components/(reusable)/labels";
+import { Forms } from "@/app/v1/components/(reusable)/forms";
 import { FormEvent, useEffect, useState } from "react";
-import { setUserPassword } from "@/actions/userActions";
-import { hash } from "bcryptjs";
 import { useRouter } from "next/navigation";
-import { Contents } from "@/components/(reusable)/contents";
-import { Titles } from "@/components/(reusable)/titles";
-import { Images } from "@/components/(reusable)/images";
-import { TitleBoxes } from "@/components/(reusable)/titleBoxes";
+import { Contents } from "@/app/v1/components/(reusable)/contents";
+import { Titles } from "@/app/v1/components/(reusable)/titles";
+import { Images } from "@/app/v1/components/(reusable)/images";
+import { TitleBoxes } from "@/app/v1/components/(reusable)/titleBoxes";
 import { X, Check } from "lucide-react";
-import { signOut } from "next-auth/react";
+import { useSignOut } from "@/app/lib/hooks/useSignOut";
+import { setUserPassword } from "@/app/lib/actions/hamburgerActions";
 
 export default function ChangePassword({ userId }: { userId: string }) {
   // Shared password scoring function
@@ -69,7 +68,7 @@ export default function ChangePassword({ userId }: { userId: string }) {
 
     if (newPassword.length === 0 || confirmPassword.length === 0) {
       setBannerMessage(
-        "Invalid. Password and/or Confirm Password cannot be empty.",
+        "Invalid. Password and/or Confirm Password cannot be empty."
       );
       setShowBanner(true);
       return;
@@ -77,7 +76,7 @@ export default function ChangePassword({ userId }: { userId: string }) {
 
     if (!validatePassword(newPassword)) {
       setBannerMessage(
-        "Invalid. Password must be at a strength of fair or better.",
+        "Invalid. Password must be at a strength of fair or better."
       );
       setShowBanner(true);
       return;
@@ -90,22 +89,18 @@ export default function ChangePassword({ userId }: { userId: string }) {
     }
 
     const formData = new FormData(event.currentTarget);
-    const hashed = await hash(newPassword, 10);
     formData.append("id", userId);
-    formData.append("password", hashed);
+    formData.append("password", newPassword);
 
     try {
       await setUserPassword(formData);
 
       // Sign out the user and redirect to sign in page
-      await signOut({
-        redirect: true,
-        redirectTo: "/signin",
-      });
+      useSignOut();
     } catch (error) {
       console.error("Error updating password:", error);
       setBannerMessage(
-        "There was an error updating your password. Please try again.",
+        "There was an error updating your password. Please try again."
       );
       setShowBanner(true);
     }
@@ -163,7 +158,9 @@ export default function ChangePassword({ userId }: { userId: string }) {
             style={{ width: `${(score / 5) * 100}%` }}
           ></div>
         </div>
-        <span className={`text-xs font-medium text-right text-opacity-80`}>
+        <span
+          className={`text-xs text-black font-medium text-right text-opacity-80`}
+        >
           {labels[score]}
         </span>
       </div>
@@ -232,7 +229,9 @@ export default function ChangePassword({ userId }: { userId: string }) {
 
                   <ul className="list-disc list-inside">
                     <li
-                      className={`flex items-center gap-2 text-xs transition-colors duration-200 ${oneCapital ? "text-green-600 " : "text-red-600"}`}
+                      className={`flex items-center gap-2 text-xs transition-colors duration-200 ${
+                        oneCapital ? "text-green-600 " : "text-red-600"
+                      }`}
                       aria-live="polite"
                     >
                       {oneCapital ? (
@@ -251,7 +250,9 @@ export default function ChangePassword({ userId }: { userId: string }) {
                       {t("CapitalCriteriaLabel")}
                     </li>
                     <li
-                      className={`flex items-center gap-2 text-xs transition-colors duration-200 ${oneLower ? "text-green-600 " : "text-red-600"}`}
+                      className={`flex items-center gap-2 text-xs transition-colors duration-200 ${
+                        oneLower ? "text-green-600 " : "text-red-600"
+                      }`}
                       aria-live="polite"
                     >
                       {oneLower ? (
@@ -271,7 +272,9 @@ export default function ChangePassword({ userId }: { userId: string }) {
                     </li>
 
                     <li
-                      className={`flex items-center gap-2 text-xs transition-colors duration-200 ${oneNumber ? "text-green-600 " : "text-red-600"}`}
+                      className={`flex items-center gap-2 text-xs transition-colors duration-200 ${
+                        oneNumber ? "text-green-600 " : "text-red-600"
+                      }`}
                       aria-live="polite"
                     >
                       {oneNumber ? (
@@ -290,7 +293,9 @@ export default function ChangePassword({ userId }: { userId: string }) {
                       {t("NumberCriteriaLabel")}
                     </li>
                     <li
-                      className={`flex items-center gap-2 text-xs transition-colors duration-200 ${oneSymbol ? "text-green-600 " : "text-red-600"}`}
+                      className={`flex items-center gap-2 text-xs transition-colors duration-200 ${
+                        oneSymbol ? "text-green-600 " : "text-red-600"
+                      }`}
                       aria-live="polite"
                     >
                       {oneSymbol ? (
@@ -309,7 +314,9 @@ export default function ChangePassword({ userId }: { userId: string }) {
                       {t("SpecialCharacterCriteriaLabel")}
                     </li>
                     <li
-                      className={`flex items-center gap-2 text-xs transition-colors duration-200 ${eightChar ? "text-green-600 " : "text-red-600"}`}
+                      className={`flex items-center gap-2 text-xs transition-colors duration-200 ${
+                        eightChar ? "text-green-600 " : "text-red-600"
+                      }`}
                       aria-live="polite"
                     >
                       {eightChar ? (
@@ -354,7 +361,13 @@ export default function ChangePassword({ userId }: { userId: string }) {
                   </Holds>
                   <ul className="list-disc list-inside">
                     <li
-                      className={`flex items-center gap-2 text-xs transition-colors duration-200 ${newPassword && confirmPassword && newPassword === confirmPassword ? "text-green-600 " : "text-red-600"}`}
+                      className={`flex items-center gap-2 text-xs transition-colors duration-200 ${
+                        newPassword &&
+                        confirmPassword &&
+                        newPassword === confirmPassword
+                          ? "text-green-600 "
+                          : "text-red-600"
+                      }`}
                       aria-live="polite"
                     >
                       {newPassword &&

@@ -79,6 +79,18 @@ export declare class UserService {
         cookiesAccess: boolean;
         lastUpdated: Date;
     }>;
+    static getUserSettings(userId: string): Promise<{
+        createdAt: Date;
+        id: string;
+        userId: string;
+        language: string;
+        generalReminders: boolean;
+        personalReminders: boolean;
+        cameraAccess: boolean;
+        locationAccess: boolean;
+        cookiesAccess: boolean;
+        lastUpdated: Date;
+    } | null>;
 }
 export default UserService;
 //# sourceMappingURL=UserService.d.ts.map

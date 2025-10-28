@@ -1,4 +1,6 @@
 import type { Request, Response } from "express";
+export declare function getUserSettingsByQuery(req: Request, res: Response): Promise<Response<any, Record<string, any>> | undefined>;
+export declare function getUserContact(req: Request, res: Response): Promise<Response<any, Record<string, any>> | undefined>;
 interface CreateUserRequestBody {
     firstName: string;
     lastName: string;
@@ -23,19 +25,12 @@ interface CreateUserRequestBody {
 interface CreateUserRequest extends Request {
     body: CreateUserRequestBody;
 }
-export declare class UserController {
-    static getUsers(req: Request, res: Response): Promise<void>;
-    static getUserById(req: Request, res: Response): Promise<Response<any, Record<string, any>> | undefined>;
-    static createUser(req: CreateUserRequest, res: Response): Promise<void>;
-    static updateUser(req: Request, res: Response): Promise<Response<any, Record<string, any>> | undefined>;
-    static deleteUser(req: Request, res: Response): Promise<Response<any, Record<string, any>> | undefined>;
-    static updateSettings(req: Request, res: Response): Promise<Response<any, Record<string, any>> | undefined>;
-}
-export declare const getUsers: typeof UserController.getUsers;
-export declare const getUserById: typeof UserController.getUserById;
-export declare const createUser: typeof UserController.createUser;
-export declare const updateUser: typeof UserController.updateUser;
-export declare const deleteUser: typeof UserController.deleteUser;
-export declare const updateSettings: typeof UserController.updateSettings;
+export declare function getUsers(req: Request, res: Response): Promise<void>;
+export declare function getUserById(req: Request, res: Response): Promise<Response<any, Record<string, any>> | undefined>;
+export declare function createUser(req: CreateUserRequest, res: Response): Promise<void>;
+export declare function updateUser(req: Request, res: Response): Promise<Response<any, Record<string, any>> | undefined>;
+export declare function deleteUser(req: Request, res: Response): Promise<Response<any, Record<string, any>> | undefined>;
+export declare function getUserSettings(req: Request, res: Response): Promise<Response<any, Record<string, any>> | undefined>;
+export declare function updateSettings(req: Request, res: Response): Promise<Response<any, Record<string, any>> | undefined>;
 export {};
 //# sourceMappingURL=userController.d.ts.map

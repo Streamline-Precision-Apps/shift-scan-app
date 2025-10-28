@@ -3,15 +3,9 @@
 import React, { useEffect, useState } from "react";
 import { IntlProvider } from "next-intl";
 import { Device } from "@capacitor/device";
-import { defineCustomElements } from "@ionic/pwa-elements/loader";
 import { loadMessages, defaultLocale, type Locale } from "./i18n-client";
 import defaultMessages from "../messages/en.json";
 import { readLocaleCookie, setLocaleCookie } from "./cookie-utils";
-
-// Initialize PWA Elements for Camera and other Capacitor plugins on web
-if (typeof window !== "undefined") {
-  defineCustomElements(window);
-}
 
 export async function persistLocale(value: Locale) {
   try {
@@ -88,6 +82,45 @@ export default function ClientIntlProvider({
 
     return () => {
       mounted = false;
+    };
+  }, []);
+
+  // 🎧 NEW: Listen for cookie changes (e.g., from settings)
+  useEffect(() => {
+    let mounted = true;
+    const pollInterval = setInterval(async () => {
+      try {
+        const cookieLocale = await readLocaleCookie();
+        if (cookieLocale && mounted) {
+          const newLocale = cookieLocale as Locale;
+          setLocale((prev) => {
+            if (prev !== newLocale) {
+              console.log(`🌍 Locale changed (cookie updated): ${prev} → ${newLocale}`);
+              // Load new messages if needed
+              if (newLocale !== defaultLocale) {
+                loadMessages(newLocale)
+                  .then((msgs) => {
+                    if (mounted && msgs) setMessages(msgs);
+                  })
+                  .catch((err) =>
+                    console.error("Failed loading messages for", newLocale, err)
+                  );
+              } else {
+                setMessages(defaultMessages);
+              }
+              return newLocale;
+            }
+            return prev;
+          });
+        }
+      } catch (err) {
+        console.error("Error polling locale cookie:", err);
+      }
+    }, 500); // Poll every 500ms for cookie changes
+
+    return () => {
+      mounted = false;
+      clearInterval(pollInterval);
     };
   }, []);
 

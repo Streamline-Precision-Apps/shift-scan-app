@@ -11,11 +11,13 @@ function getLocaleFromCookie(name = "locale") {
 type SessionContextType = {
   user: JwtUserPayload | null;
   locale: string;
+  updateLocale: (newLocale: string) => void;
 };
 
 const SessionContext = createContext<SessionContextType>({
   user: null,
   locale: "en",
+  updateLocale: () => {},
 });
 
 export function SessionProvider({ children }: { children: React.ReactNode }) {
@@ -35,9 +37,39 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
     }
   }, [router]);
 
+  // Watch for cookie changes and update locale
+  useEffect(() => {
+    const handleCookieChange = () => {
+      const newLocale = getLocaleFromCookie();
+      setLocale(newLocale);
+    };
+
+    // Listen for storage events (when cookies are updated via API)
+    window.addEventListener("storage", handleCookieChange);
+
+    return () => {
+      window.removeEventListener("storage", handleCookieChange);
+    };
+  }, []);
+
+  const updateLocale = (newLocale: string) => {
+    if (newLocale === "en" || newLocale === "es") {
+      setLocale(newLocale);
+    }
+  };
+
   return (
-    <SessionContext.Provider value={{ user, locale }}>
+    <SessionContext.Provider value={{ user, locale, updateLocale }}>
       {children}
     </SessionContext.Provider>
   );
+}
+
+// Custom hook to use session context
+export function useSession() {
+  const context = useContext(SessionContext);
+  if (!context) {
+    throw new Error("useSession must be used within SessionProvider");
+  }
+  return context;
 }

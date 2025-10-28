@@ -1,5 +1,5 @@
 
-!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="ad336396-1076-5c8c-92a0-55b398db83d3")}catch(e){}}();
+!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="3ee253f5-d493-5347-a7bb-3086fa920391")}catch(e){}}();
 import ContactsModel from "../models/Contacts.js";
 import UserSettingsModel from "../models/UserSettings.js";
 import { UserModel } from "../models/User.js";
@@ -104,6 +104,9 @@ export class UserService {
                 throw new Error("Email is already taken by another user");
             }
         }
+        if (userData.image && typeof userData.image !== "string") {
+            throw new Error("Image must be a string URL");
+        }
         // Support nested updates for Contact and UserSettings
         const updateData = { ...userData };
         if (userData.Contact) {
@@ -162,7 +165,18 @@ export class UserService {
             settingsData.cookiesAccess = data.cookiesAccess;
         return UserSettingsModel.update(userId, settingsData);
     }
+    static async getUserSettings(userId) {
+        if (!userId) {
+            throw new Error("User ID is required");
+        }
+        try {
+            return await UserSettingsModel.findByUserId(userId);
+        }
+        catch (error) {
+            throw new Error(`Failed to fetch user settings: ${error instanceof Error ? error.message : "Unknown error"}`);
+        }
+    }
 }
 export default UserService;
 //# sourceMappingURL=UserService.js.map
-//# debugId=ad336396-1076-5c8c-92a0-55b398db83d3
+//# debugId=3ee253f5-d493-5347-a7bb-3086fa920391

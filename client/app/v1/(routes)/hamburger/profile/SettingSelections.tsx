@@ -21,6 +21,8 @@ import { NModals } from "@/app/v1/components/(reusable)/newmodals";
 import { Selects } from "@/app/v1/components/(reusable)/selects";
 import LanguageModal from "@/app/v1/components/(modal)/langaugeModal";
 import { setLocale } from "@/app/lib/actions/cookieActions";
+import { useSession } from "@/app/lib/context/sessionContext";
+import { useUserStore } from "@/app/lib/store/userStore";
 type UserSettings = {
   userId: string;
   language?: string;
@@ -51,8 +53,10 @@ export default function SettingSelections({
   handleCameraAccessChange,
   handleLocationAccessChange,
 }: Props) {
+  const { setLanguage: setLang } = useUserStore();
   const router = useRouter();
   const t = useTranslations("Hamburger-Profile");
+  const { updateLocale } = useSession();
   const [language, setLanguage] = useState<string>();
   const [isLangModalOpen, setIsLangModalOpen] = useState(false);
   useEffect(() => {
@@ -89,14 +93,46 @@ export default function SettingSelections({
           <Contents width="section">
             <Selects
               className="text-center text-black"
-              value={language} // Use `language` state
-              onChange={(event: ChangeEvent<HTMLSelectElement>) => {
-                handleLanguageChange("language", event.target.value);
-                const formData = new FormData();
-                formData.append("id", id);
-                formData.append("language", event.target.value);
-                setLanguage(event.target.value);
-                setLocale(event.target.value === "es");
+              value={language}
+              onChange={async (event: ChangeEvent<HTMLSelectElement>) => {
+                const newLanguage = event.target.value;
+                console.log("🌍 Changing language to:", newLanguage);
+
+                // 1. Update database via state change
+                handleLanguageChange("language", newLanguage);
+
+                // 2. Update cookies
+                try {
+                  console.log("📝 Setting locale cookie to:", newLanguage);
+                  const response = await setLocale(newLanguage === "es");
+                  console.log("✅ Cookie API call successful:", response);
+
+                  // IMPORTANT: Wait a moment for browser to process Set-Cookie header
+                  await new Promise((resolve) => setTimeout(resolve, 100));
+
+                  // Verify cookie was set
+                  if (typeof window !== "undefined") {
+                    const locale = document.cookie
+                      .split("; ")
+                      .find((row) => row.startsWith("locale="));
+                    console.log(
+                      "🔍 Locale cookie in browser:",
+                      locale || "❌ NOT FOUND"
+                    );
+                    console.log("📋 All cookies:", document.cookie);
+                  }
+                } catch (error) {
+                  console.error("❌ Failed to update locale cookie:", error);
+                }
+
+                // 3. Update session context
+                updateLocale(newLanguage);
+
+                // 4. Update local state for UI
+                setLanguage(newLanguage);
+
+                // 5. Update user store
+                setLang(newLanguage);
               }}
             >
               <option value="en">English</option>
@@ -128,7 +164,7 @@ export default function SettingSelections({
           </Contents>
         </Holds>
 
-        <Holds background="white" className=" py-3">
+        {/* <Holds background="white" className=" py-3">
           <Contents width="section">
             <Grids rows="1" gap="5">
               <Holds position="row">
@@ -148,10 +184,10 @@ export default function SettingSelections({
               </Holds>
             </Grids>
           </Contents>
-        </Holds>
+        </Holds> */}
 
         {/*-------------------------App Usage settings------------------------------*/}
-        <Holds background="white" className=" py-3">
+        {/* <Holds background="white" className=" py-3">
           <Contents width="section">
             <Grids rows="1" gap="5">
               <Holds position="row">
@@ -169,8 +205,8 @@ export default function SettingSelections({
               </Holds>
             </Grids>
           </Contents>
-        </Holds>
-        <Holds background="white" className=" py-3">
+        </Holds> */}
+        {/* <Holds background="white" className=" py-3">
           <Contents width="section">
             <Grids rows="1" gap="5">
               <Holds position="row">
@@ -188,7 +224,7 @@ export default function SettingSelections({
               </Holds>
             </Grids>
           </Contents>
-        </Holds>
+        </Holds> */}
 
         {/* Language Selection Modal */}
         <NModals

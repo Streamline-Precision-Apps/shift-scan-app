@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { EyeIcon, EyeOff } from "lucide-react";
-
 import { Capacitor } from "@capacitor/core";
 import { useTranslations } from "next-intl";
 import { useUserStore } from "../lib/store/userStore";
@@ -153,7 +152,7 @@ export default function SignInPage() {
   };
 
   return (
-    <main className="relative min-h-screen max-h-screen overflow-hidden bg-app-gradient bg-to-br from-app-dark-blue via-app-blue to-app-blue px-4 py-0 flex flex-col items-center justify-center">
+    <main className="relative min-h-screen overflow-hidden bg-app-gradient bg-to-br from-app-dark-blue via-app-blue to-app-blue px-4 py-8 md:py-0 md:max-h-screen flex flex-col items-center justify-center">
       {/* Animated Gradient Background Overlay */}
       <div className="pointer-events-none fixed inset-0 z-0">
         <div className="absolute inset-0 bg-linear-to-br from-app-dark-blue via-app-blue to-app-blue animate-gradient-move opacity-80" />
@@ -163,7 +162,7 @@ export default function SignInPage() {
 
       {/* Sign In Form */}
       <div className="relative z-10 w-full max-w-md">
-        <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-8">
+        <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-6 md:p-8 space-y-8 md:space-y-6">
           <div className="text-center mb-8">
             <img
               src="/windows11/StoreLogo.scale-400.png"
@@ -176,7 +175,7 @@ export default function SignInPage() {
             <p className="text-gray-600">{t("welcome")}</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6 md:space-y-6">
             <div>
               <label
                 htmlFor="username"
@@ -190,7 +189,7 @@ export default function SignInPage() {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl text-gray-700 placeholder:text-gray-700 focus:outline-none focus:ring-2 focus:ring-app-blue focus:border-transparent transition-all duration-200"
+                className="w-full px-4 py-3 md:py-3 border border-gray-300 rounded-xl text-gray-700 placeholder:text-gray-700 focus:outline-none focus:ring-2 focus:ring-app-blue focus:border-transparent transition-all duration-200"
                 placeholder={t("usernamePlaceholder")}
               />
             </div>
@@ -209,7 +208,7 @@ export default function SignInPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="w-full px-4 py-3 border border-gray-300 text-gray-700  placeholder:text-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-app-blue focus:border-transparent transition-all duration-200"
+                  className="w-full px-4 py-3 md:py-3 border border-gray-300 text-gray-700  placeholder:text-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-app-blue focus:border-transparent transition-all duration-200"
                   placeholder={t("passwordPlaceholder")}
                   minLength={6}
                 />
@@ -231,6 +230,15 @@ export default function SignInPage() {
               </div>
             </div>
 
+            <div className="flex justify-end">
+              <a
+                href="/signin/forgot-password"
+                className="text-sm text-app-dark-blue hover:text-app-blue transition-colors font-medium"
+              >
+                {t("forgotPassword")}
+              </a>
+            </div>
+
             {error && (
               <div className="bg-app-red/10 border border-app-red/20 text-app-red px-4 py-3 rounded-xl text-sm">
                 {error}
@@ -247,12 +255,14 @@ export default function SignInPage() {
           </form>
 
           <div className="mt-4 text-center">
-            <a
-              href="/"
-              className="text-gray-500 hover:text-gray-700 text-sm transition-colors"
-            >
-              ← {t("backToHome")}
-            </a>
+            {!isNative && (
+              <a
+                href="/"
+                className="text-gray-500 hover:text-gray-700 text-sm transition-colors"
+              >
+                ← {t("backToHome")}
+              </a>
+            )}
           </div>
         </div>
       </div>

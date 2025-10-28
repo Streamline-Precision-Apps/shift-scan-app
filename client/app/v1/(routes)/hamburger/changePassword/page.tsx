@@ -1,25 +1,34 @@
-"use server";
+"use client";
 import "@/app/globals.css";
-import { Bases } from "@/components/(reusable)/bases";
-import ChangePassword from "@/app/(routes)/hamburger/changePassword/changepassword";
-import { auth } from "@/auth";
-import { Suspense } from "react";
-import { Holds } from "@/components/(reusable)/holds";
-import { Titles } from "@/components/(reusable)/titles";
-import { Images } from "@/components/(reusable)/images";
-import { Contents } from "@/components/(reusable)/contents";
-import { Grids } from "@/components/(reusable)/grids";
-import { TitleBoxes } from "@/components/(reusable)/titleBoxes";
-import { getTranslations } from "next-intl/server";
-import { Forms } from "@/components/(reusable)/forms";
+import { Bases } from "@/app/v1/components/(reusable)/bases";
+import { Suspense, use } from "react";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
+import { Titles } from "@/app/v1/components/(reusable)/titles";
+import { Images } from "@/app/v1/components/(reusable)/images";
+import { Contents } from "@/app/v1/components/(reusable)/contents";
+import { Grids } from "@/app/v1/components/(reusable)/grids";
+import { TitleBoxes } from "@/app/v1/components/(reusable)/titleBoxes";
 
-export default async function Index() {
-  const session = await auth();
-  if (!session) return null;
-  const userId = session.user.id;
+import { Forms } from "@/app/v1/components/(reusable)/forms";
+import { useUserStore } from "@/app/lib/store/userStore";
+import ChangePassword from "./changepassword";
+import { useTranslations } from "next-intl";
+
+export default function Index() {
+  const { user } = useUserStore();
+
+  if (!user) {
+    return (
+      <Bases>
+        <ChangePasswordSkeleton />
+      </Bases>
+    );
+  }
+
+  const userId = user?.id;
 
   async function ChangePasswordSkeleton() {
-    const t = await getTranslations("Hamburger-Profile");
+    const t = useTranslations("Hamburger-Profile");
     return (
       <Contents>
         <Forms className="h-full w-full">
@@ -55,11 +64,7 @@ export default async function Index() {
   }
   return (
     <Bases>
-      <Suspense fallback={<ChangePasswordSkeleton />}>
-        <ChangePassword userId={userId} />
-      </Suspense>
+      <ChangePassword userId={userId} />
     </Bases>
   );
 }
-
-// Fallback UI matching the ChangePassword section style

@@ -1,11 +1,11 @@
 
-!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="46d7146c-26ad-526a-9277-85159f4ff538")}catch(e){}}();
+!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="f7b94bc2-adc3-5c3a-b1a1-a9e84e7964df")}catch(e){}}();
 import { Router } from "express";
 import { initHandler } from "../controllers/initController.js";
 import { payPeriodSheetsHandler } from "../controllers/payPeriodController.js";
 import { verifyToken } from "../middleware/authMiddleware.js";
-import { createFormApproval, createFormSubmission, deleteFormSubmission, saveDraft, saveDraftToPending, savePending, updateFormApproval, } from "../controllers/formsController.js";
-import { UserController } from "../controllers/userController.js";
+import { createUser, deleteUser, getUserById, getUsers, updateSettings, updateUser, getUserSettingsByQuery, getUserContact, } from "../controllers/userController.js";
+import { createFormApproval, createFormSubmission, deleteFormSubmission, getEmployeeRequests, getForms, getUserSubmissions, saveDraft, saveDraftToPending, savePending, updateFormApproval, } from "../controllers/formsController.js";
 const router = Router();
 // Define your init routes here
 /**
@@ -92,13 +92,16 @@ router.post("/init", initHandler);
  */
 router.post("/pay-period-timesheets", payPeriodSheetsHandler);
 // Form submission
+router.get("/forms", getForms);
 router.post("/forms/submission", verifyToken, createFormSubmission);
 router.delete("/forms/submission/:id", verifyToken, deleteFormSubmission);
+router.get("/forms/:filter", verifyToken, getUserSubmissions);
 // Drafts
 router.post("/forms/draft", verifyToken, saveDraft);
 router.post("/forms/draft-to-pending", verifyToken, saveDraftToPending);
 router.post("/forms/pending", verifyToken, savePending);
 // Approvals
+router.get("/forms/employeeRequests/:filter", verifyToken, getEmployeeRequests);
 router.post("/forms/approval", verifyToken, createFormApproval);
 router.put("/forms/approval/update", verifyToken, updateFormApproval);
 /**
@@ -117,7 +120,7 @@ router.put("/forms/approval/update", verifyToken, updateFormApproval);
  *       401:
  *         description: Unauthorized - invalid or missing bearer token
  */
-router.get("/user", UserController.getUsers);
+router.get("/user", verifyToken, getUsers);
 /**
  * @swagger
  * /api/v1/user/{id}:
@@ -142,7 +145,7 @@ router.get("/user", UserController.getUsers);
  *       404:
  *         description: User not found
  */
-router.get("/user/:id", verifyToken, UserController.getUserById);
+router.get("/user/:id", verifyToken, getUserById);
 /**
  * @swagger
  * /api/v1/user:
@@ -229,7 +232,7 @@ router.get("/user/:id", verifyToken, UserController.getUserById);
  *       400:
  *         description: Bad request
  */
-router.post("/user", verifyToken, UserController.createUser);
+router.post("/user", verifyToken, createUser);
 /**
  * @swagger
  * /api/v1/user/{id}:
@@ -312,32 +315,6 @@ router.post("/user", verifyToken, UserController.createUser);
  *       404:
  *         description: User not found
  */
-router.put("/user/:id", verifyToken, UserController.updateUser);
-/**
- * @swagger
- * /api/v1/user/{id}:
- *   delete:
- *     tags:
- *       - Users
- *     summary: Delete user
- *     description: Delete a user (requires authentication)
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - name: id
- *         in: path
- *         required: true
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: User deleted successfully
- *       401:
- *         description: Unauthorized - invalid or missing bearer token
- *       404:
- *         description: User not found
- */
-router.delete("/user/:id", verifyToken, UserController.deleteUser);
 /**
  * @swagger
  * /api/v1/user/settings:
@@ -385,7 +362,35 @@ router.delete("/user/:id", verifyToken, UserController.deleteUser);
  *       400:
  *         description: Bad request
  */
-router.put("/user/settings", verifyToken, UserController.updateSettings);
+router.post("/user/settings", getUserSettingsByQuery);
+router.put("/user/settings", verifyToken, updateSettings);
+router.post("/user/contact", getUserContact);
+router.put("/user/:id", verifyToken, updateUser);
+/**
+ * @swagger
+ * /api/v1/user/{id}:
+ *   delete:
+ *     tags:
+ *       - Users
+ *     summary: Delete user
+ *     description: Delete a user (requires authentication)
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: User deleted successfully
+ *       401:
+ *         description: Unauthorized - invalid or missing bearer token
+ *       404:
+ *         description: User not found
+ */
+router.delete("/user/:id", verifyToken, deleteUser);
 export default router;
 //# sourceMappingURL=initRoutes.js.map
-//# debugId=46d7146c-26ad-526a-9277-85159f4ff538
+//# debugId=f7b94bc2-adc3-5c3a-b1a1-a9e84e7964df

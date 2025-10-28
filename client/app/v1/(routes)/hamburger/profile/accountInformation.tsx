@@ -15,13 +15,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/app/v1/components/ui/dialog";
-import { Button } from "@/app/v1/components/ui/button";
+
 import { getRawPhoneNumber } from "@/app/lib/utils/getRawPhoneNumber";
 import { formatPhoneNumber } from "@/app/lib/utils/phoneNumberFormater";
 import { formatPhoneNumberSetter } from "@/app/lib/utils/phoneNumberSetFormatter";
 import { useSignOut } from "@/app/lib/hooks/useSignOut";
 import SignatureSetUpModal from "@/app/v1/components/(signup)/signatureSetupModal";
 import { updateSettings } from "@/app/lib/actions/hamburgerActions";
+import { Button } from "@/app/v1/components/ui/button";
 
 type Employee = {
   id: string;
@@ -52,6 +53,7 @@ export default function AccountInformation({
   reloadEmployee: () => Promise<void>;
 }) {
   const t = useTranslations("Hamburger-Profile");
+  const signOut = useSignOut();
 
   const [isOpen2, setIsOpen2] = useState(false);
   const [editSignatureModalOpen, setEditSignatureModalOpen] = useState(false);
@@ -368,13 +370,13 @@ export default function AccountInformation({
               {t("Cancel")}
             </Button>
             <Button
-              className="w-1/2"
+              className="w-1/2 bg-red-500 text-white"
               type="button"
               variant="destructive"
               size={"lg"}
               onClick={async () => {
                 setIsOpen2(false);
-                useSignOut();
+                await signOut();
               }}
             >
               {t("Logout")}

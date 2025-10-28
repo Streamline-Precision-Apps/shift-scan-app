@@ -1,9 +1,12 @@
 
-!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="3bff482c-f7b7-5e00-a26e-7a8e09973f77")}catch(e){}}();
+!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="b50fab36-3c46-5223-92f3-2780bf47d8e1")}catch(e){}}();
 import { Router } from "express";
+import multer from "multer";
 import { requireFirebaseEnv } from "../middleware/requireFirebaseEnv.js";
 import { blobDelete, blobUpload } from "../controllers/blobsController.js";
 const router = Router();
+// Configure Multer for file uploads (store in memory)
+const upload = multer({ storage: multer.memoryStorage() });
 /**
  * @swagger
  * /api/storage/upload:
@@ -42,7 +45,7 @@ const router = Router();
  *       500:
  *         description: Upload failed
  */
-router.post("/upload", requireFirebaseEnv, blobUpload);
+router.post("/upload", requireFirebaseEnv, upload.single("file"), blobUpload);
 /**
  * @swagger
  * /api/storage/delete:
@@ -83,4 +86,4 @@ router.post("/upload", requireFirebaseEnv, blobUpload);
 router.delete("/delete", requireFirebaseEnv, blobDelete);
 export default router;
 //# sourceMappingURL=blobRoute.js.map
-//# debugId=3bff482c-f7b7-5e00-a26e-7a8e09973f77
+//# debugId=b50fab36-3c46-5223-92f3-2780bf47d8e1

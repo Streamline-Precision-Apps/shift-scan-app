@@ -46,6 +46,7 @@ export async function apiRequest(
     method,
     headers,
     body: fetchBody,
+    credentials: "include", // ✅ CRITICAL: Allow cookies to be sent and received
   });
   if (!res.ok) throw new Error(await res.text());
   return res.json();

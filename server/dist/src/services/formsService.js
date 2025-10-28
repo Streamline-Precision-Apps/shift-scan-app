@@ -1,8 +1,25 @@
-// Service for forms business logic
 
-!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="18d6f609-110b-548b-aff9-fc403026cbcb")}catch(e){}}();
+!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="05f6a391-ac69-5477-be36-5093e93be20a")}catch(e){}}();
 import prisma from "../lib/prisma.js";
 import { FormStatus } from "../../generated/prisma/client.js";
+/**
+ * Get all forms
+ * @returns {
+ *   id: string;
+ *   name: string;
+ * }[]
+ */
+export const ServiceGetForms = async () => {
+    return await prisma.formTemplate.findMany({
+        where: {
+            isActive: "ACTIVE",
+        },
+        select: {
+            id: true,
+            name: true,
+        },
+    });
+};
 /**
  * Create a form submission
  * @param {Object} params
@@ -224,6 +241,15 @@ export const ServiceSavePending = async (params) => {
         return newSubmission;
     }
 };
+export const ServiceGetFormsWithRequests = async () => {
+    const forms = await prisma.formSubmission.findMany({
+        where: { status: FormStatus.PENDING },
+        include: {
+            User: { select: { firstName: true, lastName: true } },
+        },
+    });
+    return forms;
+};
 /**
  * Create a form approval
  * @param {Object} params
@@ -274,5 +300,119 @@ export const ServiceUpdateFormApproval = async (params) => {
     ]);
     return { approval, updatedSubmission };
 };
+/**
+ * Fetch employee requests for a manager, with filter, skip, take
+ */
+export const ServiceGetEmployeeRequests = async ({ filter, skip, take, managerId, }) => {
+    // 'all' = all pending requests for employees in manager's team (not self),
+    // 'approved' = all approved/denied (not pending/draft) for employees in manager's team (not self),
+    // else: pending requests for a specific userId (employee), in manager's team (not self)
+    if (filter === "all") {
+        return await prisma.formSubmission.findMany({
+            where: {
+                status: "PENDING",
+                User: {
+                    NOT: { id: managerId },
+                    Crews: { some: { leadId: managerId } },
+                },
+                Approvals: { none: {} },
+            },
+            include: {
+                FormTemplate: { select: { formType: true } },
+                User: { select: { id: true, firstName: true, lastName: true } },
+                Approvals: { select: { signedBy: true } },
+            },
+            skip,
+            take,
+            orderBy: { createdAt: "desc" },
+        });
+    }
+    else if (filter === "approved") {
+        return await prisma.formSubmission.findMany({
+            where: {
+                status: { not: { in: ["PENDING", "DRAFT"] } },
+                User: {
+                    NOT: { id: managerId },
+                    Crews: { some: { leadId: managerId } },
+                },
+            },
+            include: {
+                FormTemplate: { select: { formType: true } },
+                User: { select: { firstName: true, lastName: true } },
+                Approvals: {
+                    select: {
+                        id: true,
+                        Approver: { select: { firstName: true, lastName: true } },
+                    },
+                },
+            },
+            skip,
+            take,
+            orderBy: { createdAt: "desc" },
+        });
+    }
+    else {
+        // filter is a userId
+        return await prisma.formSubmission.findMany({
+            where: {
+                status: "PENDING",
+                userId: filter,
+                User: {
+                    NOT: { id: managerId },
+                    Crews: { some: { leadId: managerId } },
+                },
+                Approvals: { none: {} },
+            },
+            include: {
+                FormTemplate: { select: { formType: true } },
+                User: { select: { firstName: true, lastName: true } },
+                Approvals: { select: { signedBy: true } },
+            },
+            skip,
+            take,
+            orderBy: { createdAt: "desc" },
+        });
+    }
+};
+export const ServiceGetUserSubmissions = async ({ userId, status, startDate, endDate, skip, take, }) => {
+    // Build where clause
+    let whereClause = { userId };
+    if (status === "pending") {
+        whereClause = { ...whereClause, status: FormStatus.PENDING };
+    }
+    else if (status === "approved") {
+        whereClause = { ...whereClause, status: FormStatus.APPROVED };
+    }
+    else if (status === "denied") {
+        whereClause = { ...whereClause, status: FormStatus.DENIED };
+    }
+    else if (status === "draft") {
+        whereClause = { ...whereClause, status: FormStatus.DRAFT };
+    }
+    else if (status === "all") {
+        if (startDate && endDate) {
+            whereClause = { ...whereClause, createdAt: { gte: startDate, lte: endDate } };
+        }
+    }
+    const forms = await prisma.formSubmission.findMany({
+        where: whereClause,
+        include: {
+            FormTemplate: { select: { name: true, formType: true } },
+            User: { select: { id: true, firstName: true, lastName: true } },
+        },
+        skip,
+        take,
+        orderBy: { createdAt: "desc" },
+    });
+    // Sort: drafts first, then by createdAt desc
+    forms.sort((a, b) => {
+        if (a.status === FormStatus.DRAFT && b.status !== FormStatus.DRAFT)
+            return -1;
+        if (a.status !== FormStatus.DRAFT && b.status === FormStatus.DRAFT)
+            return 1;
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
+    return forms;
+};
 //# sourceMappingURL=formsService.js.map
-//# debugId=18d6f609-110b-548b-aff9-fc403026cbcb
+//# debugId=05f6a391-ac69-5477-be36-5093e93be20a

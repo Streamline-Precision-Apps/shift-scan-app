@@ -394,7 +394,7 @@ router.post("/user", verifyToken, createUser);
 
 router.post("/user/settings", getUserSettingsByQuery);
 
-router.put("/user/settings", updateSettings);
+router.put("/user/settings", verifyToken, updateSettings);
 
 router.post("/user/contact", getUserContact);
 

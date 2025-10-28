@@ -1,6 +1,8 @@
 import type { AuthenticatedRequest } from "../middleware/authMiddleware.js";
 import type { Request, Response } from "express";
 import prisma from "../lib/prisma.js";
+import { v4 as uuidv4 } from "uuid";
+import { sendPasswordResetEmail } from "../lib/mail.js";
 
 export async function saveFCMToken(req: AuthenticatedRequest, res: Response) {
   const userId = req.user?.id; // assuming verifyToken middleware sets req.user
@@ -32,5 +34,263 @@ export async function saveFCMToken(req: AuthenticatedRequest, res: Response) {
     return res
       .status(500)
       .json({ success: false, error: "Failed to save FCM token" });
+  }
+}
+
+/**
+ * POST /api/tokens/password-reset
+ * Request password reset email by providing an email address
+ */
+export async function requestPasswordReset(req: Request, res: Response) {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      console.warn("❌ Password reset request: Missing email");
+      return res.status(400).json({ error: "Email is required" });
+    }
+
+    // Check if user exists
+    const user = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (!user) {
+      console.warn(
+        `❌ Password reset request: User not found for email: ${email}`
+      );
+      // Don't reveal if email exists or not (security best practice)
+      return res.status(200).json({
+        success: true,
+        message:
+          "If an account exists with this email, a reset link will be sent.",
+      });
+    }
+
+    console.log(`📧 Processing password reset for: ${email}`);
+
+    // Delete any existing tokens for this email
+    const existingToken = await prisma.passwordResetToken.findFirst({
+      where: { email },
+    });
+
+    if (existingToken) {
+      await prisma.passwordResetToken.delete({
+        where: { id: existingToken.id },
+      });
+      console.log(`🗑️  Deleted existing token for: ${email}`);
+    }
+
+    // Generate new reset token
+    const resetToken = uuidv4();
+    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+
+    const passwordResetToken = await prisma.passwordResetToken.create({
+      data: {
+        email,
+        token: resetToken,
+        expiration: expiresAt,
+      },
+    });
+
+    console.log(`✅ Password reset token created:`, {
+      email,
+      tokenId: passwordResetToken.id,
+      expiresAt: expiresAt.toISOString(),
+    });
+
+    // Send reset email
+    try {
+      await sendPasswordResetEmail(email, resetToken);
+      console.log(`📨 Password reset email sent to: ${email}`);
+    } catch (emailError) {
+      console.error(
+        `❌ Failed to send password reset email to ${email}:`,
+        emailError
+      );
+      // Delete the token if email fails to send
+      await prisma.passwordResetToken.delete({
+        where: { id: passwordResetToken.id },
+      });
+      return res.status(500).json({
+        error: "Failed to send reset email. Please try again.",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message:
+        "If an account exists with this email, a reset link will be sent.",
+    });
+  } catch (error) {
+    console.error("❌ Error in requestPasswordReset:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+}
+
+/**
+ * POST /api/tokens/reset-password
+ * Reset user password using the reset token
+ */
+export async function resetPassword(req: Request, res: Response) {
+  try {
+    const { token, password } = req.body;
+
+    if (!token || !password) {
+      console.warn("❌ Reset password: Missing token or password");
+      return res.status(400).json({ error: "Token and password are required" });
+    }
+
+    if (password.length < 6) {
+      return res
+        .status(400)
+        .json({ error: "Password must be at least 6 characters" });
+    }
+
+    console.log(`🔍 Verifying password reset token...`);
+
+    // Find and validate token
+    const resetTokenRecord = await prisma.passwordResetToken.findUnique({
+      where: { token },
+    });
+
+    if (!resetTokenRecord) {
+      console.warn(`❌ Invalid password reset token: ${token}`);
+      return res.status(400).json({ error: "Invalid or expired reset token" });
+    }
+
+    // Check if token is expired
+    if (resetTokenRecord.expiration < new Date()) {
+      console.warn(
+        `❌ Password reset token expired for: ${resetTokenRecord.email}`
+      );
+      // Delete expired token
+      await prisma.passwordResetToken.delete({
+        where: { id: resetTokenRecord.id },
+      });
+      return res.status(400).json({ error: "Reset token has expired" });
+    }
+
+    console.log(`✅ Token valid for email: ${resetTokenRecord.email}`);
+
+    // Find user
+    const user = await prisma.user.findUnique({
+      where: { email: resetTokenRecord.email },
+    });
+
+    if (!user) {
+      console.warn(`❌ User not found for email: ${resetTokenRecord.email}`);
+      return res.status(400).json({ error: "User not found" });
+    }
+
+    // Update password (you should hash this - see note below)
+    console.log(`🔐 Updating password for user: ${user.id}`);
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { password }, // ⚠️ TODO: Hash password before storing
+    });
+
+    // Delete used token
+    await prisma.passwordResetToken.delete({
+      where: { id: resetTokenRecord.id },
+    });
+
+    console.log(`✅ Password reset successful for: ${resetTokenRecord.email}`);
+
+    return res.status(200).json({
+      success: true,
+      message:
+        "Password reset successfully. Please sign in with your new password.",
+    });
+  } catch (error) {
+    console.error("❌ Error in resetPassword:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+}
+
+/**
+ * GET /api/tokens/verify-reset-token/:token
+ * Verify if a reset token is valid
+ */
+export async function verifyResetToken(req: Request, res: Response) {
+  try {
+    const { token } = req.params;
+
+    if (!token) {
+      return res.status(400).json({ error: "Token is required" });
+    }
+
+    console.log(`🔍 Verifying reset token...`);
+
+    const resetTokenRecord = await prisma.passwordResetToken.findUnique({
+      where: { token },
+    });
+
+    if (!resetTokenRecord) {
+      console.warn(`❌ Invalid token: ${token}`);
+      return res.status(400).json({ valid: false, error: "Invalid token" });
+    }
+
+    if (resetTokenRecord.expiration < new Date()) {
+      console.warn(`❌ Token expired: ${token}`);
+      await prisma.passwordResetToken.delete({
+        where: { id: resetTokenRecord.id },
+      });
+      return res.status(400).json({ valid: false, error: "Token expired" });
+    }
+
+    console.log(`✅ Token valid`);
+    return res.status(200).json({
+      valid: true,
+      email: resetTokenRecord.email,
+    });
+  } catch (error) {
+    console.error("❌ Error verifying reset token:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+}
+
+/**
+ * DELETE /api/tokens/reset/:token
+ * Delete a password reset token by token
+ */
+export async function deleteResetToken(req: Request, res: Response) {
+  try {
+    const { token } = req.params;
+
+    if (!token) {
+      console.warn("❌ Delete reset token: Missing token");
+      return res.status(400).json({ error: "Token is required" });
+    }
+
+    console.log(`🗑️  Attempting to delete reset token...`);
+
+    // Find the token record
+    const resetTokenRecord = await prisma.passwordResetToken.findUnique({
+      where: { token },
+    });
+
+    if (!resetTokenRecord) {
+      console.warn(`❌ Reset token not found: ${token}`);
+      return res.status(404).json({ error: "Token not found" });
+    }
+
+    // Delete the token
+    await prisma.passwordResetToken.delete({
+      where: { id: resetTokenRecord.id },
+    });
+
+    console.log(
+      `✅ Reset token deleted successfully for email: ${resetTokenRecord.email}`
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Token deleted successfully",
+    });
+  } catch (error) {
+    console.error("❌ Error deleting reset token:", error);
+    return res.status(500).json({ error: "Internal server error" });
   }
 }

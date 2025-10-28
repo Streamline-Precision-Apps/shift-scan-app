@@ -2,7 +2,6 @@
 
 import { useUserStore } from "@/app/lib/store/userStore";
 import { apiRequest, getToken, getUserId } from "../utils/api-Utils";
-import { get } from "lodash";
 
 type UserSettings = {
   userId: string;
