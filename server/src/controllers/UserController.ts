@@ -8,13 +8,17 @@ export async function getUserSettingsByQuery(req: Request, res: Response) {
   try {
     // Accept userId from body (POST)
     const userId = req.body.userId;
+    console.log("📝 getUserSettingsByQuery called with userId:", userId);
+
     if (!userId || typeof userId !== "string") {
+      console.log("❌ Invalid userId:", userId);
       return res.status(400).json({
         success: false,
         error: "User ID is required",
         message: "Failed to retrieve user settings",
       });
     }
+
     // Only select the requested fields
     const data = await prisma.userSettings.findUnique({
       where: { userId },
@@ -28,7 +32,11 @@ export async function getUserSettingsByQuery(req: Request, res: Response) {
         cookiesAccess: true,
       },
     });
+
+    console.log("🔍 Found UserSettings:", data);
+
     if (!data) {
+      console.log("❌ UserSettings not found for userId:", userId);
       return res.status(404).json({
         success: false,
         error: "User settings not found",
@@ -37,6 +45,7 @@ export async function getUserSettingsByQuery(req: Request, res: Response) {
     }
     res.status(200).json({ success: true, data });
   } catch (error) {
+    console.error("❌ Error in getUserSettingsByQuery:", error);
     res.status(500).json({
       success: false,
       error: error instanceof Error ? error.message : "Unknown error",
@@ -49,13 +58,17 @@ export async function getUserSettingsByQuery(req: Request, res: Response) {
 export async function getUserContact(req: Request, res: Response) {
   try {
     const userId = req.body.userId;
+    console.log("📝 getUserContact called with userId:", userId);
+
     if (!userId || typeof userId !== "string") {
+      console.log("❌ Invalid userId:", userId);
       return res.status(400).json({
         success: false,
         error: "User ID is required",
         message: "Failed to retrieve user contact info",
       });
     }
+
     // Fetch employee details as requested
     const employee = await prisma.user.findUnique({
       where: { id: userId },
@@ -75,7 +88,11 @@ export async function getUserContact(req: Request, res: Response) {
         },
       },
     });
+
+    console.log("🔍 Found employee:", employee);
+
     if (!employee) {
+      console.log("❌ User not found for userId:", userId);
       return res.status(404).json({
         success: false,
         error: "User not found",
@@ -84,6 +101,7 @@ export async function getUserContact(req: Request, res: Response) {
     }
     res.status(200).json({ success: true, data: employee });
   } catch (error) {
+    console.error("❌ Error in getUserContact:", error);
     res.status(500).json({
       success: false,
       error: error instanceof Error ? error.message : "Unknown error",

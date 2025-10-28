@@ -10,9 +10,10 @@ import { NewTab } from "@/app/v1/components/(reusable)/newTabs";
 import SettingSelections from "./SettingSelections";
 import { z } from "zod";
 import { TitleBoxes } from "@/app/v1/components/(reusable)/titleBoxes";
-import { updateSettings } from "@/app/lib/actions/hamburgerActions";
+import { updateSettings } from "@/app/lib/actions/old";
 import ProfileImageEditor from "./ProfileImageEditor";
 import { usePermissions } from "@/app/lib/context/permissionContext";
+import { apiRequest } from "@/app/lib/utils/api-Utils";
 
 type UserSettings = {
   userId: string;
@@ -75,18 +76,51 @@ export default function ProfilePage({ userId }: { userId: string }) {
   const fetchEmployee = async () => {
     setLoading(true);
     try {
+      console.log("🔍 fetchEmployee called with userId:", userId);
+
+      // First, try to load from localStorage
+      if (typeof window !== "undefined") {
+        const userStoreRaw = localStorage.getItem("user-store");
+        if (userStoreRaw) {
+          try {
+            const userStoreObj = JSON.parse(userStoreRaw);
+            const userData = userStoreObj?.state?.user || userStoreObj?.user;
+
+            if (userData && userData.id) {
+              console.log("✅ Found user in localStorage:", userData.id);
+              // Map user data to employee format
+              const employeeData = {
+                id: userData.id,
+                firstName: userData.firstName,
+                lastName: userData.lastName,
+                email: userData.email,
+                image: userData.image,
+                signature: userData.signature,
+                Contact: userData.Contact,
+              };
+
+              setEmployee(employeeData);
+              setSignatureBase64String(userData.signature ?? "");
+              setLoading(false);
+              return; // Don't fetch from API if found in localStorage
+            }
+          } catch (err) {
+            console.warn("Failed to parse stored user data:", err);
+          }
+        }
+      }
+
+      // If not in localStorage, fetch from API
+      console.log("📡 Fetching employee data from API for userId:", userId);
+
       const token =
         typeof window !== "undefined" ? localStorage.getItem("token") : null;
-      const url = process.env.NEXT_PUBLIC_API_URL || `http://localhost:3001`;
-      const res = await fetch(`${url}/api/v1/user/contact`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ userId: String(userId), token }),
+      console.log("🔑 Token:", token ? "exists" : "missing");
+
+      const result = await apiRequest("/api/v1/user/contact", "POST", {
+        userId: String(userId),
       });
-      if (!res.ok) throw new Error(await res.text());
-      const result = await res.json();
+
       const employeeData = result.data;
       setEmployee(employeeData);
       setSignatureBase64String(employeeData.signature ?? "");
@@ -106,19 +140,56 @@ export default function ProfilePage({ userId }: { userId: string }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        console.log("🔍 fetchData called with userId:", userId);
+        let settings = null;
+
+        // First, try to load from localStorage
+        if (typeof window !== "undefined") {
+          const userStoreRaw = localStorage.getItem("user-store");
+          if (userStoreRaw) {
+            try {
+              const userStoreObj = JSON.parse(userStoreRaw);
+              const userData = userStoreObj?.state?.user || userStoreObj?.user;
+
+              if (userData && userData.UserSettings) {
+                console.log(
+                  "✅ Found UserSettings in localStorage:",
+                  userData.UserSettings
+                );
+                // Use cached UserSettings from localStorage
+                settings = userData.UserSettings;
+                const validatedSettings = userSettingsSchema.parse(settings);
+
+                // Sync with permission status from context
+                const updatedSettings = {
+                  ...validatedSettings,
+                  userId,
+                  cameraAccess: permissionStatus.camera === "granted",
+                  locationAccess: permissionStatus.location === "granted",
+                };
+
+                setData(updatedSettings);
+                setUpdatedData(updatedSettings);
+                setInitialData(updatedSettings);
+                return; // Don't fetch from API if found in localStorage
+              }
+            } catch (err) {
+              console.warn("Failed to parse stored user settings:", err);
+            }
+          }
+        }
+
+        // If not in localStorage, fetch from API to get current settings
+        console.log("📡 Fetching UserSettings from API for userId:", userId);
         const token =
           typeof window !== "undefined" ? localStorage.getItem("token") : null;
-        const url = process.env.NEXT_PUBLIC_API_URL || `http://localhost:3001`;
-        const res = await fetch(`${url}/api/v1/user/settings`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ userId: String(userId), token }),
+        console.log("🔑 Token:", token ? "exists" : "missing");
+
+        const res = await apiRequest("/api/v1/user/settings", "POST", {
+          userId: String(userId),
         });
-        if (!res.ok) throw new Error(await res.text());
-        const result = await res.json();
-        const settings = result.data;
+
+        settings = res.data;
         const validatedSettings = userSettingsSchema.parse(settings);
 
         // Use permissionStatus from context: only true if 'granted'

@@ -5,8 +5,9 @@ import { useRef, useState, useEffect, Dispatch, SetStateAction } from "react";
 import { Holds } from "../(reusable)/holds";
 import { Grids } from "../(reusable)/grids";
 import { Buttons } from "../(reusable)/buttons";
-import { useSession } from "@/app/lib/context/sessionContext";
-import { updateUserSignature } from "@/app/lib/actions/userActions";
+import { apiRequest } from "@/app/lib/utils/api-Utils";
+import { updateUserSignature } from "@/app/lib/actions/hamburgerActions";
+import { useUserStore } from "@/app/lib/store/userStore";
 
 type SignatureProps = {
   setBase64String: Dispatch<SetStateAction<string | null>>;
@@ -57,12 +58,13 @@ export default function SignatureSetUpModal({
     };
   }, []);
 
-  const { user } = useSession();
+  const { user } = useUserStore();
   if (!user) {
     return null;
   }
+  const userId = localStorage.getItem("userId");
 
-  const employee = user?.id;
+  const employee = userId || (user?.id as string);
 
   // 🔹 Convert touch coordinates to match mouse event behavior
   const getTouchPos = (canvas: HTMLCanvasElement, touchEvent: TouchEvent) => {
@@ -165,27 +167,24 @@ export default function SignatureSetUpModal({
 
     try {
       const formData = new FormData();
-      formData.append("userId", employee);
+      formData.append("userId", employee as string);
       formData.append("file", file, "profile.png");
       formData.append("folder", "signatures");
 
-      const res = await fetch("/api/uploadBlobs", {
-        method: "POST",
-        body: formData,
-      });
+      const res = await apiRequest("/api/storage/upload", "POST", formData);
 
-      if (!res.ok) {
-        throw new Error("Failed to upload image");
+      const { url } = res;
+      if (!url) {
+        throw new Error("No URL returned from upload");
       }
 
-      const { url } = await res.json();
       // Add cache-busting param to break browser cache
       const cacheBustedUrl = `${url}?t=${Date.now()}`;
 
       // Update local state for immediate UI update
       setBase64String(cacheBustedUrl);
 
-      // 4. Update user image URL in your database
+      // Update user signature URL in database
       const updatingDb = await updateUserSignature(employee, cacheBustedUrl);
 
       if (!updatingDb.success) {
@@ -194,7 +193,7 @@ export default function SignatureSetUpModal({
 
       return cacheBustedUrl;
     } catch (err) {
-      console.error("[Error uploading new image or updating DB:", err);
+      console.error("Error uploading new image or updating DB:", err);
     }
   };
 
@@ -220,14 +219,21 @@ export default function SignatureSetUpModal({
           position={"row"}
           className="row-span-1 gap-2 h-full justify-center flex"
         >
-          <Buttons background={"red"} shadow={"none"} onClick={handleClear}>
+          <Buttons
+            background={"red"}
+            shadow={"none"}
+            onClick={handleClear}
+            className="text-black"
+          >
             {t("Clear")}
           </Buttons>
           <Buttons
             disabled={hasStroke === false}
             onClick={handleSave}
             shadow={"none"}
-            className={`${hasStroke ? "bg-app-blue" : "bg-gray-400 "}`}
+            className={`${
+              hasStroke ? "bg-app-blue text-black" : "bg-gray-400 text-black"
+            }`}
           >
             {t("Save")}
           </Buttons>

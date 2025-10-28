@@ -41,7 +41,3 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
     </SessionContext.Provider>
   );
 }
-
-export function useSession() {
-  return useContext(SessionContext);
-}

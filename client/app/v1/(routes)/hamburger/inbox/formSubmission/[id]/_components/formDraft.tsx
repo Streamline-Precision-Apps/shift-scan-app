@@ -19,10 +19,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/app/v1/components/ui/alert-dialog";
-import {
-  deleteFormSubmission,
-  saveDraft,
-} from "@/app/lib/actions/hamburgerActions";
+import { deleteFormSubmission, saveDraft } from "@/app/lib/actions/old";
 
 interface FormField {
   id: string;

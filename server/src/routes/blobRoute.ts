@@ -1,9 +1,13 @@
 import { Router } from "express";
+import multer from "multer";
 
 import { requireFirebaseEnv } from "../middleware/requireFirebaseEnv.js";
 import { blobDelete, blobUpload } from "../controllers/blobsController.js";
 
 const router = Router();
+
+// Configure Multer for file uploads (store in memory)
+const upload = multer({ storage: multer.memoryStorage() });
 
 /**
  * @swagger
@@ -43,7 +47,12 @@ const router = Router();
  *       500:
  *         description: Upload failed
  */
-router.post("/upload", requireFirebaseEnv, blobUpload);
+router.post(
+  "/upload",
+  requireFirebaseEnv,
+  upload.single("file"),
+  blobUpload
+);
 
 /**
  * @swagger

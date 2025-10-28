@@ -421,10 +421,13 @@ router.delete("/user/:id", verifyToken, deleteUser);
  *         description: Bad request
  */
 
-// GET user settings (by userId query param or header)
+// GET user settings (by userId in body)
 router.post("/user/settings", getUserSettingsByQuery);
 
-// GET user contact info (by userId query param or header)
+// PUT user settings (for updating settings)
+router.put("/user/settings", updateSettings);
+
+// GET user contact info (by userId in body)
 router.post("/user/contact", getUserContact);
 
 export default router;

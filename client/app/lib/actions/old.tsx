@@ -1,33 +1,6 @@
 "use client";
 
-// Utility to get API URL
-function getApiUrl() {
-  return process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
-}
-
-// Utility to get token from localStorage
-function getToken() {
-  if (typeof window !== "undefined") {
-    return localStorage.getItem("token") || "";
-  }
-  return "";
-}
-
-// Helper for API requests
-async function apiRequest(path: string, method: string, body: any) {
-  const url = `${getApiUrl()}${path}`;
-  const token = getToken();
-  const res = await fetch(url, {
-    method,
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify(body),
-  });
-  if (!res.ok) throw new Error(await res.text());
-  return res.json();
-}
+import { apiRequest, getApiUrl, getToken } from "../utils/api-Utils";
 
 // Accepts contact info and settings, updates User, Contacts, and UserSettings as needed
 export async function updateSettings(data: {

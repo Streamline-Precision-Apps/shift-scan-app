@@ -21,7 +21,7 @@ import { formatPhoneNumber } from "@/app/lib/utils/phoneNumberFormater";
 import { formatPhoneNumberSetter } from "@/app/lib/utils/phoneNumberSetFormatter";
 import { useSignOut } from "@/app/lib/hooks/useSignOut";
 import SignatureSetUpModal from "@/app/v1/components/(signup)/signatureSetupModal";
-import { updateSettings } from "@/app/lib/actions/hamburgerActions";
+import { updateSettings } from "@/app/lib/actions/old";
 
 type Employee = {
   id: string;

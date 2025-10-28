@@ -132,6 +132,9 @@ export class UserService {
         throw new Error("Email is already taken by another user");
       }
     }
+    if (userData.image && typeof userData.image !== "string") {
+      throw new Error("Image must be a string URL");
+    }
 
     // Support nested updates for Contact and UserSettings
     const updateData: Prisma.UserUpdateInput = { ...userData };

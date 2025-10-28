@@ -7,6 +7,7 @@ import { Images } from "@/app/v1/components/(reusable)/images";
 import { Grids } from "@/app/v1/components/(reusable)/grids";
 import { TitleBoxes } from "@/app/v1/components/(reusable)/titleBoxes";
 import { useUserStore } from "@/app/lib/store/userStore";
+import { useState, useEffect } from "react";
 
 function ProfileSkeleton() {
   return (
@@ -24,7 +25,7 @@ function ProfileSkeleton() {
                 titleImgAlt="profile"
                 className={`w-full h-full rounded-full object-cover `}
               />
-              <Holds className="absolute bottom-2 right-0 translate-x-1/4 translate-y-1/4 rounded-full h-8 w-8 border-[2px] p-0.5 justify-center items-center border-black bg-app-gray">
+              <Holds className="absolute bottom-2 right-0 translate-x-1/4 translate-y-1/4 rounded-full h-8 w-8 border-2 p-0.5 justify-center items-center border-black bg-app-gray">
                 <Images titleImg="/camera.svg" titleImgAlt="camera" />
               </Holds>
             </div>
@@ -42,14 +43,56 @@ function ProfileSkeleton() {
 
 export default function EmployeeProfile() {
   const { user } = useUserStore();
-  const userId = user?.id as string;
+  const [userId, setUserId] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  if (!user || !userId) {
-    <Bases>
-      <Contents>
-        <ProfileSkeleton />
-      </Contents>
-    </Bases>;
+  useEffect(() => {
+    // Try to get userId from user store first
+    if (user?.id) {
+      console.log("✅ Got userId from user store:", user.id);
+      setUserId(user.id);
+      setIsLoading(false);
+      return;
+    }
+
+    // Fallback to localStorage
+    if (typeof window !== "undefined") {
+      const storedUserId = localStorage.getItem("userId");
+      if (storedUserId) {
+        console.log("✅ Got userId from localStorage:", storedUserId);
+        setUserId(storedUserId);
+        setIsLoading(false);
+        return;
+      }
+    }
+
+    // If still no userId, wait a moment and try again (in case store is still initializing)
+    const timer = setTimeout(() => {
+      if (!user?.id) {
+        const storedUserId =
+          typeof window !== "undefined" ? localStorage.getItem("userId") : null;
+        if (storedUserId) {
+          console.log("✅ Got userId from localStorage (retry):", storedUserId);
+          setUserId(storedUserId);
+        } else {
+          console.error("❌ No userId found in store or localStorage");
+        }
+      }
+      setIsLoading(false);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [user?.id]);
+
+  // Show loading skeleton while fetching userId
+  if (isLoading || !userId) {
+    return (
+      <Bases>
+        <Contents>
+          <ProfileSkeleton />
+        </Contents>
+      </Bases>
+    );
   }
 
   return (

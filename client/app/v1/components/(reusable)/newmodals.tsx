@@ -1,7 +1,6 @@
 "use client";
 import { cva, type VariantProps } from "class-variance-authority";
 import { HTMLAttributes, FC } from "react";
-
 import ReactPortal from "./ReactPortal";
 import React, { useEffect } from "react";
 import { Bases } from "./bases";
@@ -83,7 +82,7 @@ const NModals: FC<NModalProps> = ({
         background={"modal"}
         position={"start"}
         size={"screen"}
-        className="z-9998" // Ensure it's just below the modal content
+        className="z-9998 inset-0" // Ensure it covers the entire screen
         onClick={handleClose}
       >
         <div

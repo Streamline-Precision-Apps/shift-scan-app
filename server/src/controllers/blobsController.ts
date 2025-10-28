@@ -6,7 +6,6 @@ export async function blobUpload(req: Request, res: Response) {
     const admin = getFirebaseAdmin();
     const bucket = admin.storage().bucket();
 
-    // Use multer to parse multipart form data
     const userId = req.body.userId;
     const file = req.file;
     const folder = req.body.folder || "profileImages";
@@ -18,18 +17,26 @@ export async function blobUpload(req: Request, res: Response) {
       return res.status(400).json({ error: "No file provided" });
     }
 
-    // Save to bucket
+    // Upsert: Save file (creates if new, overwrites if exists)
     const fileRef = bucket.file(`${folder}/${userId}.png`);
     const contentType = folder === "docs" ? "application/pdf" : "image/png";
+
     await fileRef.save(file.buffer, {
       contentType,
       public: true,
+      metadata: {
+        cacheControl: "no-cache", // Prevent caching old images
+      },
     });
 
     const publicUrl = `https://storage.googleapis.com/${bucket.name}/${fileRef.name}`;
-    return res.json({ url: publicUrl });
+
+    return res.status(200).json({
+      url: publicUrl,
+      message: "Image uploaded successfully",
+    });
   } catch (err) {
-    console.error(err);
+    console.error("Upload error:", err);
     return res.status(500).json({ error: "Upload failed" });
   }
 }

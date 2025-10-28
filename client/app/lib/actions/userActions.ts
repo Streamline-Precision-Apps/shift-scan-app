@@ -340,45 +340,33 @@ export default async function updateUserAccountInfo(formData: FormData) {
   }
 }
 
-// Update user image URL in the database
+// Update user image URL in the database via API
 export async function updateUserImage(id: string, imageUrl: string) {
   try {
     if (!id || !imageUrl) {
       throw new Error("Invalid credentials");
     }
 
-    await prisma.user.update({
-      where: { id },
-      data: {
-        image: imageUrl,
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+    const token =
+      typeof window !== "undefined" ? localStorage.getItem("token") : null;
+
+    const response = await fetch(`${API_URL}/api/v1/user/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
+      body: JSON.stringify({ image: imageUrl }),
     });
 
-    revalidatePath("/hamburger/profile");
-    return { success: true };
-  } catch (error) {
-    console.error("Error updating user image URL in DB", error);
-    return { success: false };
-  }
-}
-
-export async function updateUserSignature(id: string, imageUrl: string) {
-  try {
-    if (!id || !imageUrl) {
-      throw new Error("Invalid credentials");
+    if (!response.ok) {
+      throw new Error(`Failed to update user image: ${response.statusText}`);
     }
 
-    await prisma.user.update({
-      where: { id },
-      data: {
-        signature: imageUrl,
-      },
-    });
-
-    revalidatePath("/hamburger/profile");
     return { success: true };
   } catch (error) {
-    console.error("Error updating user image URL in DB", error);
+    console.error("Error updating user image URL:", error);
     return { success: false };
   }
 }

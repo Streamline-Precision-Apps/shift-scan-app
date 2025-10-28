@@ -14,7 +14,8 @@ import { useTranslations } from "next-intl";
 import Spinner from "@/app/v1/components/(animations)/spinner";
 import "@/app/globals.css";
 import { usePermissions } from "@/app/lib/context/permissionContext";
-import { updateUserImage } from "@/app/lib/actions/userActions";
+import { updateUserImage } from "@/app/lib/actions/hamburgerActions";
+import { apiRequest } from "@/app/lib/utils/api-Utils";
 
 type Employee = {
   id: string;
@@ -67,7 +68,8 @@ export default function ProfileImageEditor({
   const videoRef = useRef<HTMLVideoElement>(null);
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [isSaving, setIsSaving] = useState(false);
-  const { requestCameraPermission } = usePermissions();
+  const { requestCameraPermission, requestPhotosPermission, permissionStatus } =
+    usePermissions();
 
   // firebase states
   const [uploading, setUploading] = useState(false);
@@ -118,22 +120,30 @@ export default function ProfileImageEditor({
 
   const startCamera = async () => {
     try {
-      // First request camera permission using the centralized permissions context
+      // Request camera permission using the centralized permissions context
       const permissionGranted = await requestCameraPermission();
 
       if (!permissionGranted) {
-        console.error("Camera permission denied");
+        console.warn("Camera permission denied by user");
         setMode("select");
         return;
       }
 
-      const mediaStream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "user", width: 300, height: 300 },
-      });
-      setStream(mediaStream);
-      if (videoRef.current) videoRef.current.srcObject = mediaStream;
+      // Try to get media stream with camera access
+      try {
+        const mediaStream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: "user", width: 300, height: 300 },
+        });
+        setStream(mediaStream);
+        if (videoRef.current) videoRef.current.srcObject = mediaStream;
+      } catch (mediaError) {
+        console.error("Failed to access camera via getUserMedia:", mediaError);
+        // If getUserMedia fails, reset mode and show error
+        setMode("select");
+        return;
+      }
     } catch (error) {
-      console.error("Camera error:", error);
+      console.error("Camera permission error:", error);
       setMode("select");
     }
   };
@@ -141,6 +151,37 @@ export default function ProfileImageEditor({
   const stopCamera = () => {
     stream?.getTracks().forEach((track) => track.stop());
     setStream(null);
+  };
+
+  const selectFromGallery = async () => {
+    try {
+      // Request photos permission for gallery access
+      const photosGranted = await requestPhotosPermission();
+
+      if (!photosGranted) {
+        console.warn("Photos permission denied by user");
+        return;
+      }
+
+      // Use HTML file input for web/cross-platform compatibility
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = "image/*";
+      input.onchange = (e: any) => {
+        const file = e.target.files?.[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (event: any) => {
+            setImageSrc(event.target.result);
+            setMode("crop");
+          };
+          reader.readAsDataURL(file);
+        }
+      };
+      input.click();
+    } catch (error) {
+      console.error("Error selecting from gallery:", error);
+    }
   };
 
   const takePicture = () => {
@@ -198,23 +239,36 @@ export default function ProfileImageEditor({
       console.warn("[handleUpload] No employee id");
       return;
     }
+    console.log("Uploading file for userId:", employee.id);
 
     try {
+      // Use FormData for multipart/form-data (required for file uploads)
       const formData = new FormData();
       formData.append("userId", employee.id);
       formData.append("file", file, "profile.png");
       formData.append("folder", "profileImages");
 
-      const res = await fetch("/api/uploadBlobs", {
-        method: "POST",
-        body: formData,
-      });
+      const token = localStorage.getItem("token") || "";
+      const res = await fetch(
+        `${
+          process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"
+        }/api/storage/upload`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        }
+      );
 
       if (!res.ok) {
         throw new Error("Failed to upload image");
       }
 
-      const { url } = await res.json();
+      const data = await res.json();
+      const { url } = data;
+      const employeeId = employee.id as string;
       // Add cache-busting param to break browser cache
       const cacheBustedUrl = `${url}?t=${Date.now()}`;
 
@@ -222,7 +276,7 @@ export default function ProfileImageEditor({
       setProfileImageUrl(cacheBustedUrl);
 
       // 4. Update user image URL in your database
-      const updatingDb = await updateUserImage(employee.id, cacheBustedUrl);
+      const updatingDb = await updateUserImage(employeeId, cacheBustedUrl);
 
       if (!updatingDb.success) {
         throw new Error("Error updating url in DB");
@@ -380,6 +434,13 @@ export default function ProfileImageEditor({
                     onClick={() => setMode("camera")}
                   >
                     <Titles size={"h4"}>{t("ChangeProfilePhoto")}</Titles>
+                  </Buttons>
+                  <Buttons
+                    background="lightGray"
+                    className="w-full py-2"
+                    onClick={selectFromGallery}
+                  >
+                    <Titles size={"h4"}>{t("SelectFromGallery")}</Titles>
                   </Buttons>
                 </Holds>
               ) : mode === "camera" ? (

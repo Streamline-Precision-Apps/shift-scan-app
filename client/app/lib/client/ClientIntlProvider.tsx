@@ -3,9 +3,15 @@
 import React, { useEffect, useState } from "react";
 import { IntlProvider } from "next-intl";
 import { Device } from "@capacitor/device";
+import { defineCustomElements } from "@ionic/pwa-elements/loader";
 import { loadMessages, defaultLocale, type Locale } from "./i18n-client";
 import defaultMessages from "../messages/en.json";
 import { readLocaleCookie, setLocaleCookie } from "./cookie-utils";
+
+// Initialize PWA Elements for Camera and other Capacitor plugins on web
+if (typeof window !== "undefined") {
+  defineCustomElements(window);
+}
 
 export async function persistLocale(value: Locale) {
   try {

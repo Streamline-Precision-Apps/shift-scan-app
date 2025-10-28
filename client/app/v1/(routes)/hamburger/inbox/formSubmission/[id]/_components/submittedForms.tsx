@@ -22,10 +22,7 @@ import {
   AlertDialogTitle,
 } from "@/app/v1/components/ui/alert-dialog";
 import { FormFieldRenderer } from "../../../_components/FormFieldRenderer";
-import {
-  deleteFormSubmission,
-  savePending,
-} from "@/app/lib/actions/hamburgerActions";
+import { deleteFormSubmission, savePending } from "@/app/lib/actions/old";
 import { useAutoSave } from "@/app/lib/hooks/useAutoSave";
 
 interface FormField {
