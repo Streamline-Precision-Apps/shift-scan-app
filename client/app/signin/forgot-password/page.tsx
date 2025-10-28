@@ -51,11 +51,11 @@ export default function ForgotPassword() {
                 onSubmit={handlePasswordReset}
                 className=" w-full mx-auto h-[calc(100vh-80px)] flex flex-col justify-between"
               >
-                <div className="h-24 flex flex-col space-y-2 w-full">
-                  <Titles size={"lg"} className="text-center ">
+                <div className="h-fit flex flex-col space-y-2 w-full mb-4">
+                  <h1 className="text-xl font-bold text-app-dark-blue mb-2">
                     {t("ForgotPasswordTitle")}
-                  </Titles>
-                  <Texts size={"sm"} className="text-center ">
+                  </h1>
+                  <Texts size={"sm"} className="text-center text-gray-600 ">
                     {t("RecoveryPageTitle")}
                   </Texts>
                 </div>
