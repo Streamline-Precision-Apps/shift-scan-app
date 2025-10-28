@@ -10,6 +10,7 @@ export const initHandler = async (
 ) => {
   const userId = req.body.userId as string;
   const token = req.body.token as string;
+  console.log("[initHandler] Received userId:", userId, "token:", token);
 
   if (!token) {
     return res.status(400).json({ error: "Missing token" });
@@ -19,11 +20,11 @@ export const initHandler = async (
   }
 
   try {
-    const user = await getUserWithSettingsById(userId);
-    if (!user) {
+    const data = await getUserWithSettingsById(userId);
+    if (!data.user) {
       return res.status(404).json({ error: "User not found" });
     }
-    res.json({ user });
+    res.json(data);
   } catch (err) {
     res.status(500).json({ error: "Server error", details: String(err) });
   }

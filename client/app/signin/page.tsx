@@ -39,15 +39,17 @@ export default function SignInPage() {
       const url = process.env.NEXT_PUBLIC_API_URL || `http://localhost:3001`;
       fetch(`${url}/api/v1/init`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         credentials: "include",
-        body: JSON.stringify({ token, userId }),
+        body: JSON.stringify({ token, userId: String(userId) }),
       })
         .then((res) => res.json())
         .then((dataJson) => {
           if (dataJson.user) {
             useUserStore.getState().setUser(dataJson.user);
-            redirectAfterAuth();
           }
           if (dataJson.jobsites) {
             useProfitStore.getState().setJobsites(dataJson.jobsites);
@@ -58,10 +60,11 @@ export default function SignInPage() {
           if (dataJson.costCodes) {
             useCostCodeStore.getState().setCostCodes(dataJson.costCodes);
           }
+          redirectAfterAuth();
         })
         .catch(() => {});
     }
-  }, []);
+  }, [redirectAfterAuth]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -90,19 +93,38 @@ export default function SignInPage() {
       } else if (data && data.error) {
         setError(data.error || "Sign in failed");
       } else {
-        // If server returns a token and you prefer storing it on client
-        // you can do: if (data?.token) localStorage.setItem('token', data.token)
+        // Debug: Log the response to see what structure we're getting
+        console.log("Sign in response:", data);
+
+        // Handle different response structures
+        const userId = data.user?.id || data.userId || data.id;
+
+        if (!data.token) {
+          setError("No token received from server");
+          return;
+        }
+
+        if (!userId) {
+          console.error("No user ID found in response:", data);
+          setError("User ID not found in response");
+          return;
+        }
+
+        // Store token and userId
         localStorage.setItem("token", data.token);
-        localStorage.setItem("userId", data.user.user.id);
+        localStorage.setItem("userId", String(userId));
 
         const url = process.env.NEXT_PUBLIC_API_URL || `http://localhost:3001`;
         const response = await fetch(`${url}/api/v1/init`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${data.token}`,
+          },
           credentials: "include",
           body: JSON.stringify({
             token: data.token,
-            userId: data.user.user.id,
+            userId: String(userId),
           }),
         });
         const dataJson = await response.json();

@@ -75,6 +75,11 @@ export async function getUserWithSettingsById(userId: string) {
     },
   });
 
+  console.log("user:", user);
+  console.log("jobsites:", jobsites);
+  console.log("equipments:", equipments);
+  console.log("costCodes:", costCodes);
+
   return {
     user,
     jobsites,

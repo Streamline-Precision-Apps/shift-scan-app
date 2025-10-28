@@ -53,9 +53,16 @@ export const loginUser = async (
     // name the cookie `token`; this allows the middleware to read it as a fallback
     res.cookie("session", token, cookieOptions);
 
+    // Return simplified user object with ID (full user will be fetched via /api/v1/init)
     return res
       .status(200)
-      .json({ message: "Login successful", token, user: { user: payload } });
+      .json({ 
+        message: "Login successful", 
+        token, 
+        user: {
+          id: user.id,
+        }
+      });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ error: "Internal server error" });

@@ -70,11 +70,41 @@ type UserStore = {
   ) => void;
 };
 
+// Helper function to sanitize user data and remove any extra properties
+const sanitizeUser = (user: any): User | null => {
+  if (!user) return null;
+  return {
+    id: user.id,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    username: user.username,
+    email: user.email,
+    signature: user.signature,
+    DOB: user.DOB,
+    truckView: user.truckView,
+    tascoView: user.tascoView,
+    laborView: user.laborView,
+    mechanicView: user.mechanicView,
+    permission: user.permission,
+    image: user.image,
+    terminationDate: user.terminationDate,
+    accountSetup: user.accountSetup,
+    clockedIn: user.clockedIn,
+    companyId: user.companyId,
+    middleName: user.middleName,
+    secondLastName: user.secondLastName,
+    lastSeen: user.lastSeen,
+    accountSetupToken: user.accountSetupToken,
+    Contact: user.Contact,
+    UserSettings: user.UserSettings,
+  };
+};
+
 export const useUserStore = create(
   persist<UserStore>(
     (set, get) => ({
       user: null,
-      setUser: (user) => set({ user }),
+      setUser: (user) => set({ user: sanitizeUser(user) }),
       clearUser: () => set({ user: null }),
       setLanguage: (language) => {
         const user = get().user;

@@ -6,6 +6,7 @@ export type Equipment = {
   name: string;
   qrId: string;
   status: string;
+  approvalStatus?: string;
 };
 
 interface EquipmentStoreState {
@@ -15,15 +16,35 @@ interface EquipmentStoreState {
   clearEquipments: () => void;
 }
 
+// Helper function to sanitize equipment data
+const sanitizeEquipments = (equipments: any[]): Equipment[] => {
+  if (!Array.isArray(equipments)) return [];
+  return equipments.map((eq) => ({
+    id: eq.id,
+    name: eq.name,
+    qrId: eq.qrId,
+    status: eq.status,
+    approvalStatus: eq.approvalStatus,
+  }));
+};
+
 export const useEquipmentStore = create<EquipmentStoreState>()(
   persist(
     (set) => ({
       equipments: [],
-      setEquipments: (equipments) => set({ equipments }),
+      setEquipments: (equipments) => set({ equipments: sanitizeEquipments(equipments) }),
       addEquipment: (equipment) =>
         set((state) => ({ equipments: [...state.equipments, equipment] })),
       clearEquipments: () => set({ equipments: [] }),
     }),
-    { name: "equipment-store" }
+    {
+      name: "equipment-store",
+      partialize: (state) => ({
+        equipments: state.equipments,
+        addEquipment: () => {},
+        setEquipments: () => {},
+        clearEquipments: () => {},
+      }),
+    }
   )
 );

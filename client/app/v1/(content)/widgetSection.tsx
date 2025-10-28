@@ -28,58 +28,102 @@ export default function WidgetSection() {
   const router = useRouter();
   const [toggle, setToggle] = useState(true);
 
-  // If no user, try to load from localStorage 'user-store' first, then refetch from /api/v1/init if needed
+  // If no user, try to load from localStorage first, then refetch from /api/v1/init if needed
   useEffect(() => {
     const fetchUser = async () => {
       try {
         if (!user) {
-          let loadedFromStore = false;
           console.log("No user in store, attempting to load from localStorage");
           try {
+            // Try to load all stores from localStorage
+            let allStoresLoaded = false;
             if (typeof window !== "undefined") {
-              // Try to load user from 'user-store' in localStorage
               const userStoreRaw = localStorage.getItem("user-store");
-              if (userStoreRaw) {
+              const jobsitesStoreRaw = localStorage.getItem("profit-store");
+              const equipmentsStoreRaw =
+                localStorage.getItem("equipment-store");
+              const costCodesStoreRaw = localStorage.getItem("cost-code-store");
+
+              if (
+                userStoreRaw &&
+                jobsitesStoreRaw &&
+                equipmentsStoreRaw &&
+                costCodesStoreRaw
+              ) {
                 try {
                   const userStoreObj = JSON.parse(userStoreRaw);
+                  const jobsitesStoreObj = JSON.parse(jobsitesStoreRaw);
+                  const equipmentsStoreObj = JSON.parse(equipmentsStoreRaw);
+                  const costCodesStoreObj = JSON.parse(costCodesStoreRaw);
+
+                  // Zustand stores may have either 'state' or direct properties
+                  const userData =
+                    userStoreObj?.state?.user || userStoreObj?.user;
+                  const jobsitesData =
+                    jobsitesStoreObj?.state?.jobsites ||
+                    jobsitesStoreObj?.jobsites;
+                  const equipmentsData =
+                    equipmentsStoreObj?.state?.equipments ||
+                    equipmentsStoreObj?.equipments;
+                  const costCodesData =
+                    costCodesStoreObj?.state?.costCodes ||
+                    costCodesStoreObj?.costCodes;
+
                   if (
-                    userStoreObj &&
-                    userStoreObj.state &&
-                    userStoreObj.state.user
+                    userData &&
+                    Array.isArray(jobsitesData) &&
+                    Array.isArray(equipmentsData) &&
+                    Array.isArray(costCodesData)
                   ) {
-                    setUser(userStoreObj.state.user);
-                    loadedFromStore = true;
+                    setUser(userData);
+                    setJobsites(jobsitesData);
+                    setEquipments(equipmentsData);
+                    setCostCodes(costCodesData);
+                    allStoresLoaded = true;
                     setLoadingUi(false);
-                    return; // Don't fetch from API if found in localStorage
+                    return; // Don't fetch from API if all data found in localStorage
                   }
                 } catch (err) {
-                  // Ignore JSON parse errors
+                  console.error("Error parsing stored data:", err);
                 }
               }
             }
+
             // Get token and userId from localStorage if available
             let token = "";
-            let userId = undefined;
+            let userId: string | undefined = undefined;
             if (typeof window !== "undefined") {
               token = localStorage.getItem("token") || "";
-              userId = localStorage.getItem("userId") || undefined;
+              userId = localStorage.getItem("userId") as string | undefined;
             }
+
             const url =
               process.env.NEXT_PUBLIC_API_URL || `http://localhost:3001`;
             const res = await fetch(`${url}/api/v1/init`, {
               method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ token, userId }),
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({ token, userId: String(userId) }),
             });
+
             if (res.ok) {
               const data = await res.json();
-              if (data.user) setUser(data.user);
+
+              // Set all stores and persist to localStorage
+              if (data.user) {
+                setUser(data.user);
+                // Store with stringified userId
+                if (typeof window !== "undefined") {
+                  localStorage.setItem("userId", String(data.user.id));
+                }
+              }
               if (data.jobsites) setJobsites(data.jobsites);
               if (data.equipments) setEquipments(data.equipments);
               if (data.costCodes) setCostCodes(data.costCodes);
             }
           } catch (e) {
-            // Optionally handle error
             console.error("Error fetching user data:", e);
           }
         }
@@ -90,7 +134,7 @@ export default function WidgetSection() {
       }
     };
     fetchUser();
-  }, [user, setUser]);
+  }, [user, setUser, setJobsites, setEquipments, setCostCodes]);
 
   const accountSetup = user?.accountSetup;
   const permission = user?.permission;
