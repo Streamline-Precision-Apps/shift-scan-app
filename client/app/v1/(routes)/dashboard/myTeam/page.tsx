@@ -1,20 +1,19 @@
 "use client";
 
-import Spinner from "@/components/(animations)/spinner";
+import Spinner from "@/app/v1/components/(animations)/spinner";
 import { Suspense } from "react";
-import { Bases } from "@/components/(reusable)/bases";
-import { Buttons } from "@/components/(reusable)/buttons";
-import { Contents } from "@/components/(reusable)/contents";
-import { Grids } from "@/components/(reusable)/grids";
-import { Holds } from "@/components/(reusable)/holds";
-import { TitleBoxes } from "@/components/(reusable)/titleBoxes";
-import { Titles } from "@/components/(reusable)/titles";
-import { useSession } from "next-auth/react";
+import { Bases } from "@/app/v1/components/(reusable)/bases";
+import { Buttons } from "@/app/v1/components/(reusable)/buttons";
+import { Contents } from "@/app/v1/components/(reusable)/contents";
+import { Grids } from "@/app/v1/components/(reusable)/grids";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
+import { TitleBoxes } from "@/app/v1/components/(reusable)/titleBoxes";
+import { Titles } from "@/app/v1/components/(reusable)/titles";
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import React from "react";
 import { z } from "zod";
-import { Texts } from "@/components/(reusable)/texts";
+import { Texts } from "@/app/v1/components/(reusable)/texts";
 import { useRouter, useSearchParams } from "next/navigation";
 
 // Zod schema for Team data
@@ -41,7 +40,6 @@ export default function Content() {
   const t = useTranslations("MyTeam");
   const [myTeams, setMyTeams] = useState<Team[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const { status: sessionStatus } = useSession();
 
   useEffect(() => {
     const fetchCrew = async () => {
@@ -72,10 +70,8 @@ export default function Content() {
       }
     };
 
-    if (sessionStatus === "authenticated") {
-      fetchCrew();
-    }
-  }, [sessionStatus]);
+    fetchCrew();
+  }, []);
 
   return (
     <Bases>

@@ -2,27 +2,27 @@
 import React, { Dispatch, SetStateAction, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useTimeSheetData } from "@/app/context/TimeSheetIdContext";
-import { handleTascoTimeSheet } from "@/actions/timeSheetActions"; // Updated import
-import { useSession } from "next-auth/react";
+import { handleTascoTimeSheet } from "@/app/lib/actions/timeSheetActions"; // Updated import
 import { useCommentData } from "@/app/context/CommentContext";
 import {
   setCurrentPageView,
   setLaborType,
   setWorkRole,
-} from "@/actions/cookieActions";
+} from "@/app/lib/actions/cookieActions";
 import { useRouter } from "next/navigation";
-import { Buttons } from "@/components/(reusable)/buttons";
-import { Contents } from "@/components/(reusable)/contents";
-import { Grids } from "@/components/(reusable)/grids";
-import { Holds } from "@/components/(reusable)/holds";
-import { Images } from "@/components/(reusable)/images";
-import { Inputs } from "@/components/(reusable)/inputs";
-import { Labels } from "@/components/(reusable)/labels";
-import { Texts } from "@/components/(reusable)/texts";
-import { Titles } from "@/components/(reusable)/titles";
-import Spinner from "@/components/(animations)/spinner";
-import { TitleBoxes } from "@/components/(reusable)/titleBoxes";
+import { Buttons } from "@/app/v1/components/(reusable)/buttons";
+import { Contents } from "@/app/v1/components/(reusable)/contents";
+import { Grids } from "@/app/v1/components/(reusable)/grids";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
+import { Images } from "@/app/v1/components/(reusable)/images";
+import { Inputs } from "@/app/v1/components/(reusable)/inputs";
+import { Labels } from "@/app/v1/components/(reusable)/labels";
+import { Texts } from "@/app/v1/components/(reusable)/texts";
+import { Titles } from "@/app/v1/components/(reusable)/titles";
+import Spinner from "@/app/v1/components/(animations)/spinner";
+import { TitleBoxes } from "@/app/v1/components/(reusable)/titleBoxes";
 import { usePermissions } from "@/app/context/PermissionsContext";
+import { useUserStore } from "@/app/lib/store/userStore";
 
 type Option = {
   id: string;
@@ -66,13 +66,13 @@ export default function TascoVerificationStep({
   const t = useTranslations("Clock");
   const [date] = useState(new Date());
   const [loading, setLoading] = useState<boolean>(false);
-  const { data: session } = useSession();
+  const { user } = useUserStore();
   const { savedCommentData, setCommentData } = useCommentData();
   const router = useRouter();
   const { savedTimeSheetData, refetchTimesheet } = useTimeSheetData();
   const { permissions, getStoredCoordinates } = usePermissions();
-  if (!session) return null; // Conditional rendering for session
-  const { id } = session.user;
+  if (!user) return null; // Conditional rendering for session
+  const { id } = user;
 
   const handleSubmit = async () => {
     try {
@@ -99,11 +99,11 @@ export default function TascoVerificationStep({
       // fetch coordinates from permissions context
       formData.append(
         "clockInLat",
-        getStoredCoordinatesResult?.latitude.toString() || "",
+        getStoredCoordinatesResult?.latitude.toString() || ""
       );
       formData.append(
         "clockInLong",
-        getStoredCoordinatesResult?.longitude.toString() || "",
+        getStoredCoordinatesResult?.longitude.toString() || ""
       );
 
       if (clockInRoleTypes === "tascoAbcdEquipment") {
@@ -141,16 +141,16 @@ export default function TascoVerificationStep({
         formData.append("endTime", new Date().toISOString());
         formData.append(
           "timeSheetComments",
-          savedCommentData?.id.toString() || "",
+          savedCommentData?.id.toString() || ""
         );
         formData.append("type", "switchJobs");
         formData.append(
           "clockOutLat",
-          getStoredCoordinatesResult?.latitude.toString() || "",
+          getStoredCoordinatesResult?.latitude.toString() || ""
         );
         formData.append(
           "clockOutLong",
-          getStoredCoordinatesResult?.longitude.toString() || "",
+          getStoredCoordinatesResult?.longitude.toString() || ""
         );
       }
 
@@ -255,10 +255,10 @@ export default function TascoVerificationStep({
                             clockInRoleTypes === "tascoAbcdLabor"
                               ? "TASCO ABCD Labor"
                               : clockInRoleTypes === "tascoAbcdEquipment"
-                                ? "TASCO ABCD EQ Operator"
-                                : clockInRoleTypes === "tascoEEquipment"
-                                  ? "TASCO E EQ Operator"
-                                  : clockInRoleTypes
+                              ? "TASCO ABCD EQ Operator"
+                              : clockInRoleTypes === "tascoEEquipment"
+                              ? "TASCO E EQ Operator"
+                              : clockInRoleTypes
                           }
                           className="text-center text-base"
                         />

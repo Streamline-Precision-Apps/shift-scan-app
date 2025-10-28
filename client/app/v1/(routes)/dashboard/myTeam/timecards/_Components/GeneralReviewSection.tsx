@@ -89,16 +89,16 @@ type TimeSheet = {
     }[];
   }[];
 };
-import { Holds } from "@/components/(reusable)/holds";
-import { Images } from "@/components/(reusable)/images";
-import { Texts } from "@/components/(reusable)/texts";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
+import { Images } from "@/app/v1/components/(reusable)/images";
+import { Texts } from "@/app/v1/components/(reusable)/texts";
 import { useTranslations } from "next-intl";
 import {
   Accordion,
   AccordionItem,
   AccordionTrigger,
   AccordionContent,
-} from "@/components/ui/accordion";
+} from "@/app/v1/components/ui/accordion";
 import React, { useState } from "react";
 
 export default function GeneralReviewSection({
@@ -153,7 +153,10 @@ export default function GeneralReviewSection({
                 <AccordionTrigger className="p-2 focus:outline-none hover:no-underline focus:underline-none focus:border-none ">
                   <p className="text-xs ">{`Id: #${timesheet.id}`}</p>
                   <p className="text-xs">
-                    {`${t("Duration")}: ${getDuration(timesheet.startTime, timesheet.endTime)}`}
+                    {`${t("Duration")}: ${getDuration(
+                      timesheet.startTime,
+                      timesheet.endTime
+                    )}`}
                   </p>
                 </AccordionTrigger>
 
@@ -164,10 +167,10 @@ export default function GeneralReviewSection({
                         timesheet.workType === "TRUCK_DRIVER"
                           ? "/trucking.svg"
                           : timesheet.workType === "MECHANIC"
-                            ? "/mechanic.svg"
-                            : timesheet.workType === "TASCO"
-                              ? "/tasco.svg"
-                              : "/equipment.svg"
+                          ? "/mechanic.svg"
+                          : timesheet.workType === "TASCO"
+                          ? "/tasco.svg"
+                          : "/equipment.svg"
                       }
                       titleImgAlt="WorkType Icon"
                       className="w-7 h-7 mb-1 absolute top-1 right-1"

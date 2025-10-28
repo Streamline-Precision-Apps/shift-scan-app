@@ -2,20 +2,20 @@
 import { useTranslations } from "next-intl";
 import "@/app/globals.css";
 import { useState } from "react";
-import { Holds } from "@/components/(reusable)/holds";
-import { Grids } from "@/components/(reusable)/grids";
-import { Contents } from "@/components/(reusable)/contents";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
+import { Grids } from "@/app/v1/components/(reusable)/grids";
+import { Contents } from "@/app/v1/components/(reusable)/contents";
 import QrJobsiteContent from "./qrJobsiteContent";
 import QrEquipmentContent from "./qrEquipmentContent";
-import { NewTab } from "@/components/(reusable)/newTabs";
-import { Titles } from "@/components/(reusable)/titles";
-import { TitleBoxes } from "@/components/(reusable)/titleBoxes";
-import { Images } from "@/components/(reusable)/images";
+import { NewTab } from "@/app/v1/components/(reusable)/newTabs";
+import { Titles } from "@/app/v1/components/(reusable)/titles";
+import { TitleBoxes } from "@/app/v1/components/(reusable)/titleBoxes";
+import { Images } from "@/app/v1/components/(reusable)/images";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import { z } from "zod";
-import Spinner from "@/components/(animations)/spinner";
-import { Buttons } from "@/components/(reusable)/buttons";
+import Spinner from "@/app/v1/components/(animations)/spinner";
+import { Buttons } from "@/app/v1/components/(reusable)/buttons";
 
 const JobCodesSchema = z.object({
   id: z.string(),
@@ -60,7 +60,7 @@ export default function QRGeneratorContent() {
   const [loadingJobsite, setLoadingJobsite] = useState<boolean>(false);
   const [loadingEquipment, setLoadingEquipment] = useState<boolean>(false);
   const [generatedJobsiteList, setGeneratedJobsiteList] = useState<Option[]>(
-    [],
+    []
   );
   const [generatedEquipmentList, setGeneratedEquipmentList] = useState<
     Option[]
@@ -94,10 +94,12 @@ export default function QRGeneratorContent() {
           setGeneratedEquipmentList(
             sortedEquipment.map((item: EquipmentCodes) => ({
               id: item.id,
-              label: `${item.code ? item.code.toUpperCase() : "Pending"} - ${item.name.toUpperCase()}`,
+              label: `${
+                item.code ? item.code.toUpperCase() : "Pending"
+              } - ${item.name.toUpperCase()}`,
               code: item.qrId.toUpperCase(),
               status: item.status,
-            })),
+            }))
           );
         } catch (error) {
           if (error instanceof z.ZodError) {
@@ -129,7 +131,7 @@ export default function QRGeneratorContent() {
               label: item.name.toUpperCase(),
               code: item.qrId.toUpperCase(),
               status: item.status,
-            })),
+            }))
           );
         } catch (error) {
           if (error instanceof z.ZodError) {

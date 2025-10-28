@@ -1,13 +1,13 @@
 "use client";
-import { Holds } from "@/components/(reusable)/holds";
-import { Texts } from "@/components/(reusable)/texts";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
+import { Texts } from "@/app/v1/components/(reusable)/texts";
 import { useTranslations } from "next-intl";
 import {
   Accordion,
   AccordionItem,
   AccordionTrigger,
   AccordionContent,
-} from "@/components/ui/accordion";
+} from "@/app/v1/components/ui/accordion";
 
 type TimeSheet = {
   id: string;
@@ -118,7 +118,7 @@ export default function TascoReviewSection({
 }: TascoReviewSectionProps) {
   const t = useTranslations("TimeCardSwiper");
   const allTascoLogs = currentTimeSheets.flatMap(
-    (timesheet) => timesheet.TascoLogs || [],
+    (timesheet) => timesheet.TascoLogs || []
   );
 
   if (allTascoLogs.length === 0) {
@@ -131,14 +131,16 @@ export default function TascoReviewSection({
 
   // Helper to format hauling info
   const formatHauling = (log: TascoLog) => {
-    return `${log.shiftType?.split(" ")[0] || "-"} | ${log.laborType ? log.laborType : t("Operator")}  |  ${t("Loads")}: ${log.LoadQuantity || "0"}`;
+    return `${log.shiftType?.split(" ")[0] || "-"} | ${
+      log.laborType ? log.laborType : t("Operator")
+    }  |  ${t("Loads")}: ${log.LoadQuantity || "0"}`;
   };
 
   // Helper to format refuel info
   const formatRefuel = (log: TascoLog) => {
     if (!log.RefuelLogs?.length) return "N/A";
     return log.RefuelLogs.map(
-      (r: RefuelLog) => `${r.gallonsRefueled} gal`,
+      (r: RefuelLog) => `${r.gallonsRefueled} gal`
     ).join(", ");
   };
 
@@ -156,7 +158,8 @@ export default function TascoReviewSection({
           <AccordionContent>
             <Holds className="p-2 bg-white flex flex-col items-start relative border-t border-gray-200">
               <Texts size="sm" className="text-xs">
-                <strong>{t("Shift")}:</strong> {log.shiftType?.split(" ")[0] || "-"}
+                <strong>{t("Shift")}:</strong>{" "}
+                {log.shiftType?.split(" ")[0] || "-"}
               </Texts>
               <Texts size="sm" className="text-xs">
                 <strong>{t("Labor")}:</strong>{" "}
@@ -165,7 +168,8 @@ export default function TascoReviewSection({
                   : "Mud Conditioning"}
               </Texts>
               <Texts size="sm" className="text-xs">
-                <strong>{t("Equipment")}:</strong> {log.Equipment?.name || "N/A"}
+                <strong>{t("Equipment")}:</strong>{" "}
+                {log.Equipment?.name || "N/A"}
               </Texts>
               {log.shiftType?.split(" ")[0] !== "E" && (
                 <Texts size="sm" className="text-xs">

@@ -1,6 +1,6 @@
 "use client";
-import { Holds } from "@/components/(reusable)/holds";
-import { Texts } from "@/components/(reusable)/texts";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
+import { Texts } from "@/app/v1/components/(reusable)/texts";
 import { useTranslations } from "next-intl";
 import React, { useState } from "react";
 import {
@@ -8,7 +8,7 @@ import {
   AccordionItem,
   AccordionTrigger,
   AccordionContent,
-} from "@/components/ui/accordion";
+} from "@/app/v1/components/ui/accordion";
 
 type TascoLog = {
   id: string;
@@ -114,7 +114,7 @@ export default function TruckingReviewSection({
   const [tabs, setTabs] = useState(1);
   // Combine all trucking logs from all timesheets
   const allTruckingLogs = currentTimeSheets.flatMap(
-    (timesheet) => timesheet.TruckingLogs || [],
+    (timesheet) => timesheet.TruckingLogs || []
   );
 
   if (allTruckingLogs.length === 0) {
@@ -136,7 +136,7 @@ export default function TruckingReviewSection({
   const formatRefuel = (log: TruckingLog) => {
     if (!log.RefuelLogs?.length) return "N/A";
     return log.RefuelLogs.map(
-      (r: RefuelLog) => `${r.gallonsRefueled} gal`,
+      (r: RefuelLog) => `${r.gallonsRefueled} gal`
     ).join(", ");
   };
 
@@ -144,7 +144,7 @@ export default function TruckingReviewSection({
   const formatStateMileage = (log: TruckingLog) => {
     if (!log.StateMileages?.length) return "N/A";
     return log.StateMileages.map(
-      (s: StateMileage) => `${s.state}: ${s.stateLineMileage} mi`,
+      (s: StateMileage) => `${s.state}: ${s.stateLineMileage} mi`
     ).join(", ");
   };
 
@@ -153,7 +153,9 @@ export default function TruckingReviewSection({
     if (!log.Materials?.length) return "N/A";
     return log.Materials.map(
       (m: Material) =>
-        `${m.name} (${m.quantity ?? "-"} ${m.quantity > 1 ? m.unit : m.unit.slice(0, -1)})`,
+        `${m.name} (${m.quantity ?? "-"} ${
+          m.quantity > 1 ? m.unit : m.unit.slice(0, -1)
+        })`
     ).join(", ");
   };
 
@@ -162,7 +164,7 @@ export default function TruckingReviewSection({
     if (!log.EquipmentHauled?.length) return "-";
     return log.EquipmentHauled.map(
       (e: EquipmentHauled) =>
-        `${e.Equipment?.name ?? "-"} → ${e.destination ?? "-"}`,
+        `${e.Equipment?.name ?? "-"} → ${e.destination ?? "-"}`
     ).join(", ");
   };
 
@@ -196,7 +198,9 @@ export default function TruckingReviewSection({
               <Texts className="text-sm mb-1">{formatStateMileage(log)}</Texts>
               <Texts className="text-sm underline">{t("Materials")}: </Texts>
               <Texts className="text-sm mb-1">{formatMaterials(log)}</Texts>
-              <Texts className="text-sm underline">{t("EquipmentHauled")}: </Texts>
+              <Texts className="text-sm underline">
+                {t("EquipmentHauled")}:{" "}
+              </Texts>
               <Texts className="text-sm mb-1">
                 {formatEquipmentHauled(log)}
               </Texts>

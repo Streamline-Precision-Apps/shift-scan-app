@@ -1,8 +1,8 @@
 "use server";
 import "@/app/globals.css";
-import { Bases } from "@/components/(reusable)/bases";
-import { Contents } from "@/components/(reusable)/contents";
-import { Grids } from "@/components/(reusable)/grids";
+import { Bases } from "@/app/v1/components/(reusable)/bases";
+import { Contents } from "@/app/v1/components/(reusable)/contents";
+import { Grids } from "@/app/v1/components/(reusable)/grids";
 import QRGeneratorContent from "./content";
 import { Suspense } from "react";
 import LoadingQRGeneratorContent from "./loadingUiQrGenerator";

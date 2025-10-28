@@ -106,13 +106,13 @@ type TeamMember = {
 
 type ViewOption = "highlight" | "Trucking" | "Tasco" | "Equipment";
 
-import { Contents } from "@/components/(reusable)/contents";
-import { Grids } from "@/components/(reusable)/grids";
-import { Holds } from "@/components/(reusable)/holds";
-import { Images } from "@/components/(reusable)/images";
-import { Selects } from "@/components/(reusable)/selects";
-import { Texts } from "@/components/(reusable)/texts";
-import { Titles } from "@/components/(reusable)/titles";
+import { Contents } from "@/app/v1/components/(reusable)/contents";
+import { Grids } from "@/app/v1/components/(reusable)/grids";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
+import { Images } from "@/app/v1/components/(reusable)/images";
+import { Selects } from "@/app/v1/components/(reusable)/selects";
+import { Texts } from "@/app/v1/components/(reusable)/texts";
+import { Titles } from "@/app/v1/components/(reusable)/titles";
 import { CardControls } from "./CardControls";
 import GeneralReviewSection from "./GeneralReviewSection";
 import TascoReviewSection from "./TascoReviewSection";
@@ -128,13 +128,14 @@ import {
 } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useSession } from "next-auth/react";
-import TinderSwipe from "@/components/(animations)/tinderSwipe";
-import Spinner from "@/components/(animations)/spinner";
+
+import TinderSwipe from "@/app/v1/components/(animations)/tinderSwipe";
+import Spinner from "@/app/v1/components/(animations)/spinner";
 import EquipmentLogsSection from "./EquipmentLogsSection";
 import { ApproveUsersTimeSheets } from "@/actions/ManagerTimeCardActions";
-import { PullToRefresh } from "@/components/(animations)/pullToRefresh";
+import { PullToRefresh } from "@/app/v1/components/(animations)/pullToRefresh";
 import { useScrollSwipeHandlers } from "@/hooks/useScrollSwipeHandlers";
+import { useUserStore } from "@/app/lib/store/userStore";
 
 export default function TimeCardApprover({
   loading,
@@ -150,9 +151,9 @@ export default function TimeCardApprover({
   const [currentIndex, setCurrentIndex] = useState(0);
   const currentMember = teamMembers[currentIndex];
   const [completed, setCompleted] = useState(false);
-  const { data: session } = useSession();
-  const manager = session?.user?.firstName + " " + session?.user?.lastName;
-  const managerId = session?.user?.id;
+  const { user } = useUserStore();
+  const manager = user?.firstName + " " + user?.lastName;
+  const managerId = user?.id;
   const currentTimeSheets = currentMember?.TimeSheets || [];
   const [viewOption, setViewOption] = useState<ViewOption>("highlight");
   const swipeRef = useRef<TinderSwipeRef>(null);
@@ -198,7 +199,7 @@ export default function TimeCardApprover({
       }
       return Array.from(options);
     },
-    [],
+    []
   );
 
   // Memoized fetchCrewTimeCards for stable reference
@@ -206,7 +207,7 @@ export default function TimeCardApprover({
     try {
       setLoading(true);
       const response = await fetch(
-        `/api/getPendingTeamTimeSheets?managerId=${managerId}`,
+        `/api/getPendingTeamTimeSheets?managerId=${managerId}`
       );
       if (!response.ok)
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -240,7 +241,7 @@ export default function TimeCardApprover({
         const approveMember = teamMembers.find((member) => member.id === id);
         if (!approveMember) return;
         const timeSheetIds = approveMember.TimeSheets.map(
-          (timesheet) => timesheet.id,
+          (timesheet) => timesheet.id
         );
         const formData = new FormData();
         formData.append("id", id);
@@ -255,18 +256,18 @@ export default function TimeCardApprover({
         console.error("Error submitting timecards:", error);
       }
     },
-    [teamMembers, manager],
+    [teamMembers, manager]
   );
 
   // Memoized swipe handler
   const swiped = useCallback(
     (direction: string, memberId: string) => {
       const myTeamId = currentMember?.Crews.find(
-        (crew) => crew.leadId === managerId,
+        (crew) => crew.leadId === managerId
       )?.id;
       if (direction === "left") {
         router.push(
-          `/dashboard/myTeam/${myTeamId}/employee/${memberId}?timeCard=/dashboard/myTeam/timecards?rPath=${rPath}`,
+          `/dashboard/myTeam/${myTeamId}/employee/${memberId}?timeCard=/dashboard/myTeam/timecards?rPath=${rPath}`
         );
       } else {
         ApproveTimeSheets(memberId);
@@ -285,7 +286,7 @@ export default function TimeCardApprover({
       ApproveTimeSheets,
       currentIndex,
       teamMembers.length,
-    ],
+    ]
   );
 
   // Memoized edit/approve click handlers
@@ -369,7 +370,7 @@ export default function TimeCardApprover({
                             <option key={option} value={option}>
                               {t(option)}
                             </option>
-                          ),
+                          )
                         )}
                       </Selects>
                     </Holds>

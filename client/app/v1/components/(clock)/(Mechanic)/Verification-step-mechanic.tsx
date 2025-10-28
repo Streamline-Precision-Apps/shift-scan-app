@@ -1,33 +1,33 @@
 "use client";
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { handleMechanicTimeSheet } from "@/actions/timeSheetActions";
+import { handleMechanicTimeSheet } from "@/app/lib/actions/timeSheetActions";
 
 import { useCommentData } from "@/app/context/CommentContext";
 import { useRouter } from "next/navigation";
+
+import { useSavedCostCode } from "@/app/context/CostCodeContext";
+
+import { Buttons } from "@/app/v1/components/(reusable)/buttons";
+import { Contents } from "@/app/v1/components/(reusable)/contents";
+import { Grids } from "@/app/v1/components/(reusable)/grids";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
+import { Images } from "@/app/v1/components/(reusable)/images";
+import { Inputs } from "@/app/v1/components/(reusable)/inputs";
+import { Labels } from "@/app/v1/components/(reusable)/labels";
+import { Texts } from "@/app/v1/components/(reusable)/texts";
+import { Titles } from "@/app/v1/components/(reusable)/titles";
+import Spinner from "@/app/v1/components/(animations)/spinner";
+import { TitleBoxes } from "@/app/v1/components/(reusable)/titleBoxes";
+import { useTimeSheetData } from "@/app/context/TimeSheetIdContext";
+import { usePermissions } from "@/app/context/PermissionsContext";
+import { useUserStore } from "@/app/lib/store/userStore";
 import {
   setCurrentPageView,
   setLaborType,
   setWorkRole,
-} from "@/actions/cookieActions";
-
-import { useSavedCostCode } from "@/app/context/CostCodeContext";
-
-import Capitalize from "@/utils/captitalize";
-import { Buttons } from "@/components/(reusable)/buttons";
-import { Contents } from "@/components/(reusable)/contents";
-import { Grids } from "@/components/(reusable)/grids";
-import { Holds } from "@/components/(reusable)/holds";
-import { Images } from "@/components/(reusable)/images";
-import { Inputs } from "@/components/(reusable)/inputs";
-import { Labels } from "@/components/(reusable)/labels";
-import { Texts } from "@/components/(reusable)/texts";
-import { Titles } from "@/components/(reusable)/titles";
-import { useSession } from "next-auth/react";
-import Spinner from "@/components/(animations)/spinner";
-import { TitleBoxes } from "@/components/(reusable)/titleBoxes";
-import { useTimeSheetData } from "@/app/context/TimeSheetIdContext";
-import { usePermissions } from "@/app/context/PermissionsContext";
+} from "@/app/lib/actions/cookieActions";
+import Capitalize from "@/app/lib/utils/capitalizeFirst";
 
 type Option = {
   id: string;
@@ -61,7 +61,7 @@ export default function MechanicVerificationStep({
   const router = useRouter();
   const [date] = useState(new Date());
   const [loading, setLoading] = useState<boolean>(false);
-  const { data: session } = useSession();
+  const { user } = useUserStore();
   const { savedCommentData, setCommentData } = useCommentData();
   const { setCostCode } = useSavedCostCode();
   const costCode = "#00.50 Mechanics";
@@ -72,8 +72,8 @@ export default function MechanicVerificationStep({
     setCostCode(costCode);
   }, [costCode]);
 
-  if (!session) return null; // Conditional rendering for session
-  const { id } = session.user;
+  if (!user) return null; // Conditional rendering for session
+  const { id } = user;
 
   const handleSubmit = async () => {
     try {
@@ -99,11 +99,11 @@ export default function MechanicVerificationStep({
       // fetch coordinates from permissions context
       formData.append(
         "clockInLat",
-        getStoredCoordinatesResult?.latitude.toString() || "",
+        getStoredCoordinatesResult?.latitude.toString() || ""
       );
       formData.append(
         "clockInLong",
-        getStoredCoordinatesResult?.longitude.toString() || "",
+        getStoredCoordinatesResult?.longitude.toString() || ""
       );
 
       // If switching jobs, include the previous timesheet ID
@@ -122,16 +122,16 @@ export default function MechanicVerificationStep({
         formData.append("endTime", new Date().toISOString());
         formData.append(
           "timeSheetComments",
-          savedCommentData?.id.toString() || "",
+          savedCommentData?.id.toString() || ""
         );
         formData.append("type", "switchJobs"); // added to switch jobs
         formData.append(
           "clockOutLat",
-          getStoredCoordinatesResult?.latitude.toString() || "",
+          getStoredCoordinatesResult?.latitude.toString() || ""
         );
         formData.append(
           "clockOutLong",
-          getStoredCoordinatesResult?.longitude.toString() || "",
+          getStoredCoordinatesResult?.longitude.toString() || ""
         );
       }
 

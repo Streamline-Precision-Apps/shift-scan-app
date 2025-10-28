@@ -1,16 +1,16 @@
 "use client";
 
-import { Buttons } from "@/components/(reusable)/buttons";
+import { Buttons } from "@/app/v1/components/(reusable)/buttons";
 import React, { useState } from "react";
 import QRCode from "qrcode";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { Images } from "@/components/(reusable)/images";
-import { Holds } from "@/components/(reusable)/holds";
-import { Grids } from "@/components/(reusable)/grids";
-import { NModals } from "@/components/(reusable)/newmodals";
-import { Titles } from "@/components/(reusable)/titles";
-import NewCodeFinder from "@/components/(search)/newCodeFinder";
+import { Images } from "@/app/v1/components/(reusable)/images";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
+import { Grids } from "@/app/v1/components/(reusable)/grids";
+import { NModals } from "@/app/v1/components/(reusable)/newmodals";
+import { Titles } from "@/app/v1/components/(reusable)/titles";
+import NewCodeFinder from "@/app/v1/components/(search)/newCodeFinder";
 
 type Option = {
   id: string;
@@ -32,7 +32,7 @@ export default function QrEquipmentContent({
 }: QrEquipmentContentProps) {
   const router = useRouter();
   const [selectedEquipment, setSelectedEquipment] = useState<Option | null>(
-    null,
+    null
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [qrCodeUrl, setQrCodeUrl] = useState("");

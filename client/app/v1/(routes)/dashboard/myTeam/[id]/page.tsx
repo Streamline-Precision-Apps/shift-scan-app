@@ -1,14 +1,14 @@
 "use client";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-import Spinner from "@/components/(animations)/spinner";
-import { Bases } from "@/components/(reusable)/bases";
-import { Buttons } from "@/components/(reusable)/buttons";
-import { Contents } from "@/components/(reusable)/contents";
-import { Grids } from "@/components/(reusable)/grids";
-import { Holds } from "@/components/(reusable)/holds";
-import { Images } from "@/components/(reusable)/images";
-import { TitleBoxes } from "@/components/(reusable)/titleBoxes";
-import { Titles } from "@/components/(reusable)/titles";
+import Spinner from "@/app/v1/components/(animations)/spinner";
+import { Bases } from "@/app/v1/components/(reusable)/bases";
+import { Buttons } from "@/app/v1/components/(reusable)/buttons";
+import { Contents } from "@/app/v1/components/(reusable)/contents";
+import { Grids } from "@/app/v1/components/(reusable)/grids";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
+import { Images } from "@/app/v1/components/(reusable)/images";
+import { TitleBoxes } from "@/app/v1/components/(reusable)/titleBoxes";
+import { Titles } from "@/app/v1/components/(reusable)/titles";
 import { useTranslations } from "next-intl";
 import React, { use, useEffect, useState, Suspense } from "react";
 import { z } from "zod";
@@ -60,7 +60,7 @@ export default function Content({
 
         const membersWithStatus = members.map((member: CrewMember) => {
           const status = statusData.Users.find(
-            (u: CrewMember) => u.id === member.id,
+            (u: CrewMember) => u.id === member.id
           );
           return { ...member, clockedIn: status?.clockedIn ?? false };
         });

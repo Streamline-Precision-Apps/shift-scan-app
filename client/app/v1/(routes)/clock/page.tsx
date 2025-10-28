@@ -1,32 +1,29 @@
-"use server";
-import { auth } from "@/auth";
-// import ClockProcessor from "@/components/(clock)/clockProcess";
-import NewClockProcess from "@/components/(clock)/newclockProcess";
-import { Bases } from "@/components/(reusable)/bases";
-import { Contents } from "@/components/(reusable)/contents";
-import { Holds } from "@/components/(reusable)/holds";
+"use Client";
+import { useUserStore } from "@/app/lib/store/userStore";
+// import ClockProcessor from "@/app/v1/components/(clock)/clockProcess";
+import NewClockProcess from "@/app/v1/components/(clock)/newclockProcess";
+import { Bases } from "@/app/v1/components/(reusable)/bases";
+import { Contents } from "@/app/v1/components/(reusable)/contents";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
-export default async function Clock() {
-  const session = await auth();
-  if (!session) {
-    redirect("/signin");
-  }
+export default function Clock() {
+  const { user } = useUserStore();
 
-  const user = session.user;
   // Get the current language from cookies
-  const lang = (await cookies()).get("locale");
-  const locale = lang?.value || "en";
+  const lang = user?.UserSettings?.language as string;
+
+  const locale = lang || "en";
   return (
     <Bases>
       <Contents>
         <Holds className="h-full">
           <NewClockProcess
-            mechanicView={user.mechanicView ?? false}
-            tascoView={user.tascoView ?? false}
-            truckView={user.truckView ?? false}
-            laborView={user.laborView ?? false}
+            mechanicView={user?.mechanicView ?? false}
+            tascoView={user?.tascoView ?? false}
+            truckView={user?.truckView ?? false}
+            laborView={user?.laborView ?? false}
             option="clockin"
             returnpath="/"
             type={"jobsite"}

@@ -1,11 +1,11 @@
-import { Holds } from "@/components/(reusable)/holds";
-import { Grids } from "@/components/(reusable)/grids";
-import { Contents } from "@/components/(reusable)/contents";
-import { Titles } from "@/components/(reusable)/titles";
-import { TitleBoxes } from "@/components/(reusable)/titleBoxes";
-import Spinner from "@/components/(animations)/spinner";
-import { Buttons } from "@/components/(reusable)/buttons";
-import { Images } from "@/components/(reusable)/images";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
+import { Grids } from "@/app/v1/components/(reusable)/grids";
+import { Contents } from "@/app/v1/components/(reusable)/contents";
+import { Titles } from "@/app/v1/components/(reusable)/titles";
+import { TitleBoxes } from "@/app/v1/components/(reusable)/titleBoxes";
+import Spinner from "@/app/v1/components/(animations)/spinner";
+import { Buttons } from "@/app/v1/components/(reusable)/buttons";
+import { Images } from "@/app/v1/components/(reusable)/images";
 
 export default function LoadingQRGeneratorContent() {
   return (

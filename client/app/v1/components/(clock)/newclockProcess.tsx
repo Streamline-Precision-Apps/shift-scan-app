@@ -9,10 +9,10 @@ import TruckClockInForm from "./(Truck)/truckClockInForm";
 import { Titles } from "../(reusable)/titles";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import { setWorkRole } from "@/actions/cookieActions";
+import { setWorkRole } from "@/app/lib/actions/cookieActions";
 import SwitchJobsMultiRoles from "./switchJobsMultipleRoles";
-import { returnToPrevWork } from "@/actions/timeSheetActions";
-import { useSession } from "next-auth/react";
+import { returnToPrevWork } from "@/app/lib/actions/timeSheetActions";
+
 import QRMultiRoles from "./QRMultiRoles";
 import ClockLoadingPage from "./clock-loading-page";
 import { Contents } from "../(reusable)/contents";
@@ -25,7 +25,7 @@ import MechanicVerificationStep from "./(Mechanic)/Verification-step-mechanic";
 import TascoVerificationStep from "./(Tasco)/Verification-step-tasco";
 import TascoClockInForm from "./(Tasco)/tascoClockInForm";
 import TruckVerificationStep from "./(Truck)/Verification-step-truck";
-import { usePermissions } from "@/app/context/PermissionsContext";
+import { useUserStore } from "@/app/lib/store/userStore";
 
 type NewClockProcessProps = {
   mechanicView: boolean;
@@ -63,9 +63,9 @@ export default function NewClockProcess({
   clockOutComment,
 }: NewClockProcessProps) {
   // State management
-  const { data: session } = useSession();
-  const { permissions, requestLocationPermission, initialized } =
-    usePermissions();
+  const { user } = useUserStore();
+  // const { permissions, requestLocationPermission, initialized } =
+  //   usePermissions();
   const [clockInRole, setClockInRole] = useState<string | undefined>(workRole);
   const [step, setStep] = useState<number>(0);
   const [isLocationOn, setIsLocationOn] = useState<boolean>(false);
@@ -73,38 +73,38 @@ export default function NewClockProcess({
 
   // Update location status based on permissions (only when initialized)
   // comment out for no required location services
-  useEffect(() => {
-    if (!initialized) {
-      return;
-    }
+  // useEffect(() => {
+  //   if (!initialized) {
+  //     return;
+  //   }
 
-    if (permissions && permissions.location) {
-      console.log("Location permission granted");
-      setIsLocationOn(true);
-    } else {
-      console.log("Location permission not granted");
-      setIsLocationOn(false);
+  //   if (permissions && permissions.location) {
+  //     console.log("Location permission granted");
+  //     setIsLocationOn(true);
+  //   } else {
+  //     console.log("Location permission not granted");
+  //     setIsLocationOn(false);
 
-      // Only request location once on initial load
-      if (!hasRequestedLocation) {
-        console.log("Requesting location permission");
-        requestLocationPermission();
-        setHasRequestedLocation(true);
-      }
-    }
-  }, [initialized]); // Only depend on initialized, not permissions or requestLocationPermission
+  //     // Only request location once on initial load
+  //     if (!hasRequestedLocation) {
+  //       console.log("Requesting location permission");
+  //       requestLocationPermission();
+  //       setHasRequestedLocation(true);
+  //     }
+  //   }
+  // }, [initialized]); // Only depend on initialized, not permissions or requestLocationPermission
 
-  // Update location status when permissions change
-  useEffect(() => {
-    if (permissions?.location) {
-      setIsLocationOn(true);
-    } else {
-      setIsLocationOn(false);
-    }
-  }, [permissions?.location]);
+  // // Update location status when permissions change
+  // useEffect(() => {
+  //   if (permissions?.location) {
+  //     setIsLocationOn(true);
+  //   } else {
+  //     setIsLocationOn(false);
+  //   }
+  // }, [permissions?.location]);
 
   const [clockInRoleTypes, setClockInRoleTypes] = useState<string | undefined>(
-    switchLaborType,
+    switchLaborType
   ); // use to have more selections for clock processes
   const [numberOfRoles, setNumberOfRoles] = useState(0);
   const t = useTranslations("Clock");
@@ -157,7 +157,7 @@ export default function NewClockProcess({
   }, []);
 
   useEffect(() => {
-    if (!session) {
+    if (!user) {
       return;
     }
     // Build a list of available roles based on the view flags.
@@ -185,7 +185,7 @@ export default function NewClockProcess({
     } else {
       setStep(1);
     }
-  }, [session, mechanicView, laborView, truckView, tascoView, type, option]);
+  }, [user, mechanicView, laborView, truckView, tascoView, type, option]);
 
   //------------------------------------------------------------------
   // Helper functions
@@ -201,13 +201,13 @@ export default function NewClockProcess({
     try {
       // setting the cookies below to fetch the prev TimeSheet
       const fetchRecentTimeSheetId = await fetch(
-        "/api/getRecentTimecardReturn",
+        "/api/getRecentTimecardReturn"
       ).then((res) => res.json());
       const tId = fetchRecentTimeSheetId.id;
       // check for location permissions here
       const formData = new FormData();
       formData.append("id", tId?.toString() || "");
-      formData.append("userId", session?.user.id?.toString() || "");
+      formData.append("userId", user?.id?.toString() || "");
       const response = await returnToPrevWork(formData);
 
       if (response) {
@@ -228,12 +228,12 @@ export default function NewClockProcess({
           response.workType === "LABOR"
             ? "general"
             : response.workType === "MECHANIC"
-              ? "mechanic"
-              : response.workType === "TASCO"
-                ? "tasco"
-                : response.workType === "TRUCK_DRIVER"
-                  ? "truck"
-                  : "";
+            ? "mechanic"
+            : response.workType === "TASCO"
+            ? "tasco"
+            : response.workType === "TRUCK_DRIVER"
+            ? "truck"
+            : "";
 
         setClockInRole(prevWorkRole);
 
@@ -295,7 +295,7 @@ export default function NewClockProcess({
           }
 
           const workTypes = response.TruckingLogs.map(
-            (log) => log.laborType,
+            (log: unknown) => (log as { laborType: string }).laborType
           ).filter(Boolean);
           setClockInRoleTypes(workTypes.toString());
         }
@@ -351,21 +351,21 @@ export default function NewClockProcess({
   };
 
   // Handle retrying location permission request
-  const handleRetryLocationPermission = async () => {
-    try {
-      const result = await requestLocationPermission();
-      if (result.success) {
-        console.log("Location permission granted on retry");
-        setIsLocationOn(true);
-      } else {
-        console.log("Location permission denied again");
-        setLocationRetryCount((prev) => prev + 1);
-      }
-    } catch (error) {
-      console.error("Error retrying location permission:", error);
-      setLocationRetryCount((prev) => prev + 1);
-    }
-  };
+  // const handleRetryLocationPermission = async () => {
+  //   try {
+  //     const result = await requestLocationPermission();
+  //     if (result.success) {
+  //       console.log("Location permission granted on retry");
+  //       setIsLocationOn(true);
+  //     } else {
+  //       console.log("Location permission denied again");
+  //       setLocationRetryCount((prev) => prev + 1);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error retrying location permission:", error);
+  //     setLocationRetryCount((prev) => prev + 1);
+  //   }
+  // };
 
   // Detect device type for user instructions
   const isIOSDevice = (): boolean => {

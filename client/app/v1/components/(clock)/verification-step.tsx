@@ -1,14 +1,13 @@
 "use client";
 import React, { Dispatch, SetStateAction, useState } from "react";
 import { useTranslations } from "next-intl";
-import { handleGeneralTimeSheet } from "@/actions/timeSheetActions";
+import { handleGeneralTimeSheet } from "@/app/lib/actions/timeSheetActions";
 import { Buttons } from "../(reusable)/buttons";
 import { Contents } from "../(reusable)/contents";
 import { Labels } from "../(reusable)/labels";
 import { Inputs } from "../(reusable)/inputs";
 import { Forms } from "../(reusable)/forms";
 import { Images } from "../(reusable)/images";
-import { useSession } from "next-auth/react";
 import { Holds } from "../(reusable)/holds";
 import { Grids } from "../(reusable)/grids";
 import { useCommentData } from "@/app/context/CommentContext";
@@ -16,7 +15,7 @@ import {
   setCurrentPageView,
   setLaborType,
   setWorkRole,
-} from "@/actions/cookieActions";
+} from "@/app/lib/actions/cookieActions";
 import { Titles } from "../(reusable)/titles";
 import { useRouter } from "next/navigation";
 import Spinner from "../(animations)/spinner";
@@ -25,6 +24,7 @@ import { Texts } from "../(reusable)/texts";
 import { useTimeSheetData } from "@/app/context/TimeSheetIdContext";
 import { usePermissions } from "@/app/context/PermissionsContext";
 import { get } from "lodash";
+import { useUserStore } from "@/app/lib/store/userStore";
 
 type Options = {
   id: string;
@@ -60,14 +60,14 @@ export default function VerificationStep({
   const t = useTranslations("Clock");
   const [date] = useState(new Date());
   const [loading, setLoading] = useState<boolean>(false);
-  const { data: session } = useSession();
+  const { user } = useUserStore();
   const { savedCommentData, setCommentData } = useCommentData();
   const router = useRouter();
   const { savedTimeSheetData, refetchTimesheet } = useTimeSheetData();
   const { permissions, getStoredCoordinates } = usePermissions();
 
-  if (!session) return null; // Conditional rendering for session
-  const { id } = session.user;
+  if (!user) return null; // Conditional rendering for session
+  const { id } = user;
 
   const handleSubmit = async () => {
     try {
@@ -93,11 +93,11 @@ export default function VerificationStep({
       // fetch coordinates from permissions context
       formData.append(
         "clockInLat",
-        getStoredCoordinatesResult?.latitude.toString() || "",
+        getStoredCoordinatesResult?.latitude.toString() || ""
       );
       formData.append(
         "clockInLong",
-        getStoredCoordinatesResult?.longitude.toString() || "",
+        getStoredCoordinatesResult?.longitude.toString() || ""
       );
 
       // If switching jobs, include the previous timesheet ID
@@ -116,16 +116,16 @@ export default function VerificationStep({
         formData.append("endTime", new Date().toISOString());
         formData.append(
           "timeSheetComments",
-          savedCommentData?.id.toString() || "",
+          savedCommentData?.id.toString() || ""
         );
         formData.append("type", "switchJobs"); // added to switch jobs
         formData.append(
           "clockOutLat",
-          getStoredCoordinatesResult?.latitude.toString() || "",
+          getStoredCoordinatesResult?.latitude.toString() || ""
         );
         formData.append(
           "clockOutLong",
-          getStoredCoordinatesResult?.longitude.toString() || "",
+          getStoredCoordinatesResult?.longitude.toString() || ""
         );
       }
 

@@ -1,17 +1,17 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "@/app/v1/components/ui/button";
 import {
   Select,
   SelectTrigger,
   SelectValue,
   SelectContent,
   SelectItem,
-} from "@/components/ui/select";
+} from "@/app/v1/components/ui/select";
 import { useTimecardIdData } from "./useTimecardIdData";
 import { useRef } from "react";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@/app/v1/components/ui/skeleton";
 import { useEffect, useState, useCallback } from "react";
-import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
+import { Textarea } from "@/app/v1/components/ui/textarea";
+import { Input } from "@/app/v1/components/ui/input";
 import { format } from "date-fns";
 type AppManagerEditTimesheetModalProps = {
   timesheetId: string;
@@ -20,7 +20,7 @@ type AppManagerEditTimesheetModalProps = {
 };
 
 export default function AppManagerEditTimesheetModal(
-  props: AppManagerEditTimesheetModalProps,
+  props: AppManagerEditTimesheetModalProps
 ) {
   const { timesheetId, isOpen, onClose } = props;
   const {
@@ -447,7 +447,7 @@ export default function AppManagerEditTimesheetModal(
                               Jobsite:
                                 jobSites.find((j) => j.id === val) ?? null,
                             }
-                          : prev,
+                          : prev
                       );
                     }}
                     disabled={!editGeneral}
@@ -491,7 +491,7 @@ export default function AppManagerEditTimesheetModal(
                               CostCode:
                                 costCodes.find((c) => c.id === val) ?? null,
                             }
-                          : prev,
+                          : prev
                       );
                     }}
                     disabled={!editGeneral}
@@ -533,7 +533,7 @@ export default function AppManagerEditTimesheetModal(
                     if (!editGeneral) return;
                     const val = e.target.value.slice(0, 40);
                     setEdited((prev) =>
-                      prev ? { ...prev, comment: val } : prev,
+                      prev ? { ...prev, comment: val } : prev
                     );
                   }}
                   disabled={!editGeneral}

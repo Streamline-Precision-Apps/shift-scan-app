@@ -330,7 +330,7 @@ function WidgetButtonsSection({
             text={"QR"}
             background={"lightBlue"}
             translation={"Widgets"}
-            href="/dashboard/qr-generator?rPath=/"
+            href="/v1/dashboard/qr-generator?rPath=/v1"
           />
           <WidgetContainer
             titleImg="/team.svg"
@@ -338,7 +338,7 @@ function WidgetButtonsSection({
             text={"MyTeam"}
             background={"lightBlue"}
             translation={"Widgets"}
-            href="/dashboard/myTeam?rPath=/"
+            href="/v1/dashboard/myTeam?rPath=/v1"
           />
         </Holds>
       )}
@@ -357,7 +357,7 @@ function WidgetButtonsSection({
           textSize={isManager ? "h3" : "h3"}
           background={"green"}
           translation={"Home"}
-          href={pageView === "break" ? "/break" : "/clock"}
+          href={pageView === "break" ? "/v1/break" : "/v1/clock"}
           disabled={isTerminate}
         />
         {/*Todo: Eventually add to the disabled prop || isLocationOn === false */}

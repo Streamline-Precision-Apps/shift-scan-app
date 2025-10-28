@@ -1,17 +1,17 @@
 "use client";
-import { Inputs } from "@/components/(reusable)/inputs";
+import { Inputs } from "@/app/v1/components/(reusable)/inputs";
 import { format } from "date-fns";
 import { useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 
-import { Grids } from "@/components/(reusable)/grids";
-import { Holds } from "@/components/(reusable)/holds";
-import { Images } from "@/components/(reusable)/images";
+import { Grids } from "@/app/v1/components/(reusable)/grids";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
+import { Images } from "@/app/v1/components/(reusable)/images";
 import AppManagerEditTimesheetModal from "./TimesheetEditModal";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/app/v1/components/ui/button";
 import { useTimesheetDataSimple } from "./useTimesheetDataSimple";
-import { PullToRefresh } from "@/components/(animations)/pullToRefresh";
+import { PullToRefresh } from "@/app/v1/components/(animations)/pullToRefresh";
 
 export default function EmployeeTimeCards() {
   const [showEditModal, setShowEditModal] = useState(false);
@@ -26,7 +26,7 @@ export default function EmployeeTimeCards() {
 
   const { data, loading, error, updateDate, reset } = useTimesheetDataSimple(
     employeeId,
-    date,
+    date
   );
 
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -41,7 +41,7 @@ export default function EmployeeTimeCards() {
 
   // Import PullToRefresh
   // ...existing imports...
-  // import { PullToRefresh } from "@/components/(animations)/pullToRefresh";
+  // import { PullToRefresh } from "@/app/v1/components/(animations)/pullToRefresh";
 
   return (
     <div className="h-full w-full bg-white rounded-b-2xl">
@@ -97,12 +97,12 @@ export default function EmployeeTimeCards() {
                             ts.workType === "TASCO"
                               ? "/tasco.svg"
                               : ts.workType === "TRUCK_DRIVER"
-                                ? "/trucking.svg"
-                                : ts.workType === "MECHANIC"
-                                  ? "/mechanic.svg"
-                                  : ts.workType === "LABOR"
-                                    ? "/equipment.svg"
-                                    : "null"
+                              ? "/trucking.svg"
+                              : ts.workType === "MECHANIC"
+                              ? "/mechanic.svg"
+                              : ts.workType === "LABOR"
+                              ? "/equipment.svg"
+                              : "null"
                           }
                           titleImgAlt={`${ts.workType} Icon`}
                           className="m-auto w-8 h-8"

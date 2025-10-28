@@ -80,10 +80,10 @@ type TimeSheet = {
   }[];
 };
 
-import { Grids } from "@/components/(reusable)/grids";
-import { Holds } from "@/components/(reusable)/holds";
-import { Texts } from "@/components/(reusable)/texts";
-import { Titles } from "@/components/(reusable)/titles";
+import { Grids } from "@/app/v1/components/(reusable)/grids";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
+import { Texts } from "@/app/v1/components/(reusable)/texts";
+import { Titles } from "@/app/v1/components/(reusable)/titles";
 import { formatDurationStrings } from "@/utils/formatDurationStrings";
 import { useTranslations } from "next-intl";
 
@@ -94,7 +94,7 @@ export default function EquipmentLogsSection({
 }) {
   const t = useTranslations("TimeCardSwiper");
   const allEquipmentLogs = currentTimeSheets.flatMap(
-    (timesheet) => timesheet.EmployeeEquipmentLogs || [],
+    (timesheet) => timesheet.EmployeeEquipmentLogs || []
   );
 
   const hasAnyEquipmentData = allEquipmentLogs.length > 0;
@@ -153,7 +153,7 @@ export default function EquipmentLogsSection({
                       {`${
                         log.RefuelLogs.map((log) => log.gallonsRefueled).reduce(
                           (a, b) => a + b,
-                          0,
+                          0
                         ) || "0"
                       } gal`}
                     </Texts>

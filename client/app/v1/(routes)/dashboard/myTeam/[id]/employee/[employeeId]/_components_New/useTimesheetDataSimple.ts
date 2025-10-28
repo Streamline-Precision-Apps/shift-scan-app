@@ -25,7 +25,7 @@ interface UseTimesheetDataReturn {
 
 export const useTimesheetDataSimple = (
   employeeId: string | undefined,
-  initialDate: string,
+  initialDate: string
 ): UseTimesheetDataReturn => {
   const [data, setData] = useState<TimesheetDataResponse | null>(null);
   const [loading, setLoading] = useState(false);
@@ -43,7 +43,7 @@ export const useTimesheetDataSimple = (
         `/api/getTimesheetsByDateNew?employeeId=${employeeId}&date=${currentDate}`,
         {
           next: { tags: ["timesheet"] },
-        },
+        }
       );
       if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
       const result: TimesheetDataResponse = await res.json();

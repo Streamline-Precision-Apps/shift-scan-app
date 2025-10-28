@@ -1,9 +1,9 @@
 "use client";
-import { Grids } from "@/components/(reusable)/grids";
-import { Holds } from "@/components/(reusable)/holds";
-import { NewTab } from "@/components/(reusable)/newTabs";
-import { TitleBoxes } from "@/components/(reusable)/titleBoxes";
-import { Titles } from "@/components/(reusable)/titles";
+import { Grids } from "@/app/v1/components/(reusable)/grids";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
+import { NewTab } from "@/app/v1/components/(reusable)/newTabs";
+import { TitleBoxes } from "@/app/v1/components/(reusable)/titleBoxes";
+import { Titles } from "@/app/v1/components/(reusable)/titles";
 import { useEmployeeData } from "@/hooks/(ManagerHooks)/useEmployeeData";
 
 import { useTranslations } from "next-intl";
@@ -42,7 +42,7 @@ export default function TeamMemberLayout() {
           <TitleBoxes
             onClick={() =>
               router.push(
-                timeCard ? timeCard : `/dashboard/myTeam/${id}?rPath=${rPath}`,
+                timeCard ? timeCard : `/dashboard/myTeam/${id}?rPath=${rPath}`
               )
             }
           >

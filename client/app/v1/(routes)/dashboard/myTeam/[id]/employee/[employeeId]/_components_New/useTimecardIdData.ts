@@ -1,5 +1,5 @@
 import { updateTimesheetServerAction } from "@/actions/updateTimesheetServerAction";
-import { useSession } from "next-auth/react";
+import { useUserStore } from "@/app/lib/store/userStore";
 import { useEffect, useState, useCallback, useRef } from "react";
 
 export interface Timesheet {
@@ -39,11 +39,11 @@ export function useTimecardIdData(id: string) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [costCodes, setCostCodes] = useState<{ id: string; name: string }[]>(
-    [],
+    []
   );
   const [jobSites, setJobSites] = useState<{ id: string; name: string }[]>([]);
-  const { data: session } = useSession();
-  const editorId = session?.user?.id;
+  const { user } = useUserStore();
+  const editorId = user?.id;
   const [changeReason, setChangeReason] = useState<string>("");
 
   // Use a ref to track if we have an ongoing update
@@ -62,7 +62,7 @@ export function useTimecardIdData(id: string) {
         isUpdating.current = false;
       }, 50);
     },
-    [],
+    []
   );
 
   // Fetch timesheet data and jobsites by timesheetId
@@ -135,7 +135,7 @@ export function useTimecardIdData(id: string) {
       }
       try {
         const res = await fetch(
-          `/api/getAllCostCodesByJobSites?jobsiteId=${jobsiteId}`,
+          `/api/getAllCostCodesByJobSites?jobsiteId=${jobsiteId}`
         );
         if (!res.ok) {
           setCostCodes([]);
