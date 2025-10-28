@@ -280,15 +280,6 @@ export async function finishUserSetup(id: string) {
   });
 }
 
-export async function setUserPassword(formData: FormData) {
-  await prisma.user.update({
-    where: { id: formData.get("id") as string },
-    data: {
-      password: formData.get("password") as string,
-    },
-  });
-}
-
 export async function updateContactInfo(formData: FormData) {
   await prisma.contacts.update({
     where: { id: formData.get("id") as string },

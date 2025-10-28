@@ -10,10 +10,11 @@ import { NewTab } from "@/app/v1/components/(reusable)/newTabs";
 import SettingSelections from "./SettingSelections";
 import { z } from "zod";
 import { TitleBoxes } from "@/app/v1/components/(reusable)/titleBoxes";
-import { updateSettings } from "@/app/lib/actions/old";
+
 import ProfileImageEditor from "./ProfileImageEditor";
 import { usePermissions } from "@/app/lib/context/permissionContext";
 import { apiRequest } from "@/app/lib/utils/api-Utils";
+import { updateSettings } from "@/app/lib/actions/hamburgerActions";
 
 type UserSettings = {
   userId: string;

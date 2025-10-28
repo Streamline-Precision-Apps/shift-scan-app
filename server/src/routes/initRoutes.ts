@@ -13,7 +13,6 @@ import {
   getUserSettingsByQuery,
   getUserContact,
 } from "../controllers/userController.js";
-import { get } from "http";
 import {
   createFormApproval,
   createFormSubmission,
@@ -345,34 +344,6 @@ router.post("/user", verifyToken, createUser);
  *       404:
  *         description: User not found
  */
-router.put("/user/:id", verifyToken, updateUser);
-
-/**
- * @swagger
- * /api/v1/user/{id}:
- *   delete:
- *     tags:
- *       - Users
- *     summary: Delete user
- *     description: Delete a user (requires authentication)
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - name: id
- *         in: path
- *         required: true
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: User deleted successfully
- *       401:
- *         description: Unauthorized - invalid or missing bearer token
- *       404:
- *         description: User not found
- */
-router.delete("/user/:id", verifyToken, deleteUser);
-
 /**
  * @swagger
  * /api/v1/user/settings:
@@ -421,13 +392,38 @@ router.delete("/user/:id", verifyToken, deleteUser);
  *         description: Bad request
  */
 
-// GET user settings (by userId in body)
 router.post("/user/settings", getUserSettingsByQuery);
 
-// PUT user settings (for updating settings)
 router.put("/user/settings", updateSettings);
 
-// GET user contact info (by userId in body)
 router.post("/user/contact", getUserContact);
+
+router.put("/user/:id", verifyToken, updateUser);
+
+/**
+ * @swagger
+ * /api/v1/user/{id}:
+ *   delete:
+ *     tags:
+ *       - Users
+ *     summary: Delete user
+ *     description: Delete a user (requires authentication)
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: User deleted successfully
+ *       401:
+ *         description: Unauthorized - invalid or missing bearer token
+ *       404:
+ *         description: User not found
+ */
+router.delete("/user/:id", verifyToken, deleteUser);
 
 export default router;

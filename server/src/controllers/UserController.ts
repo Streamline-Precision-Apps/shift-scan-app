@@ -229,11 +229,13 @@ export async function updateUser(req: Request, res: Response) {
       });
     }
     const userData = req.body;
+
     // Convert string 'true'/'false' to boolean for accountSetup if present in body
     if (userData.accountSetup !== undefined) {
       if (userData.accountSetup === "true") userData.accountSetup = true;
       else if (userData.accountSetup === "false") userData.accountSetup = false;
     }
+
     const updatedUser = await UserService.updateUser(id, userData);
 
     // Additional action: log update
@@ -364,33 +366,30 @@ export async function updateSettings(req: Request, res: Response) {
       (key) => settings[key] !== undefined
     );
     if (hasSettings && UserService.updateUserSettings) {
-      // Sanitize boolean values
-      const sanitizedSettings = { ...settings };
-      if (sanitizedSettings.cameraAccess !== undefined) {
-        sanitizedSettings.cameraAccess = Boolean(
-          sanitizedSettings.cameraAccess
-        );
+      // Only extract UserSettings fields, not contact or user fields
+      const sanitizedSettings: Prisma.UserSettingsUpdateInput = {};
+
+      if (settings.language !== undefined) {
+        sanitizedSettings.language = settings.language;
       }
-      if (sanitizedSettings.locationAccess !== undefined) {
-        sanitizedSettings.locationAccess = Boolean(
-          sanitizedSettings.locationAccess
-        );
+      if (settings.generalReminders !== undefined) {
+        sanitizedSettings.generalReminders = Boolean(settings.generalReminders);
       }
-      if (sanitizedSettings.personalReminders !== undefined) {
+      if (settings.personalReminders !== undefined) {
         sanitizedSettings.personalReminders = Boolean(
-          sanitizedSettings.personalReminders
+          settings.personalReminders
         );
       }
-      if (sanitizedSettings.generalReminders !== undefined) {
-        sanitizedSettings.generalReminders = Boolean(
-          sanitizedSettings.generalReminders
-        );
+      if (settings.cameraAccess !== undefined) {
+        sanitizedSettings.cameraAccess = Boolean(settings.cameraAccess);
       }
-      if (sanitizedSettings.cookiesAccess !== undefined) {
-        sanitizedSettings.cookiesAccess = Boolean(
-          sanitizedSettings.cookiesAccess
-        );
+      if (settings.locationAccess !== undefined) {
+        sanitizedSettings.locationAccess = Boolean(settings.locationAccess);
       }
+      if (settings.cookiesAccess !== undefined) {
+        sanitizedSettings.cookiesAccess = Boolean(settings.cookiesAccess);
+      }
+
       await UserService.updateUserSettings(userId, sanitizedSettings);
     }
 

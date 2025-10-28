@@ -21,7 +21,7 @@ import { formatPhoneNumber } from "@/app/lib/utils/phoneNumberFormater";
 import { formatPhoneNumberSetter } from "@/app/lib/utils/phoneNumberSetFormatter";
 import { useSignOut } from "@/app/lib/hooks/useSignOut";
 import SignatureSetUpModal from "@/app/v1/components/(signup)/signatureSetupModal";
-import { updateSettings } from "@/app/lib/actions/old";
+import { updateSettings } from "@/app/lib/actions/hamburgerActions";
 
 type Employee = {
   id: string;
@@ -135,25 +135,42 @@ export default function AccountInformation({
   const handleEmergencyContactNumberClick = () =>
     openEditContactModal("emergencyContactNumber");
 
-  // Save handler
+  // Save handler - only submit changed fields
   const handleSaveContact = async () => {
     setFormLoading(true);
     try {
-      await updateSettings({
-        userId,
-        personalReminders: undefined,
-        generalReminders: undefined,
-        cameraAccess: undefined,
-        locationAccess: undefined,
-        language: undefined,
-        phoneNumber: getRawPhoneNumber(formState.phoneNumber),
-        email: formState.email,
-        emergencyContact: formState.emergencyContact,
-        emergencyContactNumber: getRawPhoneNumber(
+      // Build object with only changed fields
+      const changedFields: Record<string, unknown> = { userId };
+
+      if (formState.phoneNumber !== (employee?.Contact?.phoneNumber || "")) {
+        changedFields.phoneNumber = getRawPhoneNumber(formState.phoneNumber);
+      }
+      if (formState.email !== (employee?.email || "")) {
+        changedFields.email = formState.email;
+      }
+      if (
+        formState.emergencyContact !==
+        (employee?.Contact?.emergencyContact || "")
+      ) {
+        changedFields.emergencyContact = formState.emergencyContact;
+      }
+      if (
+        formState.emergencyContactNumber !==
+        (employee?.Contact?.emergencyContactNumber || "")
+      ) {
+        changedFields.emergencyContactNumber = getRawPhoneNumber(
           formState.emergencyContactNumber
-        ),
-      });
-      await reloadEmployee();
+        );
+      }
+
+      // Only submit if there are changes
+      if (Object.keys(changedFields).length > 1) {
+        await updateSettings(
+          changedFields as Parameters<typeof updateSettings>[0]
+        );
+        await reloadEmployee();
+      }
+
       setEditContactModalOpen(false);
     } catch (err) {
       console.error("Failed to save contact info:", err);
@@ -257,64 +274,66 @@ export default function AccountInformation({
         isOpen={editContactModalOpen}
       >
         <Holds className="w-full h-full" data-modal="contact-edit">
-          <Labels size={"sm"}>{t("PhoneNumber")}</Labels>
-          <EditableFields
-            value={formatPhoneNumber(formState.phoneNumber)}
-            isChanged={false}
-            maxLength={14}
-            onChange={(e) => {
-              const formatted = formatPhoneNumberSetter(e.target.value);
-              setFormState((s) => ({ ...s, phoneNumber: formatted }));
-            }}
-          />
-          <Labels size={"sm"}>{t("Email")}</Labels>
-          <EditableFields
-            value={formState.email}
-            isChanged={false}
-            onChange={(e) =>
-              setFormState((s) => ({ ...s, email: e.target.value }))
-            }
-          />
-          <Labels size={"sm"}>{t("EmergencyContact")}</Labels>
-          <EditableFields
-            value={formState.emergencyContact}
-            isChanged={false}
-            onChange={(e) =>
-              setFormState((s) => ({
-                ...s,
-                emergencyContact: e.target.value,
-              }))
-            }
-          />
-          <Labels size={"sm"}>{t("EmergencyContactNumber")}</Labels>
-          <EditableFields
-            value={formatPhoneNumber(formState.emergencyContactNumber)}
-            isChanged={false}
-            maxLength={14}
-            onChange={(e) =>
-              setFormState((s) => ({
-                ...s,
-                emergencyContactNumber: e.target.value,
-              }))
-            }
-          />
+          <Holds className="w-full h-full flex flex-col">
+            <Labels size={"sm"}>{t("PhoneNumber")}</Labels>
+            <EditableFields
+              value={formatPhoneNumber(formState.phoneNumber)}
+              isChanged={false}
+              maxLength={14}
+              onChange={(e) => {
+                const formatted = formatPhoneNumberSetter(e.target.value);
+                setFormState((s) => ({ ...s, phoneNumber: formatted }));
+              }}
+            />
+            <Labels size={"sm"}>{t("Email")}</Labels>
+            <EditableFields
+              value={formState.email}
+              isChanged={false}
+              onChange={(e) =>
+                setFormState((s) => ({ ...s, email: e.target.value }))
+              }
+            />
+            <Labels size={"sm"}>{t("EmergencyContact")}</Labels>
+            <EditableFields
+              value={formState.emergencyContact}
+              isChanged={false}
+              onChange={(e) =>
+                setFormState((s) => ({
+                  ...s,
+                  emergencyContact: e.target.value,
+                }))
+              }
+            />
+            <Labels size={"sm"}>{t("EmergencyContactNumber")}</Labels>
+            <EditableFields
+              value={formatPhoneNumber(formState.emergencyContactNumber)}
+              isChanged={false}
+              maxLength={14}
+              onChange={(e) =>
+                setFormState((s) => ({
+                  ...s,
+                  emergencyContactNumber: e.target.value,
+                }))
+              }
+            />
+          </Holds>
           <Holds position="row" className="mt-5 gap-4">
+            <Buttons
+              shadow={"none"}
+              background="lightGray"
+              onClick={handleDiscardContact}
+              className="py-2 text-black"
+            >
+              {t("Cancel")}
+            </Buttons>
             <Buttons
               shadow={"none"}
               background="green"
               onClick={handleSaveContact}
               disabled={formLoading}
-              className="py-2"
+              className="py-2 text-black"
             >
               {formLoading ? t("Saving") : t("Save")}
-            </Buttons>
-            <Buttons
-              shadow={"none"}
-              background="lightGray"
-              onClick={handleDiscardContact}
-              className="py-2"
-            >
-              {t("Cancel")}
             </Buttons>
           </Holds>
         </Holds>

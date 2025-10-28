@@ -16,6 +16,7 @@ import "@/app/globals.css";
 import { usePermissions } from "@/app/lib/context/permissionContext";
 import { updateUserImage } from "@/app/lib/actions/hamburgerActions";
 import { apiRequest } from "@/app/lib/utils/api-Utils";
+import { X } from "lucide-react";
 
 type Employee = {
   id: string;
@@ -345,7 +346,7 @@ export default function ProfileImageEditor({
 
           <Contents width={"section"} className="h-full w-full">
             <Grids rows={"10"} className="h-full w-full">
-              <Holds className="row-start-1 row-end-2">
+              <Holds className="row-start-1 row-end-2 relative">
                 <Titles size={"h4"}>
                   {mode === "crop"
                     ? t("CropPhoto")
@@ -353,6 +354,10 @@ export default function ProfileImageEditor({
                     ? t("ChangeProfilePhoto")
                     : t("MyProfilePhoto")}
                 </Titles>
+                <X
+                  onClick={() => setIsOpen(false)}
+                  className="absolute left-0 top-0 text-black"
+                />
               </Holds>
 
               {/* Content Area */}
@@ -427,20 +432,20 @@ export default function ProfileImageEditor({
               {/* Action Buttons */}
 
               {mode === "select" ? (
-                <Holds className="row-start-10 row-end-11 w-full space-y-3">
+                <Holds className="row-start-9 row-end-11 w-full space-y-3">
                   <Buttons
                     background="lightBlue"
                     className="w-full py-2"
                     onClick={() => setMode("camera")}
                   >
-                    <Titles size={"h4"}>{t("ChangeProfilePhoto")}</Titles>
+                    <Titles size={"sm"}>{t("ChangeProfilePhoto")}</Titles>
                   </Buttons>
                   <Buttons
                     background="lightGray"
                     className="w-full py-2"
                     onClick={selectFromGallery}
                   >
-                    <Titles size={"h4"}>{t("SelectFromGallery")}</Titles>
+                    <Titles size={"sm"}>{t("SelectFromGallery")}</Titles>
                   </Buttons>
                 </Holds>
               ) : mode === "camera" ? (
@@ -450,14 +455,14 @@ export default function ProfileImageEditor({
                     className="w-full py-2"
                     onClick={takePicture}
                   >
-                    <Titles size={"h4"}>{t("CaptureImage")}</Titles>
+                    <Titles size={"sm"}>{t("CaptureImage")}</Titles>
                   </Buttons>
                   <Buttons
                     background="red"
                     className="w-full py-2"
                     onClick={() => setMode("select")}
                   >
-                    <Titles size={"h4"}>{t("Cancel")}</Titles>
+                    <Titles size={"sm"}>{t("Cancel")}</Titles>
                   </Buttons>
                 </Holds>
               ) : mode === "crop" ? (
@@ -468,14 +473,14 @@ export default function ProfileImageEditor({
                     onClick={saveImage}
                     disabled={isSaving}
                   >
-                    <Titles size={"h4"}>{t("Save")}</Titles>
+                    <Titles size={"sm"}>{t("Save")}</Titles>
                   </Buttons>
                   <Buttons
                     background="red"
                     className="w-full py-2"
                     onClick={() => setMode("camera")}
                   >
-                    <Titles size={"h4"}>{t("Retake")}</Titles>
+                    <Titles size={"sm"}>{t("Retake")}</Titles>
                   </Buttons>
                 </Holds>
               ) : null}

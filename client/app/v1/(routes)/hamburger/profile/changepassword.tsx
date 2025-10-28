@@ -1,19 +1,19 @@
 "use client";
 import { useTranslations } from "next-intl";
-import { Grids } from "@/components/(reusable)/grids";
-import { Holds } from "@/components/(reusable)/holds";
-import { Buttons } from "@/components/(reusable)/buttons";
-import { Inputs } from "@/components/(reusable)/inputs";
-import { Labels } from "@/components/(reusable)/labels";
-import { Forms } from "@/components/(reusable)/forms";
+import { Grids } from "@/app/v1/components/(reusable)/grids";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
+import { Buttons } from "@/app/v1/components/(reusable)/buttons";
+import { Inputs } from "@/app/v1/components/(reusable)/inputs";
+import { Labels } from "@/app/v1/components/(reusable)/labels";
+import { Forms } from "@/app/v1/components/(reusable)/forms";
 import { FormEvent, useEffect, useState } from "react";
-import { setUserPassword } from "@/actions/userActions";
-import { hash } from "bcryptjs";
+
 import { useRouter } from "next/navigation";
-import { Contents } from "@/components/(reusable)/contents";
-import { Texts } from "@/components/(reusable)/texts";
-import { Titles } from "@/components/(reusable)/titles";
-import { Images } from "@/components/(reusable)/images";
+import { Contents } from "@/app/v1/components/(reusable)/contents";
+import { Texts } from "@/app/v1/components/(reusable)/texts";
+import { Titles } from "@/app/v1/components/(reusable)/titles";
+import { Images } from "@/app/v1/components/(reusable)/images";
+import { setUserPassword } from "@/app/lib/actions/hamburgerActions";
 
 export default function ChangePassword({ userId }: { userId: string }) {
   const t = useTranslations("Hamburger-Profile");
@@ -65,7 +65,7 @@ export default function ChangePassword({ userId }: { userId: string }) {
 
     if (!validatePassword(newPassword)) {
       setBannerMessage(
-        "Invalid. Password must be at least 8 characters long, contain 1 number, and 1 symbol.",
+        "Invalid. Password must be at least 8 characters long, contain 1 number, and 1 symbol."
       );
       setShowBanner(true);
       return;
@@ -78,9 +78,8 @@ export default function ChangePassword({ userId }: { userId: string }) {
     }
 
     const formData = new FormData(event.currentTarget);
-    const hashed = await hash(newPassword, 10);
     formData.append("id", userId);
-    formData.append("password", hashed);
+    formData.append("password", newPassword);
 
     try {
       await setUserPassword(formData);
@@ -88,7 +87,7 @@ export default function ChangePassword({ userId }: { userId: string }) {
     } catch (error) {
       console.error("Error updating password:", error);
       setBannerMessage(
-        "There was an error updating your password. Please try again.",
+        "There was an error updating your password. Please try again."
       );
       setShowBanner(true);
     }

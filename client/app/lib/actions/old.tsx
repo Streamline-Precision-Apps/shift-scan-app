@@ -3,22 +3,6 @@
 import { apiRequest, getApiUrl, getToken } from "../utils/api-Utils";
 
 // Accepts contact info and settings, updates User, Contacts, and UserSettings as needed
-export async function updateSettings(data: {
-  userId: string;
-  phoneNumber?: string;
-  email?: string;
-  emergencyContact?: string;
-  emergencyContactNumber?: string;
-  language?: string;
-  generalReminders?: boolean;
-  personalReminders?: boolean;
-  cameraAccess?: boolean;
-  locationAccess?: boolean;
-  cookiesAccess?: boolean;
-}) {
-  const { userId, ...rest } = data;
-  await apiRequest("/api/v1/user/settings", "PUT", { userId, ...rest });
-}
 
 export async function createFormSubmission(formData: FormData) {
   const token = getToken();
