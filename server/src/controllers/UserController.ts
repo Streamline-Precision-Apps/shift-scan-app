@@ -467,3 +467,33 @@ export async function updateSettings(req: Request, res: Response) {
     });
   }
 }
+
+// GET /api/v1/user/:userId/timesheet/:date
+export async function getUsersTimeSheetByDate(req: Request, res: Response) {
+  try {
+    const { userId, date } = req.params;
+    if (!userId || !date) {
+      return res.status(400).json({
+        success: false,
+        error: "User ID and date are required",
+        message: "Failed to retrieve timesheet",
+      });
+    }
+    const timesheets = await UserService.getUsersTimeSheetByDate(userId, date);
+    if (!timesheets || timesheets.length === 0) {
+      // 204 No Content for empty result
+      return res.status(204).send();
+    }
+    res.status(200).json({
+      success: true,
+      data: timesheets,
+      message: "Timesheet(s) retrieved successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error",
+      message: "Failed to retrieve timesheet",
+    });
+  }
+}

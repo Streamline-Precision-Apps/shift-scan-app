@@ -48,6 +48,7 @@ export async function apiRequest(
     body: fetchBody,
     credentials: "include", // ✅ CRITICAL: Allow cookies to be sent and received
   });
+  if (res.status === 204) return []; // or return [] if you expect an array
   if (!res.ok) throw new Error(await res.text());
   return res.json();
 }

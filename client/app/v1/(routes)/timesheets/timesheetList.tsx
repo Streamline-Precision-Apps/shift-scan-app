@@ -1,16 +1,13 @@
 "use client";
-import { Holds } from "@/components/(reusable)/holds";
-import { Images } from "@/components/(reusable)/images";
-import { Texts } from "@/components/(reusable)/texts";
-import { Titles } from "@/components/(reusable)/titles";
-import { formatTimeHHMM } from "@/utils/formatDateAmPm";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
+import { Images } from "@/app/v1/components/(reusable)/images";
+import { Texts } from "@/app/v1/components/(reusable)/texts";
+import { formatTimeHHMM } from "@/app/lib/utils/formatDateAmPm";
 import { useTranslations } from "next-intl";
-import { Contents } from "@/components/(reusable)/contents";
-import {
-  FormStatus,
-  WorkType,
-} from "../../../../prisma/generated/prisma/client";
+import { Contents } from "@/app/v1/components/(reusable)/contents";
 
+export type FormStatus = "PENDING" | "APPROVED" | "DENIED" | "DRAFT";
+export type WorkType = "MECHANIC" | "LABOR" | "TASCO" | "TRUCK_DRIVER";
 export type TimeSheet = {
   id: number;
   date: Date | string;
@@ -54,7 +51,7 @@ export default function TimesheetList({
   copyToClipboard: (timesheet: string) => Promise<void>;
   calculateDuration: (
     startTime: string | Date | null | undefined,
-    endTime: string | Date | null | undefined,
+    endTime: string | Date | null | undefined
   ) => string;
 }) {
   const t = useTranslations("TimeSheet");

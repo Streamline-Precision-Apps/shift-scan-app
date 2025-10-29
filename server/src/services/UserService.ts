@@ -327,3 +327,37 @@ export async function getAllActiveEmployees() {
 
   return activeEmployeeNames;
 }
+
+export async function getUsersTimeSheetByDate(
+  userId: string,
+  dateParam: string
+) {
+  const date = new Date(dateParam);
+
+  if (isNaN(date.getTime())) {
+    throw new Error("Invalid date format");
+  }
+
+  const nextDay = new Date(date);
+  nextDay.setDate(date.getDate() + 1);
+
+  // Query the database for timesheets on the specified date
+  const timesheets = await prisma.timeSheet.findMany({
+    where: {
+      userId: userId,
+      date: {
+        gte: date,
+        lt: nextDay,
+      },
+    },
+    orderBy: { date: "desc" },
+    include: {
+      Jobsite: {
+        select: {
+          name: true,
+        },
+      },
+    },
+  });
+  return timesheets;
+}

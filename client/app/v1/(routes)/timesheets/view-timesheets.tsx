@@ -1,22 +1,24 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Inputs } from "@/components/(reusable)/inputs";
-import { Holds } from "@/components/(reusable)/holds";
-import { Titles } from "@/components/(reusable)/titles";
-import { Forms } from "@/components/(reusable)/forms";
-import { Texts } from "@/components/(reusable)/texts";
-import Spinner from "@/components/(animations)/spinner";
+import { Inputs } from "@/app/v1/components/(reusable)/inputs";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
+import { Titles } from "@/app/v1/components/(reusable)/titles";
+import { Forms } from "@/app/v1/components/(reusable)/forms";
+import { Texts } from "@/app/v1/components/(reusable)/texts";
+import Spinner from "@/app/v1/components/(animations)/spinner";
 import { useTranslations } from "next-intl";
-import { Images } from "@/components/(reusable)/images";
-import { TitleBoxes } from "@/components/(reusable)/titleBoxes";
+import { Images } from "@/app/v1/components/(reusable)/images";
+import { TitleBoxes } from "@/app/v1/components/(reusable)/titleBoxes";
 import { useRouter } from "next/navigation";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  FormStatus,
-  WorkType,
-} from "../../../../prisma/generated/prisma/client";
+import { Input } from "@/app/v1/components/ui/input";
+import { Label } from "@/app/v1/components/ui/label";
+
 import TimesheetList from "./timesheetList";
+import { apiRequest } from "@/app/lib/utils/api-Utils";
+import { getUserId } from "@/app/lib/utils/api-Utils";
+
+export type FormStatus = "PENDING" | "APPROVED" | "DENIED" | "DRAFT";
+export type WorkType = "MECHANIC" | "LABOR" | "TASCO" | "TRUCK_DRIVER";
 
 export type TimeSheet = {
   id: number;
@@ -74,7 +76,7 @@ export default function ViewTimesheets({ user }: Props) {
   // Function to calculate duration
   const calculateDuration = (
     startTime: string | Date | null | undefined,
-    endTime: string | Date | null | undefined,
+    endTime: string | Date | null | undefined
   ): string => {
     if (startTime && endTime) {
       const start = new Date(startTime).getTime();
@@ -88,18 +90,21 @@ export default function ViewTimesheets({ user }: Props) {
     return "N/A";
   };
 
-  // Fetch timesheets from the API
+  // Fetch timesheets from the new API route using apiUtils
   const fetchTimesheets = async (date?: string) => {
     setLoading(true);
     try {
+      const userId = user || getUserId();
       const dateIso = date
         ? new Date(date).toISOString().slice(0, 10)
-        : undefined;
-      const queryParam = dateIso ? `?date=${dateIso}` : "";
-      const response = await fetch(`/api/getTimesheets${queryParam}`);
-
-      const data: TimeSheet[] = await response.json();
-      setTimesheetData(data);
+        : new Date().toISOString().slice(0, 10);
+      // Use the new backend route: /api/v1/user/:userId/timesheet/:date
+      const data = await apiRequest(
+        `/api/v1/user/${userId}/timesheet/${dateIso}`,
+        "GET"
+      );
+      // The backend returns { success, data, message }
+      setTimesheetData(Array.isArray(data.data) ? data.data : []);
       setShowTimesheets(true);
     } catch (error) {
       console.error(error);
@@ -134,7 +139,7 @@ export default function ViewTimesheets({ user }: Props) {
       >
         <TitleBoxes
           onClick={() => {
-            router.push("/");
+            router.push("/v1");
           }}
         >
           <Holds

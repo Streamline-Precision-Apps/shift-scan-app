@@ -1,30 +1,27 @@
-"use server";
-import { auth } from "@/auth";
-import ViewTimeSheets from "@/app/(routes)/timesheets/view-timesheets";
-import { Bases } from "@/components/(reusable)/bases";
-import { Contents } from "@/components/(reusable)/contents";
-import { redirect } from "next/navigation";
-import { Grids } from "@/components/(reusable)/grids";
-import { Suspense } from "react";
-import { Holds } from "@/components/(reusable)/holds";
-import { TitleBoxes } from "@/components/(reusable)/titleBoxes";
-import { Titles } from "@/components/(reusable)/titles";
-import { Forms } from "@/components/(reusable)/forms";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import Spinner from "@/components/(animations)/spinner";
-import { Texts } from "@/components/(reusable)/texts";
-import { getTranslations } from "next-intl/server";
+"use client";
 
-export default async function Timesheets() {
-  const session = await auth();
-  if (!session) {
-    redirect("/signin");
-  }
-  const id = session?.user.id;
+import { Bases } from "@/app/v1/components/(reusable)/bases";
+import { Contents } from "@/app/v1/components/(reusable)/contents";
+import { Grids } from "@/app/v1/components/(reusable)/grids";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
+import { TitleBoxes } from "@/app/v1/components/(reusable)/titleBoxes";
+import { Titles } from "@/app/v1/components/(reusable)/titles";
+import { Forms } from "@/app/v1/components/(reusable)/forms";
+import { Label } from "@/app/v1/components/ui/label";
+import { Input } from "@/app/v1/components/ui/input";
+import Spinner from "@/app/v1/components/(animations)/spinner";
+import { Texts } from "@/app/v1/components/(reusable)/texts";
+import ViewTimesheets from "@/app/v1/(routes)/timesheets/view-timesheets";
+import { useUserStore } from "@/app/lib/store/userStore";
+import { useTranslations } from "next-intl";
 
-  async function LoadingSkeleton() {
-    const t = await getTranslations("TimeSheet");
+export default function Timesheets() {
+  const { user } = useUserStore();
+
+  const id = user?.id;
+
+  function LoadingSkeleton() {
+    const t = useTranslations("TimeSheet");
     return (
       <>
         <Holds
@@ -87,13 +84,22 @@ export default async function Timesheets() {
     );
   }
 
+  if (!id)
+    return (
+      <Bases>
+        <Contents>
+          <Grids rows={"7"} gap={"5"} className="h-full w-full">
+            <LoadingSkeleton />
+          </Grids>
+        </Contents>
+      </Bases>
+    );
+
   return (
     <Bases>
       <Contents>
         <Grids rows={"7"} gap={"5"} className="h-full w-full">
-          <Suspense fallback={<LoadingSkeleton />}>
-            <ViewTimeSheets user={id} />
-          </Suspense>
+          <ViewTimesheets user={id} />
         </Grids>
       </Contents>
     </Bases>

@@ -18,7 +18,7 @@ export default function TopControlPanel({ returnToMain }: Props) {
         background={"red"}
         onClick={returnToMain}
         shadow={"none"}
-        className="w-[50px] h-[40px] justify-center items-center"
+        className="w-[50px] h-10 justify-center items-center"
       >
         <Images
           titleImg={"/arrowLeftSymbol.svg"}
@@ -29,9 +29,9 @@ export default function TopControlPanel({ returnToMain }: Props) {
 
       <Buttons
         shadow={"none"}
-        href={"/timesheets"}
+        href={"/v1/timesheets"}
         background={"green"}
-        className="w-full h-[40px] py-2"
+        className="w-full h-10 py-2"
       >
         <Titles size={"sm"}>{t("TimeSheet-Label")}</Titles>
       </Buttons>

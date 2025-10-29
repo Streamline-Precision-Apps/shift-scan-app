@@ -1,6 +1,5 @@
 import { Router } from "express";
 import { verifyToken } from "../middleware/authMiddleware.js";
-
 import {
   createUser,
   deleteUser,
@@ -11,8 +10,42 @@ import {
   getUserSettingsByQuery,
   getUserContact,
   getAllUsers,
+  getUsersTimeSheetByDate,
 } from "../controllers/userController.js";
+
 const router = Router();
+
+/**
+ * @swagger
+ * /api/v1/user/{userId}/timesheet/{date}:
+ *   get:
+ *     tags:
+ *       - Users
+ *     summary: Get user's timesheet by date
+ *     description: Retrieve a user's timesheet for a specific date (requires authentication)
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: userId
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - name: date
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: date
+ *     responses:
+ *       200:
+ *         description: Timesheet retrieved successfully
+ *       400:
+ *         description: Bad request
+ *       404:
+ *         description: Timesheet not found
+ */
+router.get("/:userId/timesheet/:date", getUsersTimeSheetByDate);
 
 /**
  * @swagger
