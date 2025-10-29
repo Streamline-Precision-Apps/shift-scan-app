@@ -1,6 +1,5 @@
+import { ServiceManagerFormApprovals, ServiceFormSubmissions, ServiceTeamSubmissions, ServiceFormDraft, ServiceForm, } from "../services/formsService.js";
 // Controller for forms endpoints
-
-!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="b1db200f-e1c8-5a77-b440-03b6ccc53789")}catch(e){}}();
 import express from "express";
 import { ServiceCreateFormApproval, ServiceCreateFormSubmission, ServiceDeleteFormSubmission, ServiceGetForms, ServiceGetUserSubmissions, ServiceSaveDraft, ServiceSaveDraftToPending, ServiceSavePending, ServiceUpdateFormApproval, } from "../services/formsService.js";
 import { ServiceGetEmployeeRequests } from "../services/formsService.js";
@@ -217,5 +216,87 @@ export const updateFormApproval = async (req, res) => {
         res.status(400).json({ message });
     }
 };
+// GET /api/v1/forms/formDraft/:id
+export const getFormDraft = async (req, res) => {
+    try {
+        const user = req.user;
+        const userId = typeof user?.id === "string" ? user.id : undefined;
+        if (!userId)
+            return res.status(401).json({ error: "Unauthorized" });
+        const id = req.params.id;
+        if (!id)
+            return res.status(400).json({ error: "Missing id param" });
+        const draft = await ServiceFormDraft(id, userId);
+        if (!draft)
+            return res.status(404).json({ error: "Draft not found" });
+        res.status(200).json(draft);
+    }
+    catch (error) {
+        res.status(500).json({ error: "Failed to fetch form draft" });
+    }
+};
+// GET /api/v1/forms/teamSubmission/:id
+export const getTeamSubmission = async (req, res) => {
+    try {
+        const id = req.params.id;
+        if (!id)
+            return res.status(400).json({ error: "Missing id param" });
+        const teamSubmission = await ServiceTeamSubmissions(id);
+        if (!teamSubmission)
+            return res.status(404).json({ error: "Team submission not found" });
+        res.status(200).json(teamSubmission);
+    }
+    catch (error) {
+        res.status(500).json({ error: "Failed to fetch team submission" });
+    }
+};
+// GET /api/v1/forms/formSubmission/:id
+export const getFormSubmission = async (req, res) => {
+    try {
+        const id = req.params.id;
+        if (!id)
+            return res.status(400).json({ error: "Missing id param" });
+        const submission = await ServiceFormSubmissions(id);
+        if (!submission)
+            return res.status(404).json({ error: "Form submission not found" });
+        res.status(200).json(submission);
+    }
+    catch (error) {
+        res.status(500).json({ error: "Failed to fetch form submission" });
+    }
+};
+// GET /api/v1/forms/managerFormApproval/:id
+export const getManagerFormApproval = async (req, res) => {
+    try {
+        const id = req.params.id;
+        if (!id)
+            return res.status(400).json({ error: "Missing id param" });
+        const approval = await ServiceManagerFormApprovals(id);
+        if (!approval)
+            return res.status(404).json({ error: "Manager form approval not found" });
+        res.status(200).json(approval);
+    }
+    catch (error) {
+        res.status(500).json({ error: "Failed to fetch manager form approval" });
+    }
+};
+// GET /api/v1/forms/form/:id
+export const getFormTemplate = async (req, res) => {
+    try {
+        const user = req.user;
+        const userId = typeof user?.id === "string" ? user.id : undefined;
+        if (!userId)
+            return res.status(401).json({ error: "Unauthorized" });
+        const id = req.params.id;
+        if (!id)
+            return res.status(400).json({ error: "Missing id param" });
+        const template = await ServiceForm(id, userId);
+        if (!template)
+            return res.status(404).json({ error: "Form template not found" });
+        res.status(200).json(template);
+    }
+    catch (error) {
+        res.status(500).json({ error: "Failed to fetch form template" });
+    }
+};
 //# sourceMappingURL=formsController.js.map
-//# debugId=b1db200f-e1c8-5a77-b440-03b6ccc53789

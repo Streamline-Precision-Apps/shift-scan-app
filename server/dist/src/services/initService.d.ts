@@ -1,8 +1,8 @@
 export declare function getUserWithSettingsById(userId: string): Promise<{
     user: {
         id: string;
-        username: string;
         email: string | null;
+        username: string;
         firstName: string;
         lastName: string;
         signature: string | null;
@@ -55,12 +55,14 @@ export declare function getUserWithSettingsById(userId: string): Promise<{
         qrId: string;
         approvalStatus: import("../../generated/prisma/index.js").$Enums.ApprovalStatus;
         archiveDate: Date | null;
+        code: string | null;
     }[];
     equipments: {
         id: string;
         name: string;
         qrId: string;
         approvalStatus: import("../../generated/prisma/index.js").$Enums.ApprovalStatus;
+        code: string | null;
         status: import("../../generated/prisma/index.js").$Enums.FormTemplateStatus;
     }[];
     costCodes: {

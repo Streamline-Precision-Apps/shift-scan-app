@@ -1,5 +1,3 @@
-
-!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="92be5582-f194-55fa-b264-1239034fc0e5")}catch(e){}}();
 import { firestoreDb } from "../lib/firebase.js";
 // Helper to get collection reference
 function getLocationsCollection(userId) {
@@ -39,4 +37,3 @@ export async function saveUserLocation(userId, coords, device) {
     return true;
 }
 //# sourceMappingURL=locationService.js.map
-//# debugId=92be5582-f194-55fa-b264-1239034fc0e5

@@ -1,7 +1,7 @@
 // GET /api/v1/user/settings (GET, by query param or header)
 import type { Request, Response } from "express";
 import type { User, Prisma } from "../../generated/prisma/index.js";
-import UserService from "../services/UserService.js";
+import * as UserService from "../services/UserService.js";
 import prisma from "../lib/prisma.js";
 
 export async function getUserSettingsByQuery(req: Request, res: Response) {
@@ -157,10 +157,30 @@ export async function getUsers(req: Request, res: Response) {
   }
 }
 
-// GET /api/users/:id
+// GET /api/users
+export async function getAllUsers(req: Request, res: Response) {
+  try {
+    const users = await UserService.getAllActiveEmployees();
+    res.status(200).json({
+      success: true,
+      data: users,
+      message: "Users retrieved successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error",
+      message: "Failed to retrieve users",
+    });
+  }
+}
+
+// GET /api/users/:id || GET /api/users/:id?query
 export async function getUserById(req: Request, res: Response) {
   try {
     const { id } = req.params;
+    const { query } = req.query;
+
     if (!id) {
       return res.status(400).json({
         success: false,
@@ -168,14 +188,23 @@ export async function getUserById(req: Request, res: Response) {
         message: "Failed to retrieve user",
       });
     }
-    const user = await UserService.getUserById(id);
-    // Remove password from user object
-    const { password, ...safeUser } = user || {};
-    res.status(200).json({
-      success: true,
-      data: safeUser,
-      message: "User retrieved successfully",
-    });
+    if (query) {
+      const user = await UserService.getUserByIdQuery(id, query as string);
+      res.status(200).json({
+        success: true,
+        data: user,
+        message: "User retrieved successfully",
+      });
+    } else {
+      const user = await UserService.getUserById(id);
+      // Remove password from user object
+      const { password, ...safeUser } = user || {};
+      res.status(200).json({
+        success: true,
+        data: safeUser,
+        message: "User retrieved successfully",
+      });
+    }
   } catch (error) {
     const statusCode =
       error instanceof Error && error.message.includes("not found") ? 404 : 500;
@@ -326,7 +355,10 @@ export async function updateSettings(req: Request, res: Response) {
   try {
     // Extract userId from authenticated token (req.user set by verifyToken middleware)
     const authenticatedUserId = (req as any).user?.id;
-    console.log("🔍 updateSettings called - authenticatedUserId:", authenticatedUserId);
+    console.log(
+      "🔍 updateSettings called - authenticatedUserId:",
+      authenticatedUserId
+    );
     console.log("📝 Request body:", JSON.stringify(req.body, null, 2));
 
     // Verify user is authenticated

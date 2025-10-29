@@ -1,5 +1,3 @@
-
-!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="b9ba4a7a-db7b-507a-b4bc-72eaa803d9ec")}catch(e){}}();
 import "./instrument.mjs";
 import * as Sentry from "@sentry/node";
 import express from "express";
@@ -28,6 +26,9 @@ async function main() {
         app.use(cors({
             origin: process.env.CORS_ORIGIN || "http://localhost:3000",
             credentials: true,
+            methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+            allowedHeaders: ["Content-Type", "Authorization"],
+            exposedHeaders: ["Set-Cookie"],
         }));
         // Cookie parser (required to read httpOnly cookies)
         app.use(cookieParser());
@@ -82,4 +83,3 @@ main().catch(async (error) => {
     process.exit(1);
 });
 //# sourceMappingURL=index.js.map
-//# debugId=b9ba4a7a-db7b-507a-b4bc-72eaa803d9ec

@@ -2,7 +2,6 @@ import prisma from "../lib/prisma.js";
 import { FormStatus } from "../../generated/prisma/client.js";
 
 // --- Types ---
-
 // Params for ServiceGetEmployeeRequests
 export interface GetEmployeeRequestsParams {
   filter: string;
@@ -461,7 +460,6 @@ export const ServiceGetEmployeeRequests = async ({
   }
 };
 
-
 export const ServiceGetUserSubmissions = async ({
   userId,
   status,
@@ -489,7 +487,10 @@ export const ServiceGetUserSubmissions = async ({
     whereClause = { ...whereClause, status: FormStatus.DRAFT };
   } else if (status === "all") {
     if (startDate && endDate) {
-      whereClause = { ...whereClause, createdAt: { gte: startDate, lte: endDate } };
+      whereClause = {
+        ...whereClause,
+        createdAt: { gte: startDate, lte: endDate },
+      };
     }
   }
 
@@ -506,9 +507,176 @@ export const ServiceGetUserSubmissions = async ({
 
   // Sort: drafts first, then by createdAt desc
   forms.sort((a, b) => {
-    if (a.status === FormStatus.DRAFT && b.status !== FormStatus.DRAFT) return -1;
-    if (a.status !== FormStatus.DRAFT && b.status === FormStatus.DRAFT) return 1;
+    if (a.status === FormStatus.DRAFT && b.status !== FormStatus.DRAFT)
+      return -1;
+    if (a.status !== FormStatus.DRAFT && b.status === FormStatus.DRAFT)
+      return 1;
     return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
   });
   return forms;
+};
+
+export const ServiceManagerFormApprovals = async (id: string) => {
+  const forms = await prisma.formSubmission.findFirst({
+    where: {
+      id: Number(id),
+    },
+    include: {
+      Approvals: {
+        include: {
+          Approver: {
+            select: {
+              firstName: true,
+              lastName: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  return forms;
+};
+
+export const ServiceFormSubmissions = async (id: string) => {
+  const forms = await prisma.formSubmission.findUnique({
+    where: {
+      id: Number(id),
+    },
+    include: {
+      FormTemplate: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+      User: {
+        select: {
+          signature: true,
+        },
+      },
+      Approvals: {
+        select: {
+          id: true,
+          comment: true,
+          updatedAt: true,
+          Approver: {
+            select: {
+              firstName: true,
+              lastName: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  return forms;
+};
+
+export const ServiceTeamSubmissions = async (id: string) => {
+  const formSubmission = await prisma.formSubmission.findUnique({
+    where: {
+      id: Number(id),
+    },
+    include: {
+      User: {
+        select: {
+          firstName: true,
+          lastName: true,
+        },
+      },
+      Approvals: {
+        select: {
+          comment: true,
+          Approver: {
+            select: {
+              firstName: true,
+              lastName: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  return formSubmission;
+};
+
+export const ServiceFormDraft = async (id: string, userId: string) => {
+  const forms = await prisma.formSubmission.findUnique({
+    where: {
+      id: Number(id),
+      userId,
+      status: FormStatus.DRAFT,
+    },
+
+    select: {
+      data: true,
+      title: true,
+      FormTemplate: {
+        select: {
+          name: true,
+        },
+      },
+    },
+  });
+
+  return forms;
+};
+
+export const ServiceForm = async (id: string, userId: string) => {
+  const formTemplate = await prisma.formTemplate.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      FormGrouping: {
+        include: {
+          Fields: {
+            include: {
+              Options: true, // Include dropdown options if any
+            },
+            orderBy: {
+              order: "asc",
+            },
+          },
+        },
+        orderBy: {
+          order: "asc",
+        },
+      },
+    },
+  });
+
+  if (!formTemplate) throw new Error("Form template not found");
+
+  const formattedForm = {
+    id: formTemplate.id,
+    name: formTemplate.name,
+    formType: formTemplate.formType,
+    isActive: formTemplate.isActive,
+    isSignatureRequired: formTemplate.isSignatureRequired,
+    groupings: formTemplate.FormGrouping.map((group) => ({
+      id: group.id,
+      title: group.title || "",
+      order: group.order,
+      fields: group.Fields.map((field) => ({
+        id: field.id,
+        label: field.label,
+        name: field.id, // Use field.id as the name since FormField doesn't have a name property
+        type: field.type,
+        required: field.required,
+        order: field.order,
+        defaultValue: undefined, // FormField doesn't have defaultValue
+        placeholder: field.placeholder,
+        helperText: field.content, // Use content as helperText
+        filter: field.filter, // Include the filter property for SEARCH_ASSET fields
+        multiple: field.multiple, // Include multiple property for multi-select fields
+        options: field.Options.map((option) => option.value), // Extract dropdown options
+      })),
+    })),
+  };
+
+  return formattedForm;
 };

@@ -1,5 +1,3 @@
-
-!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="9aa33296-c6b3-5873-8f12-f888acc4c771")}catch(e){}}();
 import express from "express";
 import dotenv from "dotenv";
 import { getUserWithSettingsById } from "../services/initService.js";
@@ -26,4 +24,3 @@ export const initHandler = async (req, res) => {
     }
 };
 //# sourceMappingURL=initController.js.map
-//# debugId=9aa33296-c6b3-5873-8f12-f888acc4c771

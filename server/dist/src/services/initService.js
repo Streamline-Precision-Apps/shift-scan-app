@@ -1,6 +1,4 @@
 // server/src/services/initService.ts
-
-!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="a606c31c-e383-5ca7-9c86-8498e1896d57")}catch(e){}}();
 import prisma from "../lib/prisma.js";
 export async function getUserWithSettingsById(userId) {
     const user = await prisma.user.findUnique({
@@ -37,6 +35,7 @@ export async function getUserWithSettingsById(userId) {
             id: true,
             qrId: true,
             name: true,
+            code: true,
             approvalStatus: true,
             archiveDate: true,
         },
@@ -47,6 +46,7 @@ export async function getUserWithSettingsById(userId) {
             id: true,
             name: true,
             qrId: true,
+            code: true,
             approvalStatus: true,
             status: true,
         },
@@ -84,4 +84,3 @@ export async function getUserWithSettingsById(userId) {
     };
 }
 //# sourceMappingURL=initService.js.map
-//# debugId=a606c31c-e383-5ca7-9c86-8498e1896d57

@@ -8,7 +8,7 @@ export type CCTag = {
 };
 
 export type CostCode = {
-  id?: string;
+  id: string;
   name: string;
   isActive: boolean;
   code?: string | null;
@@ -41,7 +41,8 @@ export const useCostCodeStore = create<CostCodeStoreState>()(
   persist<CostCodeStoreState>(
     (set, get) => ({
       costCodes: [],
-      setCostCodes: (costCodes) => set({ costCodes: sanitizeCostCodes(costCodes) }),
+      setCostCodes: (costCodes) =>
+        set({ costCodes: sanitizeCostCodes(costCodes) }),
       addCostCode: (costCode) =>
         set((state) => ({ costCodes: [...state.costCodes, costCode] })),
       clearCostCodes: () => set({ costCodes: [] }),

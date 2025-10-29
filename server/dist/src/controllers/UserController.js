@@ -1,4 +1,4 @@
-import UserService from "../services/UserService.js";
+import * as UserService from "../services/UserService.js";
 import prisma from "../lib/prisma.js";
 export async function getUserSettingsByQuery(req, res) {
     try {
@@ -118,10 +118,11 @@ export async function getUsers(req, res) {
         });
     }
 }
-// GET /api/users/:id
+// GET /api/users/:id || GET /api/users/:id?query
 export async function getUserById(req, res) {
     try {
         const { id } = req.params;
+        const { query } = req.query;
         if (!id) {
             return res.status(400).json({
                 success: false,
@@ -129,14 +130,24 @@ export async function getUserById(req, res) {
                 message: "Failed to retrieve user",
             });
         }
-        const user = await UserService.getUserById(id);
-        // Remove password from user object
-        const { password, ...safeUser } = user || {};
-        res.status(200).json({
-            success: true,
-            data: safeUser,
-            message: "User retrieved successfully",
-        });
+        if (query) {
+            const user = await UserService.getUserByIdQuery(id, query);
+            res.status(200).json({
+                success: true,
+                data: user,
+                message: "User retrieved successfully",
+            });
+        }
+        else {
+            const user = await UserService.getUserById(id);
+            // Remove password from user object
+            const { password, ...safeUser } = user || {};
+            res.status(200).json({
+                success: true,
+                data: safeUser,
+                message: "User retrieved successfully",
+            });
+        }
     }
     catch (error) {
         const statusCode = error instanceof Error && error.message.includes("not found") ? 404 : 500;
@@ -275,10 +286,13 @@ export async function getUserSettings(req, res) {
 // PUT /api/user/settings
 export async function updateSettings(req, res) {
     try {
-        // Extract userId from authenticated token
-        const authenticatedUserId = req.userId;
+        // Extract userId from authenticated token (req.user set by verifyToken middleware)
+        const authenticatedUserId = req.user?.id;
+        console.log("🔍 updateSettings called - authenticatedUserId:", authenticatedUserId);
+        console.log("📝 Request body:", JSON.stringify(req.body, null, 2));
         // Verify user is authenticated
         if (!authenticatedUserId) {
+            console.error("❌ No authenticated user found");
             return res.status(401).json({
                 success: false,
                 error: "Unauthorized",
@@ -366,6 +380,4 @@ export async function updateSettings(req, res) {
         });
     }
 }
-!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="3babd270-c524-59af-a938-0bb04a5b0a21")}catch(e){}}();
 //# sourceMappingURL=userController.js.map
-//# debugId=3babd270-c524-59af-a938-0bb04a5b0a21

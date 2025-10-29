@@ -1,6 +1,4 @@
 // server/src/services/payPeriodService.ts
-
-!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="f4757968-a50f-5cdf-84d9-21caa90983bf")}catch(e){}}();
 import prisma from "../lib/prisma.js";
 // Utility to calculate the start date of the current pay period
 export function calculatePayPeriodStart() {
@@ -31,4 +29,3 @@ export async function getPayPeriodSheets(userId) {
     });
 }
 //# sourceMappingURL=payPeriodService.js.map
-//# debugId=f4757968-a50f-5cdf-84d9-21caa90983bf

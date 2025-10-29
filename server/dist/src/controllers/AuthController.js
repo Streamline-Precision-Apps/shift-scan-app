@@ -66,6 +66,4 @@ export const signOutUser = async (req, res) => {
         return res.status(500).json({ error: "Internal server error" });
     }
 };
-!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="ff4ac816-1366-59c6-a286-357fd115e41c")}catch(e){}}();
 //# sourceMappingURL=authController.js.map
-//# debugId=ff4ac816-1366-59c6-a286-357fd115e41c

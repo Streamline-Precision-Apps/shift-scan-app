@@ -7,6 +7,7 @@ import { useEquipmentStore } from "@/app/lib/store/equipmentStore";
 import { useProfitStore } from "@/app/lib/store/profitStore";
 import { useCostCodeStore } from "@/app/lib/store/costCodeStore";
 import { FormIndividualTemplate } from "../../../admins/forms/[id]/_component/hooks/types";
+import { apiRequest } from "@/app/lib/utils/api-Utils";
 
 // Define FormFieldValue type to match RenderFields expectations
 type FormFieldValue =
@@ -120,20 +121,25 @@ export const FormFieldRenderer: React.FC<FormFieldRendererProps> = ({
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const res = await fetch("/api/getAllActiveEmployeeName", {
-          cache: "no-store",
-          headers: { "Cache-Control": "no-cache" },
-        });
-        const employees = await res.json();
-        const options = employees.map(
-          (user: { id: string; firstName: string; lastName: string }) => ({
-            value: user.id,
-            label: `${user.firstName} ${user.lastName}`,
-          })
-        );
-        setUserOptions(options);
+        const employeesRes = await apiRequest(`/api/v1/user/all`, "GET");
+        const employees = Array.isArray(employeesRes.data)
+          ? employeesRes.data
+          : [];
+        if (Array.isArray(employees)) {
+          const options = employees.map(
+            (user: { id: string; firstName: string; lastName: string }) => ({
+              value: user.id,
+              label: `${user.firstName} ${user.lastName}`,
+            })
+          );
+          setUserOptions(options);
+        } else {
+          setUserOptions([]);
+          console.warn("Expected array for employees, got:", employees);
+        }
       } catch (error) {
         console.error("Error fetching users:", error);
+        setUserOptions([]);
       }
     };
     fetchUsers();

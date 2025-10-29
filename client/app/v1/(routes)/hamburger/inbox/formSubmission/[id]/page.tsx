@@ -6,17 +6,15 @@ import FormDraft from "./_components/formDraft";
 import ManagerFormApproval from "./_components/managerFormApproval";
 import SubmittedForms from "./_components/submittedForms";
 import ManagerFormEditApproval from "./_components/managerFormEdit";
-
 import { Bases } from "@/app/v1/components/(reusable)/bases";
 import { Contents } from "@/app/v1/components/(reusable)/contents";
-import { Grids } from "@/app/v1/components/(reusable)/grids";
 import { Holds } from "@/app/v1/components/(reusable)/holds";
 import { TitleBoxes } from "@/app/v1/components/(reusable)/titleBoxes";
 import SubmittedFormsApproval from "./_components/SubmittedFormsApproval";
 import { Titles } from "@/app/v1/components/(reusable)/titles";
 import { useTranslations } from "next-intl";
+import { apiRequest } from "@/app/lib/utils/api-Utils";
 import { FormIndividualTemplate } from "@/app/v1/(routes)/admins/forms/[id]/_component/hooks/types";
-import { useSession } from "@/app/lib/context/sessionContext";
 import { useUserStore } from "@/app/lib/store/userStore";
 import { saveDraftToPending } from "@/app/lib/actions/old";
 
@@ -134,7 +132,7 @@ export default function DynamicForm({
   // Determine which API endpoints to fetch based on the current state
   const determineApiEndpoints = () => {
     const endpoints = {
-      form: `/api/form/${id}`,
+      form: `/api/v1/forms/form/${id}`,
       submission: null as string | null,
       managerApproval: null as string | null,
     };
@@ -143,11 +141,11 @@ export default function DynamicForm({
 
     // Determine submission endpoint based on status and approval status
     if (submissionStatus === "DRAFT") {
-      endpoints.submission = `/api/formDraft/${submissionId}`;
+      endpoints.submission = `/api/v1/forms/formDraft/${submissionId}`;
     } else if (submissionApprovingStatus === "true") {
-      endpoints.submission = `/api/teamSubmission/${submissionId}`;
+      endpoints.submission = `/api/v1/forms/teamSubmission/${submissionId}`;
     } else {
-      endpoints.submission = `/api/formSubmission/${submissionId}`;
+      endpoints.submission = `/api/v1/forms/formSubmission/${submissionId}`;
     }
 
     // Determine if manager approval data is needed
@@ -156,7 +154,7 @@ export default function DynamicForm({
       submissionStatus === "DENIED" ||
       submissionApprovingStatus === "true"
     ) {
-      endpoints.managerApproval = `/api/managerFormApproval/${submissionId}`;
+      endpoints.managerApproval = `/api/v1/forms/managerFormApproval/${submissionId}`;
     }
 
     return endpoints;
@@ -170,38 +168,17 @@ export default function DynamicForm({
 
       try {
         const endpoints = determineApiEndpoints();
-        const fetchOptions = {
-          // Use default caching instead of forcing no-cache
-          // This will improve performance and reduce unnecessary reloads
-        };
-
-        // Build array of fetch promises based on required endpoints
-        const fetchPromises = [fetch(endpoints.form, fetchOptions)];
-
+        // Use apiRequest for all fetches (GET)
+        const fetchPromises = [apiRequest(endpoints.form, "GET")];
         if (endpoints.submission) {
-          fetchPromises.push(fetch(endpoints.submission, fetchOptions));
+          fetchPromises.push(apiRequest(endpoints.submission, "GET"));
         }
-
         if (endpoints.managerApproval) {
-          fetchPromises.push(fetch(endpoints.managerApproval, fetchOptions));
+          fetchPromises.push(apiRequest(endpoints.managerApproval, "GET"));
         }
 
         // Execute all fetches in parallel
-        const responses = await Promise.all(fetchPromises);
-
-        // Check if any response failed
-        for (const response of responses) {
-          if (!response.ok) {
-            throw new Error(
-              `API request failed with status ${response.status}`
-            );
-          }
-        }
-
-        // Parse all responses in parallel
-        const [formData, ...otherData] = await Promise.all(
-          responses.map((res) => res.json())
-        );
+        const [formData, ...otherData] = await Promise.all(fetchPromises);
 
         // Set form data first
         setFormData(formData);

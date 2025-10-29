@@ -9,4 +9,9 @@ export declare const saveDraftToPending: (req: express.Request, res: express.Res
 export declare const savePending: (req: express.Request, res: express.Response) => Promise<void>;
 export declare const createFormApproval: (req: express.Request, res: express.Response) => Promise<void>;
 export declare const updateFormApproval: (req: express.Request, res: express.Response) => Promise<void>;
+export declare const getFormDraft: (req: express.Request, res: express.Response) => Promise<express.Response<any, Record<string, any>> | undefined>;
+export declare const getTeamSubmission: (req: express.Request, res: express.Response) => Promise<express.Response<any, Record<string, any>> | undefined>;
+export declare const getFormSubmission: (req: express.Request, res: express.Response) => Promise<express.Response<any, Record<string, any>> | undefined>;
+export declare const getManagerFormApproval: (req: express.Request, res: express.Response) => Promise<express.Response<any, Record<string, any>> | undefined>;
+export declare const getFormTemplate: (req: express.Request, res: express.Response) => Promise<express.Response<any, Record<string, any>> | undefined>;
 //# sourceMappingURL=formsController.d.ts.map

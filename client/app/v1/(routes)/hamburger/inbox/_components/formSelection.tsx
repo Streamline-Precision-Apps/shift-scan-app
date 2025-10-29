@@ -204,42 +204,28 @@ export default function FormSelection({
         className="h-16 border-b-2  border-neutral-100  gap-2 px-2"
       >
         <Holds>
-          <Suspense
-            fallback={
-              <Selects
-                value={""}
-                disabled
-                className="text-center text-sm disabled:bg-white h-full p-2"
-              >
-                <option value={""}>{t("SelectAForm")}</option>
-              </Selects>
-            }
-          >
-            <>
-              {loading ? (
-                <Selects
-                  value={""}
-                  disabled
-                  className="text-center text-sm text-black disabled:bg-white h-full p-2"
-                >
-                  <option value={""}>{t("SelectAForm")}</option>
-                </Selects>
-              ) : (
-                <Selects
-                  value={selectedForm}
-                  onChange={(e) => setSelectedForm(e.target.value)}
-                  className="text-center text-sm text-black h-full p-2 "
-                >
-                  <option value={""}>{t("SelectAForm")}</option>
-                  {forms.map((form) => (
-                    <option key={form.id} value={form.id}>
-                      {form.name}
-                    </option>
-                  ))}
-                </Selects>
-              )}
-            </>
-          </Suspense>
+          {loading ? (
+            <Selects
+              value={""}
+              disabled
+              className="text-center text-sm text-black disabled:bg-white h-full p-2"
+            >
+              <option value={""}>{t("SelectAForm")}</option>
+            </Selects>
+          ) : (
+            <Selects
+              value={selectedForm}
+              onChange={(e) => setSelectedForm(e.target.value)}
+              className="text-center text-sm text-black h-full p-2 "
+            >
+              <option value={""}>{t("SelectAForm")}</option>
+              {(Array.isArray(forms) ? forms : []).map((form) => (
+                <option key={form.id} value={form.id}>
+                  {form.name}
+                </option>
+              ))}
+            </Selects>
+          )}
         </Holds>
         <Holds className="w-fit ">
           <Buttons

@@ -2,7 +2,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { FormFieldRenderer } from "@/app/v1/(routes)/hamburger/inbox/_components/FormFieldRenderer";
 import { FormEvent } from "react";
-
 import { Buttons } from "@/app/v1/components/(reusable)/buttons";
 import { Contents } from "@/app/v1/components/(reusable)/contents";
 import { Inputs } from "@/app/v1/components/(reusable)/inputs";
@@ -20,6 +19,7 @@ import {
   AlertDialogTitle,
 } from "@/app/v1/components/ui/alert-dialog";
 import { deleteFormSubmission, saveDraft } from "@/app/lib/actions/old";
+import { apiRequest } from "@/app/lib/utils/api-Utils";
 
 interface FormField {
   id: string;
@@ -82,15 +82,20 @@ export default function FormDraft({
   useEffect(() => {
     const fetchSignature = async () => {
       try {
-        const response = await fetch("/api/getUserSignature");
-        const data = await response.json();
-        setSignature(data.signature);
+        // Replace userId with the actual user ID variable
+        const data = await apiRequest(
+          `/api/v1/user/${userId}?fields=signature`,
+          "GET"
+        );
+
+        setSignature(data.data?.signature || null);
       } catch (error) {
         console.error("Error fetching signature:", error);
       }
     };
     fetchSignature();
-  }, [signature]);
+    // Only re-run if userId changes
+  }, [userId]);
 
   // Update formValues when showSignature changes
   const setSignatureData = (value: boolean) => {

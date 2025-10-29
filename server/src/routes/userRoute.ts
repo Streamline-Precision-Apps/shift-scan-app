@@ -10,6 +10,7 @@ import {
   updateUser,
   getUserSettingsByQuery,
   getUserContact,
+  getAllUsers,
 } from "../controllers/userController.js";
 const router = Router();
 
@@ -29,7 +30,9 @@ const router = Router();
  *       401:
  *         description: Unauthorized - invalid or missing bearer token
  */
-router.get("/user", verifyToken, getUsers);
+router.get("/", verifyToken, getUsers);
+
+router.get("/All", verifyToken, getAllUsers);
 
 /**
  * @swagger
@@ -55,7 +58,7 @@ router.get("/user", verifyToken, getUsers);
  *       404:
  *         description: User not found
  */
-router.get("/user/:id", verifyToken, getUserById);
+router.get("/:id", verifyToken, getUserById);
 
 /**
  * @swagger
@@ -143,7 +146,7 @@ router.get("/user/:id", verifyToken, getUserById);
  *       400:
  *         description: Bad request
  */
-router.post("/user", verifyToken, createUser);
+router.post("/", verifyToken, createUser);
 
 /**
  * @swagger
@@ -275,13 +278,13 @@ router.post("/user", verifyToken, createUser);
  *         description: Bad request
  */
 
-router.post("/user/settings", getUserSettingsByQuery);
+router.post("/settings", getUserSettingsByQuery);
 
-router.put("/user/settings", verifyToken, updateSettings);
+router.put("/settings", verifyToken, updateSettings);
 
-router.post("/user/contact", getUserContact);
+router.post("/contact", getUserContact);
 
-router.put("/user/:id", verifyToken, updateUser);
+router.put("/:id", verifyToken, updateUser);
 
 /**
  * @swagger
@@ -307,6 +310,6 @@ router.put("/user/:id", verifyToken, updateUser);
  *       404:
  *         description: User not found
  */
-router.delete("/user/:id", verifyToken, deleteUser);
+router.delete("/:id", verifyToken, deleteUser);
 
 export default router;

@@ -1,6 +1,4 @@
 // Error handling middleware
-
-!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="147fabb7-8f0e-5ae5-abee-aa258a20b24c")}catch(e){}}();
 export function routeErrorHandler(error, message) {
     if (message) {
         console.error(message);
@@ -65,4 +63,3 @@ export const validateJsonMiddleware = (error, req, res, next) => {
     next(error);
 };
 //# sourceMappingURL=errorMiddleware.js.map
-//# debugId=147fabb7-8f0e-5ae5-abee-aa258a20b24c
