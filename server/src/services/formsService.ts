@@ -462,14 +462,14 @@ export const ServiceGetEmployeeRequests = async ({
 
 export const ServiceGetUserSubmissions = async ({
   userId,
-  status,
+  filter,
   startDate,
   endDate,
   skip,
   take,
 }: {
   userId: string;
-  status: string;
+  filter: string;
   startDate: Date | null;
   endDate: Date | null;
   skip: number;
@@ -477,15 +477,15 @@ export const ServiceGetUserSubmissions = async ({
 }) => {
   // Build where clause
   let whereClause: any = { userId };
-  if (status === "pending") {
+  if (filter === "pending") {
     whereClause = { ...whereClause, status: FormStatus.PENDING };
-  } else if (status === "approved") {
+  } else if (filter === "approved") {
     whereClause = { ...whereClause, status: FormStatus.APPROVED };
-  } else if (status === "denied") {
+  } else if (filter === "denied") {
     whereClause = { ...whereClause, status: FormStatus.DENIED };
-  } else if (status === "draft") {
+  } else if (filter === "draft") {
     whereClause = { ...whereClause, status: FormStatus.DRAFT };
-  } else if (status === "all") {
+  } else if (filter === "all") {
     if (startDate && endDate) {
       whereClause = {
         ...whereClause,

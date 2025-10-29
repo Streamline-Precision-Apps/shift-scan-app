@@ -18,7 +18,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/app/v1/components/ui/alert-dialog";
-import { deleteFormSubmission, saveDraft } from "@/app/lib/actions/old";
+import { deleteFormSubmission, saveDraft } from "@/app/lib/actions/formActions";
 import { apiRequest } from "@/app/lib/utils/api-Utils";
 
 interface FormField {

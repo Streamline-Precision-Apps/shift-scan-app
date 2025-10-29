@@ -23,18 +23,22 @@ import {
 import { ServiceGetEmployeeRequests } from "../services/formsService.js";
 // Fetch employee requests for a manager (with filter, skip, take)
 
-export const getUserSubmissions = async (req: any, res: express.Response) => {
+export const getUserSubmissions = async (
+  req: express.Request,
+  res: express.Response
+) => {
   try {
-    const userId = req.user?.id;
-    if (!userId) {
-      return res.status(401).json({ error: "Unauthorized User" });
-    }
-    const status = req.query.status as string;
+    const filter = req.params.filter as string;
+    const userId = req.query.userId as string | null;
     const skip = parseInt((req.query.skip as string) || "0");
     const take = parseInt((req.query.take as string) || "10");
     const startDateParam = req.query.startDate as string | null;
     const endDateParam = req.query.endDate as string | null;
     const weekFilter = req.query.week === "true";
+
+    if (!userId) {
+      return res.status(401).json({ error: "Unauthorized User" });
+    }
 
     // Process date filters
     let startDate: Date | null = null;
@@ -55,7 +59,7 @@ export const getUserSubmissions = async (req: any, res: express.Response) => {
 
     const submissions = await ServiceGetUserSubmissions({
       userId,
-      status,
+      filter,
       startDate,
       endDate,
       skip,

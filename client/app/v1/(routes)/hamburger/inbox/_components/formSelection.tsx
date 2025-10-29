@@ -14,6 +14,7 @@ import { useEffect, useState, useCallback, Suspense } from "react";
 import InboxSkeleton from "./inboxSkeleton";
 import { useInfiniteScroll } from "@/app/lib/hooks/useInfiniteScroll";
 import { useUserStore } from "@/app/lib/store/userStore";
+import { apiRequest } from "@/app/lib/utils/api-Utils";
 
 type Form = {
   id: string;
@@ -106,21 +107,13 @@ export default function FormSelection({
     skip: number,
     reset?: boolean
   ): Promise<SentContent[]> => {
-    const token = localStorage.getItem("token"); // or however you store the JWT
-    const url = process.env.NEXT_PUBLIC_API_URL || `http://localhost:3001`;
-    const response = await fetch(
-      `${url}/api/v1/forms/${
+    const data = await apiRequest(
+      `/api/v1/forms/${
         selectedFilter ? selectedFilter : "all"
-      }?startDate=${startDate}&endDate=${endDate}&skip=${skip}&take=10`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
+      }?startDate=${startDate}&endDate=${endDate}&skip=${skip}&take=10&userId=${userId}`,
+      "GET"
     );
-    const data = await response.json();
-    // Defensive: filter out any non-object/string results
+
     return Array.isArray(data)
       ? data.filter(
           (item): item is SentContent =>
