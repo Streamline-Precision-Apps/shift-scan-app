@@ -5,8 +5,8 @@ import { Buttons } from "@/app/v1/components/(reusable)/buttons";
 import {
   createJobsite,
   jobExists,
-  sendJobsiteNotification,
-} from "@/app/lib/actions/jobsiteActions";
+  sendNotification,
+} from "@/app/lib/actions/generatorActions";
 import { useTranslations } from "next-intl";
 import { Inputs } from "@/app/v1/components/(reusable)/inputs";
 import { TextAreas } from "@/app/v1/components/(reusable)/textareas";
@@ -103,7 +103,7 @@ export default function AddJobsiteForm() {
       formDataToSend.append("submitterName", submitterName);
       const response = await createJobsite(formDataToSend);
       if (response) {
-        await sendJobsiteNotification({
+        await sendNotification({
           topic: "items",
           title: "Jobsite Created",
           message: `${

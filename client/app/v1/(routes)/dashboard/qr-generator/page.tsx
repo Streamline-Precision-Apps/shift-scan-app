@@ -5,8 +5,8 @@ import { useState } from "react";
 import { Holds } from "@/app/v1/components/(reusable)/holds";
 import { Grids } from "@/app/v1/components/(reusable)/grids";
 import { Contents } from "@/app/v1/components/(reusable)/contents";
-import QrJobsiteContent from "./qrJobsiteContent";
-import QrEquipmentContent from "./qrEquipmentContent";
+import QrJobsiteContent from "./_components/qrJobsiteContent";
+import QrEquipmentContent from "./_components/qrEquipmentContent";
 import { NewTab } from "@/app/v1/components/(reusable)/newTabs";
 import { Titles } from "@/app/v1/components/(reusable)/titles";
 import { TitleBoxes } from "@/app/v1/components/(reusable)/titleBoxes";
@@ -16,9 +16,11 @@ import { useEffect } from "react";
 import { z } from "zod";
 import Spinner from "@/app/v1/components/(animations)/spinner";
 import { Buttons } from "@/app/v1/components/(reusable)/buttons";
-import LoadingQRGeneratorContent from "./loadingUiQrGenerator";
+import LoadingQRGeneratorContent from "./_components/loadingUiQrGenerator";
 import { Bases } from "@/app/v1/components/(reusable)/bases";
 import { apiRequestNoResCheck } from "@/app/lib/utils/api-Utils";
+import { useProfitStore } from "@/app/lib/store/profitStore";
+import { useEquipmentStore } from "@/app/lib/store/equipmentStore";
 
 const JobCodesSchema = z.object({
   id: z.string(),
@@ -54,11 +56,13 @@ type JobCodes = z.infer<typeof JobCodesSchema>;
 type EquipmentCodes = z.infer<typeof EquipmentCodesSchema>;
 
 export default function QRGeneratorContent() {
+  const { jobsites, setJobsites } = useProfitStore();
+  const { equipments, setEquipments } = useEquipmentStore();
   const [activeTab, setActiveTab] = useState(1);
   const t = useTranslations("Generator");
   const router = useRouter();
   const searchParams = useSearchParams();
-  const url = searchParams.get("returnUrl") || "/dashboard";
+  const url = searchParams.get("rPath") || "/v1/dashboard";
   const [loading, setLoading] = useState(true);
   const [loadingJobsite, setLoadingJobsite] = useState<boolean>(false);
   const [loadingEquipment, setLoadingEquipment] = useState<boolean>(false);
@@ -90,6 +94,7 @@ export default function QRGeneratorContent() {
         const equipmentData = await equipmentRes.json();
         try {
           EquipmentListSchema.parse(equipmentData);
+          setEquipments(equipmentData); // update store
           const sortedEquipment = [...equipmentData].sort((a, b) => {
             const aIsPending = !a.code;
             const bIsPending = !b.code;
@@ -134,6 +139,7 @@ export default function QRGeneratorContent() {
         const jobsiteData = await jobsiteRes.json();
         try {
           JobsiteListSchema.parse(jobsiteData);
+          setJobsites(jobsiteData); // update store
           setGeneratedJobsiteList(
             jobsiteData.map((item: JobCodes) => ({
               id: item.id,
@@ -165,9 +171,48 @@ export default function QRGeneratorContent() {
     setLoadingEquipment(true);
     setLoadingJobsite(true);
 
-    Promise.all([fetchEquipment(), fetchJobsites()]).finally(() => {
+    // Try to use store for initial load
+    let usedStore = false;
+    if (equipments && equipments.length > 0) {
+      const sortedEquipment = [...equipments].sort((a, b) => {
+        const aIsPending = !a.code;
+        const bIsPending = !b.code;
+        if (aIsPending && !bIsPending) return -1;
+        if (!aIsPending && bIsPending) return 1;
+        return 0;
+      });
+      setGeneratedEquipmentList(
+        sortedEquipment.map((item: any) => ({
+          id: item.id,
+          label: `${
+            item.code ? item.code.toUpperCase() : "Pending"
+          } - ${item.name.toUpperCase()}`,
+          code: item.qrId.toUpperCase(),
+          status: item.status,
+        }))
+      );
+      setLoadingEquipment(false);
+      usedStore = true;
+    }
+    if (jobsites && jobsites.length > 0) {
+      setGeneratedJobsiteList(
+        jobsites.map((item: any) => ({
+          id: item.id,
+          label: item.name.toUpperCase(),
+          code: item.qrId.toUpperCase(),
+          status: item.status,
+        }))
+      );
+      setLoadingJobsite(false);
+      usedStore = true;
+    }
+    if (!usedStore) {
+      Promise.all([fetchEquipment(), fetchJobsites()]).finally(() => {
+        setLoading(false);
+      });
+    } else {
       setLoading(false);
-    });
+    }
   }, []);
 
   useEffect(() => {

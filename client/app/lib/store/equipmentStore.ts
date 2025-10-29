@@ -6,6 +6,7 @@ export type Equipment = {
   name: string;
   qrId: string;
   status: string;
+  code?: string;
   approvalStatus?: string;
 };
 
@@ -24,6 +25,7 @@ const sanitizeEquipments = (equipments: any[]): Equipment[] => {
     name: eq.name,
     qrId: eq.qrId,
     status: eq.status,
+    code: eq.code,
     approvalStatus: eq.approvalStatus,
   }));
 };
@@ -32,7 +34,8 @@ export const useEquipmentStore = create<EquipmentStoreState>()(
   persist(
     (set) => ({
       equipments: [],
-      setEquipments: (equipments) => set({ equipments: sanitizeEquipments(equipments) }),
+      setEquipments: (equipments) =>
+        set({ equipments: sanitizeEquipments(equipments) }),
       addEquipment: (equipment) =>
         set((state) => ({ equipments: [...state.equipments, equipment] })),
       clearEquipments: () => set({ equipments: [] }),

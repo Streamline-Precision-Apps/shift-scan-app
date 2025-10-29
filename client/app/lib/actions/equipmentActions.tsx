@@ -1,91 +1,4 @@
-"use server";
-import prisma from "@/lib/prisma";
-import * as Sentry from "@sentry/nextjs";
-import { revalidatePath } from "next/cache";
-import {
-  EquipmentTags,
-  EquipmentState,
-} from "../../prisma/generated/prisma/client";
-import { auth } from "@/auth";
-import { OwnershipType } from "../../prisma/generated/prisma";
-
-export async function equipmentTagExists(id: string) {
-  try {
-    const equipment = await prisma.equipment.findUnique({
-      where: {
-        id: id,
-      },
-    });
-    return equipment;
-  } catch (error) {
-    Sentry.captureException(error);
-    console.error("Error checking if equipment exists:", error);
-    throw error;
-  }
-}
-
-// Create equipment
-export async function createEquipment(formData: FormData) {
-  try {
-    const ownershipType = formData.get("ownershipType") as OwnershipType;
-    const createdById = formData.get("createdById") as string;
-    const equipmentTag = formData.get("equipmentTag") as EquipmentTags;
-    const name = formData.get("temporaryEquipmentName") as string;
-    const creationReason = formData.get("creationReasoning") as string;
-    const destination = formData.get("destination") as string;
-    const qrId = formData.get("eqCode") as string;
-    const description = "";
-
-    // Validate required fields before starting transaction
-    if (!equipmentTag) {
-      throw new Error("Please select an equipment tag.");
-    }
-
-    const result = await prisma.$transaction(async (prisma) => {
-      const newEquipment = await prisma.equipment.create({
-        data: {
-          qrId,
-          name,
-          status: "ACTIVE",
-          description,
-          creationReason,
-          equipmentTag,
-          createdById,
-          ownershipType,
-        },
-        include: {
-          createdBy: {
-            select: {
-              firstName: true,
-              lastName: true,
-            },
-          },
-        },
-      });
-
-      if (destination) {
-        await prisma.equipmentHauled.create({
-          data: {
-            equipmentId: newEquipment.id,
-            destination,
-          },
-        });
-      }
-
-      return newEquipment;
-    });
-
-    revalidatePath("/dashboard/qr-generator");
-    return { success: true, data: result };
-  } catch (error) {
-    console.error("Error creating equipment:", error);
-    return {
-      success: false,
-      error:
-        error instanceof Error ? error.message : "An unknown error occurred",
-    };
-  }
-}
+"use client";
 
 export async function CreateEmployeeEquipmentLog(formData: FormData) {
   console.log("Creating Employee Equipment Log with formData:", formData);
@@ -131,11 +44,11 @@ export async function CreateEmployeeEquipmentLog(formData: FormData) {
 
       if (equipmentAnyStatus) {
         throw new Error(
-          `Equipment with ID ${equipmentId} is ${equipmentAnyStatus.status.toLowerCase()}. Please scan an active equipment QR code.`,
+          `Equipment with ID ${equipmentId} is ${equipmentAnyStatus.status.toLowerCase()}. Please scan an active equipment QR code.`
         );
       } else {
         throw new Error(
-          `Equipment with ID ${equipmentId} not found. Please scan a valid equipment QR code.`,
+          `Equipment with ID ${equipmentId} not found. Please scan a valid equipment QR code.`
         );
       }
     }
@@ -146,7 +59,7 @@ export async function CreateEmployeeEquipmentLog(formData: FormData) {
 
       if (!timeSheetId) {
         throw new Error(
-          "TimeSheet ID is required. Make sure you're properly clocked in.",
+          "TimeSheet ID is required. Make sure you're properly clocked in."
         );
       }
 
@@ -164,7 +77,7 @@ export async function CreateEmployeeEquipmentLog(formData: FormData) {
 
       if (timeSheet.endTime) {
         throw new Error(
-          "This timesheet has been closed. Please clock in again before logging equipment.",
+          "This timesheet has been closed. Please clock in again before logging equipment."
         );
       }
 
@@ -187,7 +100,7 @@ export async function CreateEmployeeEquipmentLog(formData: FormData) {
     if (error instanceof Error) {
       console.error("Error creating employee equipment log:", error);
       throw new Error(
-        `Failed to create employee equipment log: ${error.message}`,
+        `Failed to create employee equipment log: ${error.message}`
       );
     } else {
       throw error;
