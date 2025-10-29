@@ -361,3 +361,78 @@ export async function getUsersTimeSheetByDate(
   });
   return timesheets;
 }
+
+export async function getTeamsByUserId(userId: string) {
+  const teams = await prisma.crew.findMany({
+    where: {
+      leadId: userId,
+    },
+    select: {
+      id: true,
+      name: true,
+      // Use _count to count the total crew members
+      _count: {
+        select: {
+          Users: true, // Count the number of crew members
+        },
+      },
+    },
+  });
+  return teams;
+}
+
+// service to get the online status of crew members
+export async function crewStatus(crewId: string) {
+  const crew = await prisma.crew.findUnique({
+    where: {
+      id: crewId,
+    },
+    select: {
+      Users: {
+        select: {
+          id: true,
+          clockedIn: true,
+        },
+      },
+    },
+  });
+  return crew;
+}
+
+// service to get employee in crew
+export async function getCrewMembers(crewId: string) {
+  console.log("[UserService] getCrewMembers called with crewId:", crewId);
+  const crew = await prisma.crew.findUnique({
+    where: {
+      id: crewId,
+    },
+    select: {
+      crewType: true,
+      Users: {
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          image: true,
+        },
+      },
+    },
+  });
+
+  if (!crew) {
+    console.log("[UserService] No crew found for crewId:", crewId);
+    throw new Error("Crew not found");
+  }
+
+  // Sort crew members alphabetically by first name
+  const crewMembers = crew.Users.map((member) => member).sort((a, b) =>
+    a.firstName.localeCompare(b.firstName)
+  );
+
+  const crewType = crew.crewType;
+
+  console.log("[UserService] crewMembers:", crewMembers);
+  console.log("[UserService] crewType:", crewType);
+
+  return { crewMembers, crewType };
+}

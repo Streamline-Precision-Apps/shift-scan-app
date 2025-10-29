@@ -497,3 +497,103 @@ export async function getUsersTimeSheetByDate(req: Request, res: Response) {
     });
   }
 }
+
+export async function getTeamsByUserId(req: Request, res: Response) {
+  try {
+    const { userId } = req.params;
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        error: "User ID is required",
+        message: "Failed to retrieve teams",
+      });
+    }
+    const teams = await UserService.getTeamsByUserId(userId);
+
+    if (!teams || teams.length === 0) {
+      // 204 No Content for empty result
+      return res.status(204).send();
+    }
+    res.status(200).json({
+      success: true,
+      data: teams,
+      message: "Teams retrieved successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error",
+      message: "Failed to retrieve teams",
+    });
+  }
+}
+// GET /api/v1/user/:userId/crew/:crewId
+export async function getCrewMembers(req: Request, res: Response) {
+  try {
+    const { crewId } = req.params;
+    console.log("[UserController] getCrewMembers called with crewId:", crewId);
+    if (!crewId) {
+      console.log("[UserController] No crewId provided in params");
+      return res.status(400).json({
+        success: false,
+        error: "Crew ID is required",
+        message: "Failed to retrieve crew members",
+      });
+    }
+    const crew = await UserService.getCrewMembers(crewId);
+    console.log("[UserController] getCrewMembers service result:", crew);
+    if (!crew) {
+      console.log("[UserController] No crew found for crewId:", crewId);
+      return res.status(404).json({
+        success: false,
+        error: "Crew not found",
+        message: "No crew found for this ID",
+      });
+    }
+    res.status(200).json({
+      success: true,
+      data: crew,
+      message: "Crew members retrieved successfully",
+    });
+  } catch (error) {
+    console.error("[UserController] Error in getCrewMembers:", error);
+    res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error",
+      message: "Failed to retrieve crew members",
+    });
+  }
+}
+
+// GET /api/v1/user/:userId/crew/:crewId/online
+export async function getCrewOnlineStatus(req: Request, res: Response) {
+  try {
+    const { crewId } = req.params;
+    if (!crewId) {
+      return res.status(400).json({
+        success: false,
+        error: "Crew ID is required",
+        message: "Failed to retrieve crew online status",
+      });
+    }
+    const crew = await UserService.crewStatus(crewId);
+    if (!crew) {
+      return res.status(404).json({
+        success: false,
+        error: "Crew not found",
+        message: "No crew found for this ID",
+      });
+    }
+    res.status(200).json({
+      success: true,
+      data: crew,
+      message: "Crew online status retrieved successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error",
+      message: "Failed to retrieve crew online status",
+    });
+  }
+}

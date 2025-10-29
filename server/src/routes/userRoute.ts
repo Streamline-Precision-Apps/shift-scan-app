@@ -11,6 +11,9 @@ import {
   getUserContact,
   getAllUsers,
   getUsersTimeSheetByDate,
+  getTeamsByUserId,
+  getCrewMembers,
+  getCrewOnlineStatus,
 } from "../controllers/userController.js";
 
 const router = Router();
@@ -47,6 +50,9 @@ const router = Router();
  */
 router.get("/:userId/timesheet/:date", getUsersTimeSheetByDate);
 
+router.get("/:userId/teams", getTeamsByUserId);
+router.get("/:userId/crew/:crewId", getCrewMembers);
+router.get("/:userId/crew/:crewId/online", getCrewOnlineStatus);
 /**
  * @swagger
  * /api/v1/user:

@@ -11,7 +11,12 @@ import { TitleBoxes } from "@/app/v1/components/(reusable)/titleBoxes";
 import { Titles } from "@/app/v1/components/(reusable)/titles";
 import { useTranslations } from "next-intl";
 import React, { use, useEffect, useState, Suspense } from "react";
+
 import { z } from "zod";
+import { apiRequest, apiRequestNoResCheck } from "@/app/lib/utils/api-Utils";
+import { useUserStore } from "@/app/lib/store/userStore";
+import { useTeamStore } from "@/app/lib/store/teamStore";
+import { PullToRefresh } from "@/app/v1/components/(animations)/pullToRefresh";
 
 const CrewMemberSchema = z.object({
   id: z.string(),
@@ -34,7 +39,16 @@ export default function Content({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  // Animation utility: fade in and slide down
+  const animationClass =
+    "transition-all duration-700 ease-out opacity-0 translate-y-[-30px]";
+  const animationClassActive = "opacity-100 translate-y-0";
+  const { user } = useUserStore();
+  const userId = user?.id;
+
   const [crewMembers, setCrewMembers] = useState<CrewMember[]>([]);
+  const [animateList, setAnimateList] = useState(false);
+  const updateTeamWorkers = useTeamStore((state) => state.updateTeamWorkers);
 
   const [crewType, setCrewType] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
@@ -47,26 +61,66 @@ export default function Content({
   const { id } = use(params);
 
   useEffect(() => {
+    if (!userId || !id) return;
+    let staticTeamInfo: { id: string; name: string; crewType: string } | null =
+      null;
     const fetchCrewData = async () => {
       try {
         setIsLoading(true);
-        // Fetch Cache information
-        const crewRes = await fetch(`/api/getCrewById/${id}`);
-        const [members, type] = await crewRes.json();
+        setAnimateList(false);
+        // Fetch Cache information (static info)
+        const crewRes = await apiRequestNoResCheck(
+          `/api/v1/user/${userId}/crew/${id}`,
+          "GET"
+        );
+        const json = await crewRes.json();
+        const { crewMembers, crewType } = json.data;
 
-        // Fetch dynamic crew status
-        const statusRes = await fetch(`/api/crewStatus/${id}`);
-        const statusData = await statusRes.json();
+        // Store static team info in Zustand (only id, name, crewType)
+        staticTeamInfo = { id, name: crewType + " Team", crewType };
+        updateTeamWorkers(
+          id,
+          (crewMembers || []).map((m: CrewMember) => ({
+            id: m.id,
+            firstName: m.firstName,
+            lastName: m.lastName,
+            status: false,
+          }))
+        );
 
-        const membersWithStatus = members.map((member: CrewMember) => {
-          const status = statusData.Users.find(
-            (u: CrewMember) => u.id === member.id
-          );
-          return { ...member, clockedIn: status?.clockedIn ?? false };
-        });
+        // Fetch dynamic crew status (always on every render)
+        const status = await apiRequestNoResCheck(
+          `/api/v1/user/${userId}/crew/${id}/online`,
+          "GET"
+        );
+        const statusData = await status.json();
+
+        const usersArray = Array.isArray(statusData?.Users)
+          ? statusData.Users
+          : [];
+        const membersWithStatus = (crewMembers || []).map(
+          (member: CrewMember) => {
+            const status = usersArray.find(
+              (u: CrewMember) => u.id === member.id
+            );
+            return { ...member, clockedIn: status?.clockedIn ?? false };
+          }
+        );
 
         setCrewMembers(membersWithStatus);
-        setCrewType(type);
+        setCrewType(crewType || "");
+        // Update worker status in Zustand store
+        updateTeamWorkers(
+          id,
+          membersWithStatus.map((m: CrewMember) => ({
+            id: m.id,
+            firstName: m.firstName,
+            lastName: m.lastName,
+            status: m.clockedIn,
+          }))
+        );
+        // Trigger animation after a short delay to ensure DOM update
+        setTimeout(() => setAnimateList(true), 100);
       } catch (error) {
         console.error("Error fetching crew data:", error);
       } finally {
@@ -75,21 +129,78 @@ export default function Content({
     };
 
     fetchCrewData();
-  }, [id]);
+  }, [userId, id]);
 
+  // On first render, load all teams into Zustand store
   useEffect(() => {
-    const fetchTeamName = async () => {
+    if (!userId) return;
+    const fetchTeams = async () => {
       try {
-        const response = await fetch("/api/getTeam");
-        const data = await response.json();
-        const teamName = data[0]?.name || "";
+        const data = await apiRequest(`/api/v1/user/${userId}/teams`, "GET");
+        // Store all teams in Zustand (id, name, crewType, empty workers)
+
+        // Set the title for this page
+        const teamName = data.data.find((team: any) => team.id === id)?.name;
         setTitles(teamName);
       } catch (error) {
         console.error("Error fetching team name:", error);
       }
     };
-    fetchTeamName();
-  }, [id]);
+    fetchTeams();
+  }, [userId]);
+
+  // Refreshes crew members, their online status, and updates Zustand store
+  const refreshTeams = async () => {
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    if (!userId || !id) return;
+    setIsLoading(true);
+    try {
+      // Fetch crew members and crew type
+      const crewRes = await apiRequestNoResCheck(
+        `/api/v1/user/${userId}/crew/${id}`,
+        "GET"
+      );
+      const json = await crewRes.json();
+      const { crewMembers, crewType } = json.data;
+
+      // Fetch online status
+      const status = await apiRequestNoResCheck(
+        `/api/v1/user/${userId}/crew/${id}/online`,
+        "GET"
+      );
+      const statusData = await status.json();
+      const usersArray = Array.isArray(statusData?.Users)
+        ? statusData.Users
+        : [];
+      const membersWithStatus = (crewMembers || []).map(
+        (member: CrewMember) => {
+          const status = usersArray.find((u: CrewMember) => u.id === member.id);
+          return { ...member, clockedIn: status?.clockedIn ?? false };
+        }
+      );
+
+      setCrewMembers(membersWithStatus);
+      setCrewType(crewType || "");
+      // Update worker status in Zustand store
+      updateTeamWorkers(
+        id,
+        membersWithStatus.map((m: CrewMember) => ({
+          id: m.id,
+          firstName: m.firstName,
+          lastName: m.lastName,
+          status: m.clockedIn,
+        }))
+      );
+      // Optionally, update the team name/title if needed
+      setTitles(crewType + " Team");
+      setAnimateList(false);
+      setTimeout(() => setAnimateList(true), 100);
+    } catch (error) {
+      console.error("Error refreshing crew data:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <Bases>
@@ -97,7 +208,7 @@ export default function Content({
         <Grids rows={"7"} gap={"5"} className="h-full">
           <Holds background={"white"} className="row-start-1 row-end-2 h-full">
             <TitleBoxes
-              onClick={() => router.push(`/dashboard/myTeam?rPath=${url}`)}
+              onClick={() => router.push(`/v1/dashboard/myTeam?rPath=${url}`)}
             >
               <Titles size={"lg"}>{titles}</Titles>
             </TitleBoxes>
@@ -137,50 +248,64 @@ export default function Content({
                     <Holds
                       className={`row-start-1 row-end-8 h-full w-full overflow-y-auto no-scrollbar`}
                     >
-                      <Contents width={"section"}>
-                        {crewMembers.map((member) => (
-                          <Holds key={member.id} className="w-full pb-3.5 ">
-                            <Buttons
-                              href={`/dashboard/myTeam/${id}/employee/${member.id}?rPath=${url}`}
-                              background="lightBlue"
-                              className="w-full h-full py-2 relative"
-                            >
-                              <Holds
-                                position={"row"}
-                                className="w-full gap-x-4"
+                      <PullToRefresh
+                        textColor="text-darkBlue"
+                        bgColor="bg-darkBlue/70"
+                        onRefresh={refreshTeams}
+                        refreshingText=""
+                        containerClassName="h-full"
+                      >
+                        <Contents
+                          width={"section"}
+                          className={
+                            `${animationClass} ` +
+                            (animateList ? animationClassActive : "")
+                          }
+                        >
+                          {crewMembers.map((member) => (
+                            <Holds key={member.id} className="w-full pb-3.5 ">
+                              <Buttons
+                                href={`/dashboard/myTeam/${id}/employee/${member.id}?rPath=${url}`}
+                                background="lightBlue"
+                                className="w-full h-full py-2 relative"
                               >
-                                <Holds className="w-24 relative">
-                                  <Images
-                                    titleImg={
-                                      member.image
-                                        ? member.image
-                                        : "/profileEmpty.svg"
-                                    }
-                                    titleImgAlt="profileFilled"
-                                    loading="lazy"
-                                    className={`rounded-full max-w-12 h-auto object-contain ${
-                                      member.image
-                                        ? "border-[3px] border-black"
-                                        : ""
-                                    } `}
-                                  />
-                                  <Holds
-                                    background={
-                                      member.clockedIn ? "green" : "gray"
-                                    }
-                                    className="absolute top-1 right-0 w-3 h-3 rounded-full p-1.5 border-[3px] border-black"
-                                  />
+                                <Holds
+                                  position={"row"}
+                                  className="w-full gap-x-4"
+                                >
+                                  <Holds className="w-24 relative">
+                                    <Images
+                                      titleImg={
+                                        member.image
+                                          ? member.image
+                                          : "/profileEmpty.svg"
+                                      }
+                                      titleImgAlt="profileFilled"
+                                      loading="lazy"
+                                      className={`rounded-full max-w-12 h-auto object-contain ${
+                                        member.image
+                                          ? "border-[3px] border-black"
+                                          : ""
+                                      } `}
+                                    />
+                                    <Holds
+                                      background={
+                                        member.clockedIn ? "green" : "gray"
+                                      }
+                                      className="absolute top-1 right-0 w-3 h-3 rounded-full p-1.5 border-[3px] border-black"
+                                    />
+                                  </Holds>
+                                  <Holds className="w-full">
+                                    <Titles position={"left"} size="lg">
+                                      {member.firstName} {member.lastName}
+                                    </Titles>
+                                  </Holds>
                                 </Holds>
-                                <Holds className="w-full">
-                                  <Titles position={"left"} size="lg">
-                                    {member.firstName} {member.lastName}
-                                  </Titles>
-                                </Holds>
-                              </Holds>
-                            </Buttons>
-                          </Holds>
-                        ))}
-                      </Contents>
+                              </Buttons>
+                            </Holds>
+                          ))}
+                        </Contents>
+                      </PullToRefresh>
                     </Holds>
                     {/* {crewType === "Mechanic" && (
                       <Holds className="row-start-7 row-end-8 ">
