@@ -53,7 +53,7 @@ export default function QrJobsiteContent({
   };
 
   const handleNew = () => {
-    router.push("/dashboard/qr-generator/add-jobsite");
+    router.push("/v1/dashboard/qr-generator/add-jobsite");
   };
 
   const handleSearchSelectChange = (selectedOption: Option | null) => {

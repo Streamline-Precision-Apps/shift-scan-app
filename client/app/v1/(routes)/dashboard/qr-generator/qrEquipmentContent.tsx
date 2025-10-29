@@ -1,7 +1,7 @@
 "use client";
 
 import { Buttons } from "@/app/v1/components/(reusable)/buttons";
-import React, { useState } from "react";
+import { useState } from "react";
 import QRCode from "qrcode";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -53,7 +53,7 @@ export default function QrEquipmentContent({
   };
 
   const handleNew = () => {
-    router.push("/dashboard/qr-generator/add-equipment");
+    router.push("/v1/dashboard/qr-generator/add-equipment");
   };
 
   const handleSearchSelectChange = (selectedOption: Option | null) => {

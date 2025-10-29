@@ -23,7 +23,7 @@ export default function SignInPage() {
   // helper: returns true for phone/tablet devices
 
   const redirectAfterAuth = () => {
-    const target = isNative ? "/v1" : "/dashboard";
+    const target = isNative ? "/v1" : "/admins";
     router.push(target);
   };
 

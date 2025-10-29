@@ -1,17 +1,26 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { Popover, PopoverContent, PopoverTrigger } from "./components/popover";
 import { Capacitor } from "@capacitor/core";
 import { useEffect, useState } from "react";
 import { useUserStore } from "./lib/store/userStore";
 import { useProfitStore } from "./lib/store/profitStore";
 import { useEquipmentStore } from "./lib/store/equipmentStore";
 import { useCostCodeStore } from "./lib/store/costCodeStore";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "./v1/components/ui/popover";
 
 export default function Home() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const isNative = Capacitor.isNativePlatform();
+
+  const redirectAfterAuth = () => {
+    const target = isNative ? "/v1" : "/admins";
+    router.push(target);
+  };
 
   useEffect(() => {
     const redirectIfMobile = async () => {
@@ -48,7 +57,8 @@ export default function Home() {
                 router.replace("/signin/signup");
                 return;
               }
-              router.replace("/v1");
+
+              redirectAfterAuth();
               return;
             }
           } catch {

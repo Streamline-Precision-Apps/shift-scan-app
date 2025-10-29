@@ -51,3 +51,38 @@ export async function apiRequest(
   if (!res.ok) throw new Error(await res.text());
   return res.json();
 }
+
+// Helper for API requests
+export async function apiRequestNoResCheck(
+  path: string,
+  method: string,
+  body?: Record<string, unknown> | FormData
+) {
+  const url = `${getApiUrl()}${path}`;
+  const token = getToken();
+
+  const headers: Record<string, string> = {
+    Authorization: `Bearer ${token}`,
+  };
+
+  let fetchBody: string | FormData | undefined;
+
+  // Check if body is FormData
+  if (body instanceof FormData) {
+    // Don't set Content-Type header - browser will set it with boundary
+    fetchBody = body;
+  } else if (body) {
+    // Regular JSON request
+    headers["Content-Type"] = "application/json";
+    fetchBody = JSON.stringify(body);
+  }
+
+  const res = await fetch(url, {
+    method,
+    headers,
+    body: fetchBody,
+    credentials: "include", // ✅ CRITICAL: Allow cookies to be sent and received
+  });
+
+  return res;
+}
