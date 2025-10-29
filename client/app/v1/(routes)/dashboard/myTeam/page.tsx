@@ -52,6 +52,11 @@ export default function MyTeam() {
   const { teams } = useTeamStore();
   const setTeams = useTeamStore((state) => state.setTeams);
   const [isLoading, setIsLoading] = useState(true);
+  const [animateList, setAnimateList] = useState(false);
+
+  const animationClass =
+    "transition-all duration-700 ease-out opacity-0 translate-y-[-30px]";
+  const animationClassActive = "opacity-100 translate-y-0";
 
   const refreshTeams = async () => {
     await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -60,6 +65,7 @@ export default function MyTeam() {
   // Extracted API fetch logic for reuse (normal load and pull-to-refresh)
   const fetchTeamsFromApi = useCallback(async () => {
     if (!userId) return;
+    setAnimateList(false);
     setIsLoading(true);
     try {
       const response = await apiRequestNoResCheck(
@@ -79,6 +85,7 @@ export default function MyTeam() {
           }));
           setTeams(teamsForStore);
           setMyTeams(teamsForStore);
+          setTimeout(() => setAnimateList(true), 100);
         } catch (error) {
           if (error instanceof z.ZodError) {
             console.error("Validation error in team data:", error);
@@ -167,7 +174,10 @@ export default function MyTeam() {
               >
                 <Contents
                   width={"section"}
-                  className="row-start-2 row-end-8 w-[90%] h-full "
+                  className={
+                    `row-start-2 row-end-8 w-[90%] h-full  ${animationClass} ` +
+                    (animateList ? animationClassActive : "")
+                  }
                 >
                   <Grids rows={"7"} gap={"5"} className="h-full w-full">
                     <Holds className="row-start-1 row-end-7 h-full w-full ">

@@ -1,44 +1,47 @@
-"use server";
+import type { Prisma } from "../../generated/prisma/client.js";
+import prisma from "../lib/prisma.js";
 
-import prisma from "@/lib/prisma";
-import { revalidateTag } from "next/cache";
-
-export async function updateTimesheetServerAction(formData: FormData) {
-  const id = Number(formData.get("id"));
-  const editorId = formData.get("editorId") as string;
-  const changesJson = formData.get("changes") as string;
-  const changeReason = formData.get("changeReason") as string;
-  const numberOfChanges = Number(formData.get("numberOfChanges")) || 0;
-  // Form Values
-  const startTime = formData.get("startTime") as string;
-  const endTime = formData.get("endTime") as string | null;
-  const jobsite = formData.get("Jobsite") as string;
-  const costCode = formData.get("CostCode") as string;
-  const comment = formData.get("comment") as string | null;
+export async function updateTimesheetService({
+  id,
+  editorId,
+  changes,
+  changeReason,
+  numberOfChanges,
+  startTime,
+  endTime,
+  Jobsite,
+  CostCode,
+  comment,
+}: {
+  id: number;
+  editorId: string;
+  changes: string;
+  changeReason?: string;
+  numberOfChanges?: number;
+  startTime: string;
+  endTime?: string;
+  Jobsite?: string;
+  CostCode?: string;
+  comment?: string;
+}) {
   try {
-    if (!id) {
-      throw new Error("Timesheet ID is required for update.");
-    }
-
-    if (!editorId) {
-      throw new Error("Editor ID is required for tracking changes.");
-    }
-
-    const changes = changesJson ? JSON.parse(changesJson) : {};
-
+    const parsedChanges =
+      changes && typeof changes === "string"
+        ? JSON.parse(changes)
+        : changes || {};
     const transactionResult = await prisma.$transaction(async (tx) => {
       let editorLog = null;
       let userFullname = null;
       let editorFullName = null;
 
-      if (Object.keys(changes).length > 0) {
+      if (parsedChanges && Object.keys(parsedChanges).length > 0) {
         editorLog = await tx.timeSheetChangeLog.create({
           data: {
             timeSheetId: id,
             changedBy: editorId,
-            changes: changes,
+            changes: parsedChanges,
             changeReason: changeReason || "No reason provided",
-            numberOfChanges: numberOfChanges,
+            numberOfChanges: numberOfChanges || 0,
           },
           include: {
             User: {
@@ -54,15 +57,26 @@ export async function updateTimesheetServerAction(formData: FormData) {
         ? `${editorLog.User.firstName} ${editorLog.User.lastName}`
         : "Unknown Editor";
 
+      // Build update data object dynamically to only update provided fields
+      const updateData: Prisma.TimeSheetUpdateInput = {};
+      if (typeof startTime !== "undefined") {
+        updateData.startTime = startTime;
+      }
+      if (typeof endTime !== "undefined") {
+        updateData.endTime = endTime ? new Date(endTime) : null;
+      }
+      if (typeof Jobsite !== "undefined" && Jobsite) {
+        updateData.Jobsite = { connect: { id: Jobsite } }; // or { id: Jobsite } if you use IDs
+      }
+      if (typeof CostCode !== "undefined" && CostCode) {
+        updateData.CostCode = { connect: { name: CostCode } }; // or { id: CostCode } if you use IDs
+      }
+      if (typeof comment !== "undefined") {
+        updateData.comment = comment;
+      }
       const updated = await tx.timeSheet.update({
         where: { id },
-        data: {
-          startTime: startTime,
-          endTime: endTime ? new Date(endTime) : undefined,
-          comment: comment ?? undefined,
-          Jobsite: jobsite ? { connect: { id: jobsite } } : undefined,
-          CostCode: costCode ? { connect: { name: costCode } } : undefined,
-        },
+        data: updateData,
         include: {
           Jobsite: true,
           CostCode: true,
@@ -82,7 +96,6 @@ export async function updateTimesheetServerAction(formData: FormData) {
       return { updated, editorLog, userFullname, editorFullName };
     });
 
-    revalidateTag("timesheet");
     return {
       success: true,
       timesheet: transactionResult.updated,

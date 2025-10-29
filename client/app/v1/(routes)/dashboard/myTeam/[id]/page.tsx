@@ -265,7 +265,7 @@ export default function Content({
                           {crewMembers.map((member) => (
                             <Holds key={member.id} className="w-full pb-3.5 ">
                               <Buttons
-                                href={`/dashboard/myTeam/${id}/employee/${member.id}?rPath=${url}`}
+                                href={`/v1/dashboard/myTeam/${id}/employee/${member.id}?rPath=${url}`}
                                 background="lightBlue"
                                 className="w-full h-full py-2 relative"
                               >

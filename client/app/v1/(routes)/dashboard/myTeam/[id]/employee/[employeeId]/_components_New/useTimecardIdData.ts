@@ -1,6 +1,7 @@
-import { updateTimesheetServerAction } from "@/actions/updateTimesheetServerAction";
+import { apiRequest } from "@/app/lib/utils/api-Utils";
 import { useUserStore } from "@/app/lib/store/userStore";
 import { useEffect, useState, useCallback, useRef } from "react";
+import { sendNotification } from "@/app/lib/actions/generatorActions";
 
 export interface Timesheet {
   id: string;
@@ -232,26 +233,22 @@ export function useTimecardIdData(id: string) {
       formData.append("changes", JSON.stringify(changes));
       formData.append("numberOfChanges", numberOfChanges.toString());
 
-      const result = await updateTimesheetServerAction(formData);
+      const result = await apiRequest(
+        "/api/timesheets/update",
+        "PUT",
+        formData
+      );
 
       // Update the original record with the saved changes
       if (result?.success) {
         setOriginal(edited);
-
-        const response = await fetch("/api/notifications/send-multicast", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            topic: "timecards-changes",
-            title: "Timecard Modified ",
-            message: `${result.editorFullName} made ${numberOfChanges} changes to ${result.userFullname}'s timesheet #${id}.`,
-            link: `/admins/timesheets?id=${id}`,
-            referenceId: id,
-          }),
+        await sendNotification({
+          topic: "timecards-changes",
+          title: "Timecard Modified ",
+          message: `${result.editorFullName} made ${numberOfChanges} changes to ${result.userFullname}'s timesheet #${id}.`,
+          link: `/admins/timesheets?id=${id}`,
+          referenceId: id,
         });
-        await response.json();
       }
 
       return result;

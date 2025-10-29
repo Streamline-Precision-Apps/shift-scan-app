@@ -4,7 +4,7 @@ import { Holds } from "@/app/v1/components/(reusable)/holds";
 import { NewTab } from "@/app/v1/components/(reusable)/newTabs";
 import { TitleBoxes } from "@/app/v1/components/(reusable)/titleBoxes";
 import { Titles } from "@/app/v1/components/(reusable)/titles";
-import { useEmployeeData } from "@/hooks/(ManagerHooks)/useEmployeeData";
+import { useEmployeeData } from "./useEmployeeData";
 
 import { useTranslations } from "next-intl";
 import { useParams, useRouter, useSearchParams } from "next/navigation";

@@ -16,14 +16,14 @@ type Contact = {
   emergencyContactNumber?: string;
 };
 
-import Spinner from "@/components/(animations)/spinner";
-import { Buttons } from "@/components/(reusable)/buttons";
-import { Contents } from "@/components/(reusable)/contents";
-import { Holds } from "@/components/(reusable)/holds";
-import { Inputs } from "@/components/(reusable)/inputs";
-import { Labels } from "@/components/(reusable)/labels";
-import { Texts } from "@/components/(reusable)/texts";
-import { formatPhoneNumber } from "@/utils/phoneNumberFormater";
+import Spinner from "@/app/v1/components/(animations)/spinner";
+import { Buttons } from "@/app/v1/components/(reusable)/buttons";
+import { Contents } from "@/app/v1/components/(reusable)/contents";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
+import { Inputs } from "@/app/v1/components/(reusable)/inputs";
+import { Labels } from "@/app/v1/components/(reusable)/labels";
+import { Texts } from "@/app/v1/components/(reusable)/texts";
+import { formatPhoneNumber } from "@/app/lib/utils/phoneNumberFormater";
 import { format } from "date-fns";
 import { useTranslations } from "next-intl";
 import { PhoneCall } from "lucide-react";
@@ -71,7 +71,7 @@ export default function EmployeeInfo({
               {formatPhoneNumber(contacts?.phoneNumber)}
             </Texts>
             <Buttons
-              className="w-10 h-9 rounded-r-none rounded-l-[8px] border-none  flex justify-center items-center absolute -left-1"
+              className="w-10 h-9 rounded-r-none rounded-l-lg border-none  flex justify-center items-center absolute -left-1"
               shadow={"none"}
               href={`tel:${contacts?.phoneNumber}`}
               background={"darkBlue"}
@@ -105,7 +105,7 @@ export default function EmployeeInfo({
               {formatPhoneNumber(contacts?.emergencyContactNumber)}
             </Texts>
             <Buttons
-              className="w-10 h-9 rounded-r-none rounded-l-[8px] border-none flex justify-center items-center absolute -left-1"
+              className="w-10 h-9 rounded-r-none rounded-l-lg border-none flex justify-center items-center absolute -left-1"
               shadow={"none"}
               href={`tel:${contacts?.emergencyContactNumber}`}
               background={"darkBlue"}
