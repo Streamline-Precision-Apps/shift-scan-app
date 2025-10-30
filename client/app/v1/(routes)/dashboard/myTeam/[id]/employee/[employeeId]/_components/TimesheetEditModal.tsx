@@ -1,17 +1,9 @@
 import { Button } from "@/app/v1/components/ui/button";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/app/v1/components/ui/select";
-import { useTimecardIdData } from "./useTimecardIdData";
-import { useRef } from "react";
+import { Combobox } from "@/app/v1/components/ui/combobox";
+import { useTimecardIdData } from "./_hooks/useTimecardIdData";
 import { Skeleton } from "@/app/v1/components/ui/skeleton";
 import { useEffect, useState, useCallback } from "react";
 import { Textarea } from "@/app/v1/components/ui/textarea";
-import { Input } from "@/app/v1/components/ui/input";
 import { format } from "date-fns";
 type AppManagerEditTimesheetModalProps = {
   timesheetId: string;
@@ -436,10 +428,16 @@ export default function AppManagerEditTimesheetModal(
                   <label className="text-xs font-semibold">Jobsite</label>
                 </div>
                 <div className="w-full">
-                  <Select
-                    value={data.Jobsite?.id ?? ""}
-                    onValueChange={(val) => {
-                      const newJobsite = jobSites.find((j) => j.id === val);
+                  <Combobox
+                    options={jobSites.map((j) => ({
+                      value: j.id,
+                      label: j.name,
+                    }))}
+                    value={data.Jobsite?.id ? [data.Jobsite.id] : []}
+                    onChange={(valArr) => {
+                      // Always replace with the new selection (single select)
+                      const val =
+                        valArr.length > 0 ? valArr[valArr.length - 1] : "";
                       setEdited((prev) =>
                         prev
                           ? {
@@ -451,18 +449,11 @@ export default function AppManagerEditTimesheetModal(
                       );
                     }}
                     disabled={!editGeneral}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select jobsite" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {jobSites.map((jobsite) => (
-                        <SelectItem key={jobsite.id} value={jobsite.id}>
-                          {jobsite.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                    placeholder="Select jobsite"
+                    required={true}
+                    errorMessage="Jobsite is required"
+                    showCount={false}
+                  />
                 </div>
                 {showValidation && validationErrors.jobsite && (
                   <div className="text-red-500 text-xs mt-1 px-1">
@@ -481,9 +472,15 @@ export default function AppManagerEditTimesheetModal(
                   <label className="text-xs font-semibold">Cost Code</label>
                 </div>
                 <div className="w-full">
-                  <Select
-                    value={data.CostCode?.id ?? ""}
-                    onValueChange={(val) => {
+                  <Combobox
+                    options={costCodes
+                      .filter((c) => c.id && c.name)
+                      .map((c) => ({ value: c.id, label: c.name }))}
+                    value={data.CostCode?.id ? [data.CostCode.id] : []}
+                    onChange={(valArr) => {
+                      // Always replace with the new selection (single select)
+                      const val =
+                        valArr.length > 0 ? valArr[valArr.length - 1] : "";
                       setEdited((prev) =>
                         prev
                           ? {
@@ -495,18 +492,11 @@ export default function AppManagerEditTimesheetModal(
                       );
                     }}
                     disabled={!editGeneral}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select cost code" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {costCodes.map((code) => (
-                        <SelectItem key={code.id} value={code.id}>
-                          {code.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                    placeholder="Select cost code"
+                    required={true}
+                    errorMessage="Cost code is required"
+                    showCount={false}
+                  />
                 </div>
                 {showValidation && validationErrors.costCode && (
                   <div className="text-red-500 text-xs mt-1 px-1">
@@ -571,7 +561,11 @@ export default function AppManagerEditTimesheetModal(
                       setLocalChangeReason(e.target.value);
                       setChangeReason(e.target.value);
                     }}
-                    className="ring-2 ring-app-orange truncate"
+                    className={
+                      showValidation && !changeReason.trim()
+                        ? "border-2 border-red-500"
+                        : ""
+                    }
                     required
                   />
                 </div>
@@ -581,10 +575,10 @@ export default function AppManagerEditTimesheetModal(
         </div>
         {/* Sticky Action Bar for Edit/Exit and Save/Cancel */}
         {!editGeneral ? (
-          <div className="fixed bottom-0 left-0 w-full max-w-md bg-gradient-to-tr from-app-dark-blue/20 to-app-blue/20 border-t flex gap-2 px-4 pt-3 pb-8 z-50 shadow-lg">
+          <div className="fixed bottom-0 left-0 w-full max-w-md bg-linear-to-tr from-app-dark-blue/20 to-app-blue/20 border-t flex gap-2 px-4 pt-3 pb-8 z-50 shadow-lg">
             <Button
               variant="outline"
-              className="flex-1 flex items-center justify-center gap-2 min-h-[48px] rounded-lg text-base font-medium"
+              className="flex-1 flex items-center justify-center gap-2 min-h-12 rounded-lg text-base font-medium"
               onClick={onClose}
               aria-label="Exit"
             >
@@ -592,7 +586,7 @@ export default function AppManagerEditTimesheetModal(
             </Button>
             <Button
               variant="outline"
-              className="flex-1 flex items-center justify-center gap-2 min-h-[48px] rounded-lg text-base font-medium bg-app-orange hover:bg-app-orange/80 text-black transition-colors"
+              className="flex-1 flex items-center justify-center gap-2 min-h-12 rounded-lg text-base font-medium bg-app-orange hover:bg-app-orange/80 text-black transition-colors"
               onClick={() => setEditGeneral(true)}
               aria-label="Edit"
             >
@@ -604,7 +598,7 @@ export default function AppManagerEditTimesheetModal(
           <div className="fixed bottom-0 left-0 w-full max-w-md bg-neutral-200 border-t flex gap-2 px-4 pt-3 pb-8 z-50 shadow-lg animate-fade-in">
             <Button
               variant="outline"
-              className="flex-1 flex items-center justify-center gap-2 min-h-[48px] rounded-lg text-base font-medium bg-white hover:bg-gray-100 transition-colors"
+              className="flex-1 flex items-center justify-center gap-2 min-h-12 rounded-lg text-base font-medium bg-white hover:bg-gray-100 transition-colors"
               onClick={() => {
                 setEditGeneral(false);
                 setShowValidation(false);
@@ -615,7 +609,7 @@ export default function AppManagerEditTimesheetModal(
               Cancel
             </Button>
             <Button
-              className="flex-1 flex items-center justify-center gap-2 min-h-[48px] rounded-lg text-base font-semibold bg-app-green text-white shadow-md transition-colors disabled:bg-app-green"
+              className="flex-1 flex items-center justify-center gap-2 min-h-12 rounded-lg text-base font-semibold bg-app-green text-white shadow-md transition-colors disabled:bg-app-green"
               onClick={onSave}
               disabled={isSaving || !editGeneral || !changeReason.trim()}
             >

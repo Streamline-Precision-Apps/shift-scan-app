@@ -58,6 +58,7 @@ export async function getUserWithSettingsById(userId: string) {
   // CostCodes (for costCodeStore)
   const costCodes = await prisma.costCode.findMany({
     select: {
+      id: true,
       name: true,
       isActive: true,
       code: true,

@@ -39,10 +39,42 @@ export default function Content({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  // Animation utility: fade in and slide down
-  const animationClass =
-    "transition-all duration-700 ease-out opacity-0 translate-y-[-30px]";
-  const animationClassActive = "opacity-100 translate-y-0";
+  // Drop-in animation: starts above and fades in, then settles
+  const animationClass = "opacity-0 drop-in-animate";
+  const animationClassActive = "opacity-100 drop-in-animate-active";
+
+  // Add drop-in animation CSS
+  React.useEffect(() => {
+    const style = document.createElement("style");
+    style.innerHTML = `
+      @keyframes dropIn {
+        0% {
+          opacity: 0;
+          transform: translateY(-40px);
+        }
+        60% {
+          opacity: 1;
+          transform: translateY(10px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .drop-in-animate {
+        transition: none;
+        opacity: 0;
+        transform: translateY(-40px);
+      }
+      .drop-in-animate-active {
+        animation: dropIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      }
+    `;
+    document.head.appendChild(style);
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
   const { user } = useUserStore();
   const userId = user?.id;
 
@@ -258,8 +290,8 @@ export default function Content({
                         <Contents
                           width={"section"}
                           className={
-                            `${animationClass} ` +
-                            (animateList ? animationClassActive : "")
+                            `${animationClass}` +
+                            (animateList ? ` ${animationClassActive}` : "")
                           }
                         >
                           {crewMembers.map((member) => (

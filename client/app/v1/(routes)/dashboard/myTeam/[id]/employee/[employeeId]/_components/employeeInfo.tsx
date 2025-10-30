@@ -6,7 +6,7 @@ type Employee = {
   lastName: string;
   image: string;
   email: string;
-  DOB?: Date;
+  DOB?: string | Date;
   clockedIn?: boolean;
 };
 
@@ -84,7 +84,7 @@ export default function EmployeeInfo({
           </Labels>
           <Inputs
             name={"email"}
-            className={"text-center text-sm"}
+            className={"text-center text-sm text-black"}
             value={employee?.email}
             readOnly
           />

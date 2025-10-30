@@ -1,5 +1,6 @@
 "use client";
 
+// import React from "react";
 import Spinner from "@/app/v1/components/(animations)/spinner";
 import { Suspense } from "react";
 import { Bases } from "@/app/v1/components/(reusable)/bases";
@@ -9,7 +10,7 @@ import { Grids } from "@/app/v1/components/(reusable)/grids";
 import { Holds } from "@/app/v1/components/(reusable)/holds";
 import { TitleBoxes } from "@/app/v1/components/(reusable)/titleBoxes";
 import { Titles } from "@/app/v1/components/(reusable)/titles";
-import { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useTranslations } from "next-intl";
 import { z } from "zod";
 import { Texts } from "@/app/v1/components/(reusable)/texts";
@@ -54,9 +55,42 @@ export default function MyTeam() {
   const [isLoading, setIsLoading] = useState(true);
   const [animateList, setAnimateList] = useState(false);
 
-  const animationClass =
-    "transition-all duration-700 ease-out opacity-0 translate-y-[-30px]";
-  const animationClassActive = "opacity-100 translate-y-0";
+  // Drop-in animation: starts above and fades in, then settles
+  const animationClass = "opacity-0 drop-in-animate";
+  const animationClassActive = "opacity-100 drop-in-animate-active";
+
+  // Add drop-in animation CSS
+  React.useEffect(() => {
+    const style = document.createElement("style");
+    style.innerHTML = `
+      @keyframes dropIn {
+        0% {
+          opacity: 0;
+          transform: translateY(-40px);
+        }
+        60% {
+          opacity: 1;
+          transform: translateY(10px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .drop-in-animate {
+        transition: none;
+        opacity: 0;
+        transform: translateY(-40px);
+      }
+      .drop-in-animate-active {
+        animation: dropIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      }
+    `;
+    document.head.appendChild(style);
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
 
   const refreshTeams = async () => {
     await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -108,6 +142,7 @@ export default function MyTeam() {
     if (teams && teams.length > 0) {
       setMyTeams(teams);
       setIsLoading(false);
+      setAnimateList(true); // Ensure animation triggers and list is visible
       return;
     }
     // Fallback to API if store is empty
@@ -174,13 +209,14 @@ export default function MyTeam() {
               >
                 <Contents
                   width={"section"}
-                  className={
-                    `row-start-2 row-end-8 w-[90%] h-full  ${animationClass} ` +
-                    (animateList ? animationClassActive : "")
-                  }
+                  className={`row-start-2 row-end- w-[90%] h-full `}
                 >
                   <Grids rows={"7"} gap={"5"} className="h-full w-full">
-                    <Holds className="row-start-1 row-end-7 h-full w-full ">
+                    <Holds
+                      className={`row-start-1 row-end-7 h-full w-full ${animationClass} ${
+                        animateList ? animationClassActive : ""
+                      }`}
+                    >
                       <PullToRefresh
                         textColor="text-darkBlue"
                         bgColor="bg-darkBlue/70"

@@ -2,8 +2,8 @@
 
 import * as React from "react";
 import { CheckIcon, ChevronsUpDownIcon } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
+
+import { Button } from "@/app/v1/components/ui/button";
 import {
   Command,
   CommandEmpty,
@@ -11,13 +11,14 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@/components/ui/command";
+} from "@/app/v1/components/ui/command";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from "@/app/v1/components/ui/popover";
 import { useState } from "react";
+import { cn } from "@/app/lib/utils/utils";
 
 export interface ComboboxOption {
   value: string;
@@ -75,7 +76,7 @@ export function Combobox({
             obj && typeof obj === "object"
               ? (obj as Record<string, unknown>)[k]
               : undefined,
-          option,
+          option
         );
       return (value ?? "")
         .toString()
@@ -95,7 +96,7 @@ export function Combobox({
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className={`w-full justify-between text-sm md:text-xs py-2 h-auto min-h-[40px] overflow-hidden ${
+            className={`w-full justify-between text-sm md:text-xs py-2 h-auto min-h-10 overflow-hidden ${
               showError && listData.length < 1 ? "border-red-500" : ""
             }`}
             disabled={disabled}
@@ -111,7 +112,7 @@ export function Combobox({
             </span>
             <div className="flex items-center gap-2">
               {showCount && options.length > 0 && (
-                <span className="text-xs bg-slate-100 text-slate-600 border border-slate-300 font-medium px-2 py-0.5 rounded-full min-w-[1.5rem] text-center">
+                <span className="text-xs bg-slate-100 text-slate-600 border border-slate-300 font-medium px-2 py-0.5 rounded-full min-w-6 text-center">
                   {options.length}{" "}
                   {options.length === 1 ? optionName : `${optionName}s`}
                 </span>
@@ -120,7 +121,7 @@ export function Combobox({
             </div>
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0 max-h-[300px] overflow-hidden text-sm md:text-xs">
+        <PopoverContent className="w-(--radix-popover-trigger-width) p-0 max-h-[300px] overflow-hidden text-sm md:text-xs">
           <Command className="w-full">
             <CommandInput
               placeholder={`Search...`}
@@ -153,16 +154,16 @@ export function Combobox({
                       <div className="flex items-center w-full gap-2">
                         <div
                           className={cn(
-                            "flex-shrink-0 h-5 w-5 rounded border flex items-center justify-center",
+                            "shrink-0 h-5 w-5 rounded border flex items-center justify-center",
                             checked
                               ? "bg-green-500 border-green-500"
-                              : "border-gray-300",
+                              : "border-gray-300"
                           )}
                         >
                           <CheckIcon
                             className={cn(
                               "h-3.5 w-3.5 text-white",
-                              checked ? "opacity-100" : "opacity-0",
+                              checked ? "opacity-100" : "opacity-0"
                             )}
                           />
                         </div>

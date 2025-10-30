@@ -1,9 +1,9 @@
-// GET /api/v1/user/settings (GET, by query param or header)
 import type { Request, Response } from "express";
 import type { User, Prisma } from "../../generated/prisma/index.js";
 import * as UserService from "../services/UserService.js";
 import prisma from "../lib/prisma.js";
 
+// GET /api/v1/user/settings (GET, by query param or header)
 export async function getUserSettingsByQuery(req: Request, res: Response) {
   try {
     // Accept userId from body (POST)
@@ -594,6 +594,72 @@ export async function getCrewOnlineStatus(req: Request, res: Response) {
       success: false,
       error: error instanceof Error ? error.message : "Unknown error",
       message: "Failed to retrieve crew online status",
+    });
+  }
+}
+
+// GET /api/v1/user/:userId/online
+export async function getUserOnlineStatus(req: Request, res: Response) {
+  try {
+    const { userId } = req.params;
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        error: "User ID is required",
+        message: "Failed to retrieve user online status",
+      });
+    }
+    const status = await UserService.getUserOnlineStatus(userId);
+    if (!status) {
+      return res.status(404).json({
+        success: false,
+        error: "User not found",
+        message: "No user found for this ID",
+      });
+    }
+    res.status(200).json({
+      success: true,
+      data: status,
+      message: "User online status retrieved successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error",
+      message: "Failed to retrieve user online status",
+    });
+  }
+}
+
+// GET /api/v1/user/:userId/info
+export async function getUserInfo(req: Request, res: Response) {
+  try {
+    const { userId } = req.params;
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        error: "User ID is required",
+        message: "Failed to retrieve user info",
+      });
+    }
+    const info = await UserService.getUserInfo(userId);
+    if (!info) {
+      return res.status(404).json({
+        success: false,
+        error: "User not found",
+        message: "No user found for this ID",
+      });
+    }
+    res.status(200).json({
+      success: true,
+      data: info,
+      message: "User info retrieved successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error",
+      message: "Failed to retrieve user info",
     });
   }
 }

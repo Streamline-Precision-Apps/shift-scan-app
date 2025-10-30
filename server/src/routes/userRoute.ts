@@ -14,9 +14,58 @@ import {
   getTeamsByUserId,
   getCrewMembers,
   getCrewOnlineStatus,
+  getUserOnlineStatus,
+  getUserInfo,
 } from "../controllers/userController.js";
 
 const router = Router();
+/**
+ * @swagger
+ * /api/v1/user/{userId}/online:
+ *   get:
+ *     tags:
+ *       - Users
+ *     summary: Get user's online status
+ *     description: Retrieve a user's online (clocked in) status by userId
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: userId
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: User online status retrieved successfully
+ *       404:
+ *         description: User not found
+ */
+router.get("/:userId/online", getUserOnlineStatus);
+
+/**
+ * @swagger
+ * /api/v1/user/{userId}/info:
+ *   get:
+ *     tags:
+ *       - Users
+ *     summary: Get user info (profile + contact)
+ *     description: Retrieve a user's profile and contact info by userId
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: userId
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: User info retrieved successfully
+ *       404:
+ *         description: User not found
+ */
+router.get("/:userId/info", getUserInfo);
 
 /**
  * @swagger

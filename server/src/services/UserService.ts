@@ -436,3 +436,57 @@ export async function getCrewMembers(crewId: string) {
 
   return { crewMembers, crewType };
 }
+
+export async function getUserInfo(userId: string) {
+  const employee = await prisma.user.findUnique({
+    where: {
+      id: userId,
+    },
+    select: {
+      id: true,
+      firstName: true,
+      lastName: true,
+      email: true,
+      DOB: true,
+      image: true,
+      Contact: {
+        select: {
+          phoneNumber: true,
+          emergencyContact: true,
+          emergencyContactNumber: true,
+        },
+      },
+    },
+  });
+
+  if (!employee) {
+    throw new Error("Employee not found");
+  }
+
+  const contact = employee.Contact;
+  const employeeData = {
+    id: employee.id,
+    firstName: employee.firstName,
+    lastName: employee.lastName,
+    email: employee.email,
+    DOB: employee.DOB,
+    image: employee.image,
+  };
+  const data = { employeeData, contact };
+
+  return data;
+}
+
+export async function getUserOnlineStatus(userId: string) {
+  const userStatus = await prisma.user.findUnique({
+    where: {
+      id: userId,
+    },
+    select: {
+      id: true,
+      clockedIn: true,
+    },
+  });
+
+  return userStatus;
+}

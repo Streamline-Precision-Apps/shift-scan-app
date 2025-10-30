@@ -111,3 +111,79 @@ export async function updateTimesheetService({
     return { error: message };
   }
 }
+
+export async function getUserTimesheetsByDate({
+  employeeId,
+  dateParam,
+}: {
+  employeeId: string;
+  dateParam?: string | undefined;
+}) {
+  let start: Date | undefined = undefined;
+  let end: Date | undefined = undefined;
+  if (dateParam) {
+    start = new Date(dateParam + "T00:00:00.000Z");
+    end = new Date(dateParam + "T23:59:59.999Z");
+  }
+
+  // Only include date filter if both start and end are defined
+  const where: Prisma.TimeSheetWhereInput = {
+    userId: employeeId,
+    status: {
+      not: "DRAFT",
+    },
+    ...(start && end ? { date: { gte: start, lte: end } } : {}),
+  };
+
+  const timesheetData = await prisma.timeSheet.findMany({
+    where,
+    select: {
+      id: true,
+      startTime: true,
+      endTime: true,
+      status: true,
+      workType: true,
+      Jobsite: {
+        select: {
+          name: true,
+        },
+      },
+      CostCode: {
+        select: {
+          name: true,
+        },
+      },
+    },
+    orderBy: { date: "desc" },
+  });
+  return timesheetData;
+}
+
+export async function getTimesheetDetailsManager({
+  timesheetId,
+}: {
+  timesheetId: number;
+}) {
+  const timesheet = await prisma.timeSheet.findUnique({
+    where: { id: timesheetId },
+    select: {
+      id: true,
+      comment: true,
+      startTime: true,
+      endTime: true,
+      Jobsite: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+      CostCode: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+    },
+  });
+  return timesheet;
+}

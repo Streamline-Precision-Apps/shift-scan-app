@@ -1,3 +1,4 @@
+import { apiRequest } from "@/app/lib/utils/api-Utils";
 import { useState, useEffect, useCallback } from "react";
 
 export interface TimesheetEntry {
@@ -39,15 +40,13 @@ export const useTimesheetDataSimple = (
     setError(null);
 
     try {
-      const res = await fetch(
-        `/api/getTimesheetsByDateNew?employeeId=${employeeId}&date=${currentDate}`,
-        {
-          next: { tags: ["timesheet"] },
-        }
+      // Use the new backend endpoint and apiRequest util
+      const result = await apiRequest(
+        `/api/v1/timesheet/user/${employeeId}?date=${currentDate}`,
+        "GET"
       );
-      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-      const result: TimesheetDataResponse = await res.json();
-      setData(result);
+      // The backend returns { success, data }, so wrap in TimesheetDataResponse shape
+      setData({ timesheetData: result.data });
     } catch (err) {
       setError(`Failed to fetch timesheets`);
     } finally {

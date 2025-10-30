@@ -2,6 +2,8 @@ import { apiRequest } from "@/app/lib/utils/api-Utils";
 import { useUserStore } from "@/app/lib/store/userStore";
 import { useEffect, useState, useCallback, useRef } from "react";
 import { sendNotification } from "@/app/lib/actions/generatorActions";
+import { useProfitStore } from "@/app/lib/store/profitStore";
+import { useCostCodeStore } from "@/app/lib/store/costCodeStore";
 
 export interface Timesheet {
   id: string;
@@ -35,6 +37,9 @@ interface ChangeLogEntry {
  * @param id Timesheet ID
  */
 export function useTimecardIdData(id: string) {
+  const { jobsites } = useProfitStore();
+  const { costCodes: costCodeList } = useCostCodeStore();
+
   const [original, setOriginal] = useState<Timesheet | null>(null);
   const [edited, setEdited] = useState<Timesheet | null>(null);
   const [loading, setLoading] = useState(false);
@@ -66,7 +71,7 @@ export function useTimecardIdData(id: string) {
     []
   );
 
-  // Fetch timesheet data and jobsites by timesheetId
+  // Fetch timesheet data by timesheetId and set jobSites and costCodes from store
   useEffect(() => {
     if (!id) return;
     let isMounted = true;
@@ -74,42 +79,24 @@ export function useTimecardIdData(id: string) {
       setLoading(true);
       setError(null);
       try {
-        // Fetch timesheet
-        const res = await fetch(`/api/getTimesheetDetailsManager/${id}`);
-        if (!res.ok) throw new Error(await res.text());
-        const data = await res.json();
-
+        // Fetch timesheet using new API route and apiRequest
+        const data = await apiRequest(`/api/v1/timesheet/${id}/details`, "GET");
         if (!isMounted) return;
-
-        // Ensure that dates are properly formatted as Date objects
-        if (data.timesheet) {
-          // Convert string dates to Date objects if needed
-          if (
-            data.timesheet.startTime &&
-            typeof data.timesheet.startTime === "string"
-          ) {
-            data.timesheet.startTime = new Date(data.timesheet.startTime);
+        const timesheet = data?.data ?? null;
+        // Convert string dates to Date objects if needed
+        if (timesheet) {
+          if (timesheet.startTime && typeof timesheet.startTime === "string") {
+            timesheet.startTime = new Date(timesheet.startTime);
           }
-
-          if (
-            data.timesheet.endTime &&
-            typeof data.timesheet.endTime === "string"
-          ) {
-            data.timesheet.endTime = new Date(data.timesheet.endTime);
+          if (timesheet.endTime && typeof timesheet.endTime === "string") {
+            timesheet.endTime = new Date(timesheet.endTime);
           }
         }
-
-        setOriginal(data.timesheet ?? null);
-        setEdited(data.timesheet ?? null);
-
-        // Fetch jobsites for this timesheetId
-        const jobsitesRes = await fetch(`/api/getJobsiteSummary`);
-        if (jobsitesRes.ok) {
-          const jobsites = await jobsitesRes.json();
-          setJobSites(jobsites);
-        } else {
-          setJobSites([]);
-        }
+        setOriginal(timesheet);
+        setEdited(timesheet);
+        // Set jobSites and costCodes from store
+        setJobSites(jobsites || []);
+        setCostCodes(costCodeList.map(({ id, name }) => ({ id, name })));
       } catch (error) {
         if (error instanceof Error) {
           setError(error.message);
@@ -124,32 +111,7 @@ export function useTimecardIdData(id: string) {
     return () => {
       isMounted = false;
     };
-  }, [id]);
-
-  // Fetch cost codes when Jobsite changes
-  useEffect(() => {
-    async function fetchCostCodes() {
-      const jobsiteId = edited?.Jobsite?.id;
-      if (!jobsiteId) {
-        setCostCodes([]);
-        return;
-      }
-      try {
-        const res = await fetch(
-          `/api/getAllCostCodesByJobSites?jobsiteId=${jobsiteId}`
-        );
-        if (!res.ok) {
-          setCostCodes([]);
-          return;
-        }
-        const codes = await res.json();
-        setCostCodes(codes);
-      } catch {
-        setCostCodes([]);
-      }
-    }
-    fetchCostCodes();
-  }, [edited?.Jobsite?.id]);
+  }, [id, jobsites, costCodeList]);
 
   // Save the entire edited form to the server
   // Compare original and edited, return changes object
@@ -186,18 +148,19 @@ export function useTimecardIdData(id: string) {
   const save = useCallback(async () => {
     if (!id || !edited) return;
     try {
+      const body: Record<string, string | number> = {};
       const formData = new FormData();
-      formData.append("id", id);
+      body.id = id;
 
       if (!editorId) {
         throw new Error("No user detected");
       }
-      formData.append("editorId", editorId);
+      body.editorId = editorId;
 
       if (!changeReason) {
         throw new Error("Change reason is required");
       }
-      formData.append("changeReason", changeReason);
+      body.changeReason = changeReason;
 
       // Only include fields that have values
       if (edited.startTime) {
@@ -205,7 +168,7 @@ export function useTimecardIdData(id: string) {
           typeof edited.startTime === "string"
             ? edited.startTime
             : edited.startTime.toISOString();
-        formData.append("startTime", startTimeStr);
+        body.startTime = startTimeStr;
       }
 
       if (edited.endTime) {
@@ -213,31 +176,27 @@ export function useTimecardIdData(id: string) {
           typeof edited.endTime === "string"
             ? edited.endTime
             : edited.endTime.toISOString();
-        formData.append("endTime", endTimeStr);
+        body.endTime = endTimeStr;
       }
 
       if (edited.Jobsite) {
-        formData.append("Jobsite", edited.Jobsite.id);
+        body.Jobsite = edited.Jobsite.id;
       }
 
       if (edited.CostCode) {
-        formData.append("CostCode", edited.CostCode.name);
+        body.CostCode = edited.CostCode.name;
       }
 
       if (edited.comment !== null) {
-        formData.append("comment", edited.comment);
+        body.comment = edited.comment;
       }
 
       // Add changes object for logging
       const { changes, numberOfChanges } = getChanges();
-      formData.append("changes", JSON.stringify(changes));
-      formData.append("numberOfChanges", numberOfChanges.toString());
+      body.changes = JSON.stringify(changes);
+      body.numberOfChanges = numberOfChanges;
 
-      const result = await apiRequest(
-        "/api/timesheets/update",
-        "PUT",
-        formData
-      );
+      const result = await apiRequest(`/api/v1/timesheet/${id}`, "PUT", body);
 
       // Update the original record with the saved changes
       if (result?.success) {

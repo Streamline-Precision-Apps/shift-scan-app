@@ -10,7 +10,7 @@ import { Holds } from "@/app/v1/components/(reusable)/holds";
 import { Images } from "@/app/v1/components/(reusable)/images";
 import AppManagerEditTimesheetModal from "./TimesheetEditModal";
 import { Button } from "@/app/v1/components/ui/button";
-import { useTimesheetDataSimple } from "./useTimesheetDataSimple";
+import { useTimesheetDataSimple } from "./_hooks/useTimesheetDataSimple";
 import { PullToRefresh } from "@/app/v1/components/(animations)/pullToRefresh";
 
 export default function EmployeeTimeCards() {
@@ -39,10 +39,6 @@ export default function EmployeeTimeCards() {
   const timesheets =
     data && Array.isArray(data.timesheetData) ? data.timesheetData : [];
 
-  // Import PullToRefresh
-  // ...existing imports...
-  // import { PullToRefresh } from "@/app/v1/components/(animations)/pullToRefresh";
-
   return (
     <div className="h-full w-full bg-white rounded-b-2xl">
       <div className="h-full w-full grid grid-rows-10">
@@ -55,12 +51,12 @@ export default function EmployeeTimeCards() {
             name="date"
             id="date"
             value={date}
-            className="text-xs text-center w-full max-w-[170px] border-[3px] py-2 border-black"
+            className="text-xs bg-white text-center w-full max-w-[170px] border-[3px] py-2 border-black"
             onChange={handleDateChange}
           />
         </div>
         {/* PullToRefresh wraps the timesheet content */}
-        <div className="h-full row-start-2 row-end-11 rounded-b-xl overflow-y-auto no-scrollbar p-2 border-[4px] border-app-dark-blue">
+        <div className="h-full row-start-2 row-end-11 rounded-b-xl overflow-y-auto no-scrollbar p-2 border-4 border-app-dark-blue">
           <PullToRefresh
             onRefresh={reset}
             refreshingText=""
