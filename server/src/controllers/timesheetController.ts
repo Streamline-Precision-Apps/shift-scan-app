@@ -1,9 +1,14 @@
+import type { Prisma } from "../../generated/prisma/client.js";
 import {
+  createGeneralTimesheetService,
   approveTimesheetsBatchService,
   updateTimesheetService,
   getUserTimesheetsByDate,
   getTimesheetDetailsManager,
   getManagerCrewTimesheets,
+  createMechanicTimesheetService,
+  createTascoTimesheetService,
+  createTruckDriverTimesheetService,
 } from "../services/timesheetService.js";
 
 import Express from "express";
@@ -197,5 +202,60 @@ export async function approveTimesheetsBatchController(
       error
     );
     return res.status(500).json({ error: "Failed to approve timesheets." });
+  }
+}
+
+export interface GeneralTimesheetInput {
+  date: string;
+  jobsiteId: string;
+  workType: string;
+  userId: string;
+  costCode: string;
+  startTime: string;
+  clockInLat?: number | null;
+  clockInLong?: number | null;
+  type?: string;
+  previousTimeSheetId?: number;
+  endTime?: string;
+  previoustimeSheetComments?: string;
+  clockOutLat?: number | null;
+  clockOutLong?: number | null;
+}
+
+// POST /v1/timesheet/create
+export async function createTimesheetAndSwitchJobsController(
+  req: Express.Request,
+  res: Express.Response
+) {
+  try {
+    const body = req.body as {
+      type: string;
+    } & GeneralTimesheetInput;
+    const { workType, type, ...rest } = body;
+    let result;
+    switch (workType) {
+      case "general":
+        result = await createGeneralTimesheetService({
+          data: { ...rest, workType },
+          type,
+        });
+        break;
+      case "mechanic":
+        result = await createMechanicTimesheetService({ ...rest, type });
+        break;
+      case "tasco":
+        result = await createTascoTimesheetService({ ...rest, type });
+        break;
+      case "truck":
+        result = await createTruckDriverTimesheetService({ ...rest, type });
+        break;
+      default:
+        return res.status(400).json({ error: "Invalid workType" });
+    }
+
+    return res.status(201).json({ success: true, data: result });
+  } catch (error) {
+    console.error("[createTimesheetController] Error:", error);
+    return res.status(500).json({ error: "Failed to create timesheet." });
   }
 }

@@ -32,22 +32,28 @@ export async function apiRequest(
 
   let fetchBody: string | FormData | undefined;
 
-  // Check if body is FormData
-  if (body instanceof FormData) {
+  // Only attach body for non-GET/HEAD requests
+  let includeBody = body && method !== "GET" && method !== "HEAD";
+
+  if (includeBody && body instanceof FormData) {
     // Don't set Content-Type header - browser will set it with boundary
     fetchBody = body;
-  } else if (body) {
+  } else if (includeBody && body) {
     // Regular JSON request
     headers["Content-Type"] = "application/json";
     fetchBody = JSON.stringify(body);
   }
 
-  const res = await fetch(url, {
+  const fetchOptions: RequestInit = {
     method,
     headers,
-    body: fetchBody,
     credentials: "include", // ✅ CRITICAL: Allow cookies to be sent and received
-  });
+  };
+  if (includeBody) {
+    fetchOptions.body = fetchBody;
+  }
+
+  const res = await fetch(url, fetchOptions);
   if (res.status === 204) return []; // or return [] if you expect an array
   if (!res.ok) throw new Error(await res.text());
   return res.json();

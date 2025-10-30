@@ -1,4 +1,4 @@
-import WidgetContainer from "@/app/(content)/widgetContainer";
+import WidgetContainer from "@/app/v1/(content)/widgetContainer";
 
 import { useTranslations } from "next-intl";
 

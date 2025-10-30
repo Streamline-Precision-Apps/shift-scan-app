@@ -1,4 +1,6 @@
+import { formatISO } from "date-fns";
 import type { Prisma } from "../../generated/prisma/client.js";
+import type { GeneralTimesheetInput } from "../controllers/timesheetController.js";
 import prisma from "../lib/prisma.js";
 
 export async function updateTimesheetService({
@@ -442,4 +444,73 @@ export async function approveTimesheetsBatchService({
     console.error("Error updating timesheets:", error);
     return { success: false, error: "Failed to update timesheets" };
   }
+}
+
+export async function createGeneralTimesheetService({
+  data,
+  type,
+}: {
+  data: GeneralTimesheetInput;
+  type?: string;
+}) {
+  const createdTimeSheet = await prisma.$transaction(async (prisma) => {
+    // Step 1: Create a new TimeSheet
+    const createdTimeSheet = await prisma.timeSheet.create({
+      data: {
+        date: data.date,
+        Jobsite: { connect: { id: data.jobsiteId } },
+        User: { connect: { id: data.userId } },
+        CostCode: { connect: { name: data.costCode } },
+        startTime: data.startTime,
+        workType: "LABOR",
+        status: "DRAFT",
+        clockInLat: data.clockInLat || null,
+        clockInLng: data.clockInLong || null,
+      },
+      include: {
+        User: {
+          select: {
+            firstName: true,
+            lastName: true,
+          },
+        },
+      },
+    });
+
+    // Update user status if timesheet created successfully
+    if (createdTimeSheet) {
+      await prisma.user.update({
+        where: { id: data.userId },
+        data: {
+          clockedIn: true,
+        },
+      });
+    }
+    if (type === "switchJobs" && data.previousTimeSheetId && data.endTime) {
+      await prisma.timeSheet.update({
+        where: { id: data.previousTimeSheetId },
+        data: {
+          endTime: formatISO(data.endTime),
+          comment: data.previoustimeSheetComments || null,
+          status: "PENDING",
+          clockOutLat: data.clockOutLat || null,
+          clockOutLng: data.clockOutLong || null,
+        },
+      });
+    }
+    return createdTimeSheet;
+  });
+  return createdTimeSheet;
+}
+
+export async function createMechanicTimesheetService({}) {
+  // Implementation for creating a mechanic timesheet
+}
+
+export async function createTruckDriverTimesheetService({}) {
+  // Implementation for creating a truck driver timesheet
+}
+
+export async function createTascoTimesheetService({}) {
+  // Implementation for creating a tasco timesheet
 }

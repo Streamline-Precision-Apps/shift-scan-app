@@ -5,6 +5,7 @@ import { PermissionsProvider } from "../lib/context/permissionContext";
 import { CommentDataProvider } from "../lib/context/CommentContext";
 import { EquipmentIdProvider } from "../lib/context/operatorContext";
 import { ScanDataEQProvider } from "../lib/context/equipmentContext";
+import { TimeSheetDataProvider } from "../lib/context/TimeSheetIdContext";
 
 export function AppProviders({ children }: { children: React.ReactNode }) {
   return (
@@ -12,7 +13,9 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
       <CommentDataProvider>
         <EquipmentIdProvider>
           <ScanDataEQProvider>
-            <PermissionsProvider>{children}</PermissionsProvider>
+            <TimeSheetDataProvider>
+              <PermissionsProvider>{children}</PermissionsProvider>
+            </TimeSheetDataProvider>
           </ScanDataEQProvider>
         </EquipmentIdProvider>
       </CommentDataProvider>

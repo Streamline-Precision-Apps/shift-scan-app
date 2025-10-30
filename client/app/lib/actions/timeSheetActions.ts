@@ -1,6 +1,7 @@
 "use client";
 
 import { formatISO } from "date-fns";
+import { apiRequest } from "../utils/api-Utils";
 
 // Get all TimeSheets
 type TimesheetUpdate = {
@@ -303,95 +304,62 @@ export async function forcePendingIfEnded(id: number) {
 //-----------------------------------------------   General   CRUD  ---------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------------------------
 //---------- Transaction to create a new time sheet for General
-export async function handleGeneralTimeSheet(formData: FormData) {
-  try {
-    const session = await auth();
-    if (!session) {
-      throw new Error("Unauthorized user");
-    }
-    let previousTimeSheetId: number | null = null;
-    let previoustimeSheetComments: string | null = null;
-    let endTime: string | null = null;
-    let type: string | null = null;
-    // Extract all needed values before transaction
-    const jobsiteId = formData.get("jobsiteId") as string;
-    const userId = formData.get("userId") as string;
-    const clockInLat = Number(formData.get("clockInLat") as string) || null;
-    const clockInLong = Number(formData.get("clockInLong") as string) || null;
-    const clockOutLat = Number(formData.get("clockOutLat") as string) || null;
-    const clockOutLong = Number(formData.get("clockOutLong") as string) || null;
+export async function handleGeneralTimeSheet({
+  date,
+  jobsiteId,
+  workType,
+  userId,
+  costCode,
+  startTime,
+  clockInLat,
+  clockInLong,
+  type,
+  previousTimeSheetId,
+  endTime,
+  previoustimeSheetComments,
+  clockOutLat,
+  clockOutLong,
+}: {
+  date: string;
+  jobsiteId: string;
+  workType: string;
+  userId: string;
+  costCode: string;
+  startTime: string;
+  clockInLat?: number | null;
+  clockInLong?: number | null;
+  type?: string;
+  previousTimeSheetId?: number;
+  endTime?: string;
+  previoustimeSheetComments?: string;
+  clockOutLat?: number | null;
+  clockOutLong?: number | null;
+}) {
+  const body: Record<string, any> = {
+    date,
+    jobsiteId,
+    workType,
+    userId,
+    costCode,
+    startTime,
+    clockInLat,
+    clockInLong,
+  };
 
-    previoustimeSheetComments = formData.get("timeSheetComments") as string;
-    const costCode = formData.get("costcode") as string;
-    type = formData.get("type") as string;
-    if (type === "switchJobs") {
-      previousTimeSheetId = Number(formData.get("id"));
-      endTime = formData.get("endTime") as string;
-    }
-    // Only DB operations in transaction
-    const createdTimeSheet = await prisma.$transaction(async (prisma) => {
-      // Step 1: Create a new TimeSheet
-      const createdTimeSheet = await prisma.timeSheet.create({
-        data: {
-          date: formatISO(formData.get("date") as string),
-          Jobsite: { connect: { id: jobsiteId } },
-          User: { connect: { id: userId } },
-          CostCode: { connect: { name: costCode } },
-          startTime: formatISO(formData.get("startTime") as string),
-          workType: "LABOR",
-          status: "DRAFT",
-          clockInLat: clockInLat,
-          clockInLng: clockInLong,
-        },
-        include: {
-          User: {
-            select: {
-              firstName: true,
-              lastName: true,
-            },
-          },
-        },
-      });
-
-      // Update user status if timesheet created successfully
-      if (createdTimeSheet) {
-        await prisma.user.update({
-          where: { id: userId },
-          data: {
-            clockedIn: true,
-          },
-        });
-      }
-      if (type === "switchJobs" && previousTimeSheetId && endTime) {
-        await prisma.timeSheet.update({
-          where: { id: previousTimeSheetId },
-          data: {
-            endTime: formatISO(endTime),
-            comment: previoustimeSheetComments,
-            status: "PENDING",
-            clockOutLat: clockOutLat,
-            clockOutLng: clockOutLong,
-          },
-        });
-      }
-      return createdTimeSheet;
-    });
-
-    // Revalidate paths after transaction
-    revalidatePath("/");
-    revalidatePath("/admins/settings");
-    revalidatePath("/admins/assets");
-    revalidatePath("/admins/reports");
-    revalidatePath("/admins/personnel");
-    revalidatePath("/admins");
-    revalidatePath("/dashboard");
-    return { success: true, createdTimeSheet };
-  } catch (error) {
-    console.error("[handleGeneralTimeSheet] Error in transaction:", error);
-    throw error;
+  // Only include switchJobs fields if type === "switchJobs"
+  if (type === "switchJobs") {
+    body.type = type;
+    body.previousTimeSheetId = previousTimeSheetId;
+    body.endTime = endTime;
+    body.previoustimeSheetComments = previoustimeSheetComments;
+    body.clockOutLat = clockOutLat;
+    body.clockOutLong = clockOutLong;
   }
-}
 
+  // If you want to always send optional fields, you can remove the above if and just include all fields
+
+  return apiRequest("/api/v1/timesheet/create", "POST", body);
+}
 //-------------------------------------------------------------------------------------------------------------------------------
 //-----------------------------------------------   Mechanic   CRUD  ---------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------------------------

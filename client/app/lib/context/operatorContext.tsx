@@ -1,4 +1,3 @@
-// this is a context to hold an equipment used in the app the operator labor type.
 "use client";
 import { setEquipment } from "@/app/lib/actions/cookieActions";
 import React, {

@@ -1,34 +1,6 @@
 "use client";
 
-// Utility to get API URL
-function getApiUrl() {
-  return process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
-}
-
-// Utility to get token from localStorage
-function getToken() {
-  if (typeof window !== "undefined") {
-    return localStorage.getItem("token") || "";
-  }
-  return "";
-}
-
-// Helper for API requests
-async function apiRequest(path: string, method: string, body: any) {
-  const url = `${getApiUrl()}${path}`;
-  const token = getToken();
-  const res = await fetch(url, {
-    method,
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify(body),
-    credentials: "include", // ✅ CRITICAL: Allow cookies to be sent and received
-  });
-  if (!res.ok) throw new Error(await res.text());
-  return res.json();
-}
+import { apiRequest } from "../utils/api-Utils";
 
 type Options = {
   label: string;
@@ -38,8 +10,7 @@ export async function getCookies({ cookieName }: { cookieName: string }) {
   try {
     const res = await apiRequest(
       `/api/cookies?name=${encodeURIComponent(cookieName)}`,
-      "GET",
-      null
+      "GET"
     );
     return res.value;
   } catch (error) {
@@ -165,7 +136,7 @@ export async function setLaborType(laborType: string) {
 // deletes the cookie for workRole to either mechanic, tasco, truck, general
 export async function RemoveWorkRole() {
   try {
-    await apiRequest(`/api/cookies?name=workRole`, "DELETE", null);
+    await apiRequest(`/api/cookies?name=workRole`, "DELETE");
   } catch (error) {
     console.error("Failed to delete locale cookie:", error);
   }
@@ -354,7 +325,7 @@ export async function setAdminAccess() {
 // a function to remove the cookie for admin access
 export async function RemoveAdminAccess() {
   try {
-    await apiRequest(`/api/cookies?name=adminAccess`, "DELETE", null);
+    await apiRequest(`/api/cookies?name=adminAccess`, "DELETE");
   } catch (error) {
     console.error("Failed to delete locale cookie:", error);
   }

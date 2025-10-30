@@ -5,12 +5,16 @@ import {
   getTimesheetDetailsManagerController,
   getManagerCrewTimesheetsController,
   approveTimesheetsBatchController,
+  createTimesheetAndSwitchJobsController,
 } from "../controllers/timesheetController.js";
+import { create } from "domain";
 
 const router = Router();
 
 // Batch approve timesheets
 router.post("/approve-batch", approveTimesheetsBatchController);
+//create a timesheet
+router.post("/create", createTimesheetAndSwitchJobsController);
 
 // Update a timesheet
 router.put("/:id", updateTimesheet);

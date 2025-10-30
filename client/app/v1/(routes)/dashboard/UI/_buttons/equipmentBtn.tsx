@@ -1,6 +1,8 @@
 "use client";
-import WidgetContainer from "@/app/(content)/widgetContainer";
-import { Holds } from "@/components/(reusable)/holds";
+
+import WidgetContainer from "@/app/v1/(content)/widgetContainer";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
+
 import { useTranslations } from "next-intl";
 
 export default function EquipmentBtn({ permission }: { permission: string }) {
