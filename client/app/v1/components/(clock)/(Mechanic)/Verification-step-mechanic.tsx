@@ -1,12 +1,8 @@
 "use client";
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { handleMechanicTimeSheet } from "@/app/lib/actions/timeSheetActions";
 
-import { useCommentData } from "@/app/context/CommentContext";
 import { useRouter } from "next/navigation";
-
-import { useSavedCostCode } from "@/app/context/CostCodeContext";
 
 import { Buttons } from "@/app/v1/components/(reusable)/buttons";
 import { Contents } from "@/app/v1/components/(reusable)/contents";
@@ -19,15 +15,19 @@ import { Texts } from "@/app/v1/components/(reusable)/texts";
 import { Titles } from "@/app/v1/components/(reusable)/titles";
 import Spinner from "@/app/v1/components/(animations)/spinner";
 import { TitleBoxes } from "@/app/v1/components/(reusable)/titleBoxes";
-import { useTimeSheetData } from "@/app/context/TimeSheetIdContext";
-import { usePermissions } from "@/app/context/PermissionsContext";
-import { useUserStore } from "@/app/lib/store/userStore";
+
+import { usePermissions } from "@/app/lib/context/permissionContext";
+import { handleMechanicTimeSheet } from "@/app/lib/actions/timeSheetActions";
+import Capitalize from "@/app/lib/utils/capitalizeFirst";
 import {
   setCurrentPageView,
   setLaborType,
   setWorkRole,
 } from "@/app/lib/actions/cookieActions";
-import Capitalize from "@/app/lib/utils/capitalizeFirst";
+import { useUserStore } from "@/app/lib/store/userStore";
+import { useTimeSheetData } from "@/app/lib/context/TimeSheetIdContext";
+import { useSavedCostCode } from "@/app/lib/context/CostCodeContext";
+import { useCommentData } from "@/app/lib/context/CommentContext";
 
 type Option = {
   id: string;
@@ -66,14 +66,14 @@ export default function MechanicVerificationStep({
   const { setCostCode } = useSavedCostCode();
   const costCode = "#00.50 Mechanics";
   const { savedTimeSheetData, refetchTimesheet } = useTimeSheetData();
-  const { permissions, getStoredCoordinates } = usePermissions();
+  const { permissionStatus } = usePermissions();
 
   useEffect(() => {
     setCostCode(costCode);
   }, [costCode]);
 
   if (!user) return null; // Conditional rendering for session
-  const { id } = user;
+  const id = user.id;
 
   const handleSubmit = async () => {
     try {
@@ -83,11 +83,11 @@ export default function MechanicVerificationStep({
         return;
       }
       // Check if location permissions are granted if not clock in does not work
-      if (!permissions.location) {
+      if (!permissionStatus.location) {
         console.error("Location permissions are required to clock in.");
         return;
       }
-      const getStoredCoordinatesResult = getStoredCoordinates();
+      // const getStoredCoordinatesResult = getStoredCoordinates();
       const formData = new FormData();
       formData.append("submitDate", new Date().toISOString());
       formData.append("userId", id);
@@ -97,14 +97,14 @@ export default function MechanicVerificationStep({
       formData.append("startTime", new Date().toISOString());
       formData.append("workType", role);
       // fetch coordinates from permissions context
-      formData.append(
-        "clockInLat",
-        getStoredCoordinatesResult?.latitude.toString() || ""
-      );
-      formData.append(
-        "clockInLong",
-        getStoredCoordinatesResult?.longitude.toString() || ""
-      );
+      // formData.append(
+      //   "clockInLat",
+      //   getStoredCoordinatesResult?.latitude.toString() || ""
+      // );
+      // formData.append(
+      //   "clockInLong",
+      //   getStoredCoordinatesResult?.longitude.toString() || ""
+      // );
 
       // If switching jobs, include the previous timesheet ID
       if (type === "switchJobs") {
@@ -125,14 +125,14 @@ export default function MechanicVerificationStep({
           savedCommentData?.id.toString() || ""
         );
         formData.append("type", "switchJobs"); // added to switch jobs
-        formData.append(
-          "clockOutLat",
-          getStoredCoordinatesResult?.latitude.toString() || ""
-        );
-        formData.append(
-          "clockOutLong",
-          getStoredCoordinatesResult?.longitude.toString() || ""
-        );
+        //   formData.append(
+        //     "clockOutLat",
+        //     getStoredCoordinatesResult?.latitude.toString() || ""
+        //   );
+        //   formData.append(
+        //     "clockOutLong",
+        //     getStoredCoordinatesResult?.longitude.toString() || ""
+        //   );
       }
 
       // Use the new transaction-based function

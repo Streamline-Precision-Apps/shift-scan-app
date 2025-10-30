@@ -730,6 +730,8 @@
     "TASCOABCDLabor": "Tasco ABCD Labor",
     "TASCOABCDEquipmentOperator": "Operador de equipos ABCD de Tasco",
     "TASCOEEquipmentOperator": "Operador de equipos de turno de Tasco E",
+    "TASCOFEquipmentOperator": "Operador de equipos de turno de Tasco F",
+    "TASCOFShift": "TASCO F Turno - Pantalla Cal",
     "PleaseChooseYourRole": "Elija su papel:",
     "ChangeJobsite": "Cambiar el sitio de trabajo",
     "ChangeCostCode": "Cambiar código de costo",

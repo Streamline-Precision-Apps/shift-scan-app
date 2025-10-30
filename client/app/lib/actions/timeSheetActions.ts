@@ -1,9 +1,5 @@
-"use server";
+"use client";
 
-import { auth } from "@/auth";
-import prisma from "@/lib/prisma";
-import { FormStatus, WorkType } from "../../prisma/generated/prisma/client";
-import { revalidatePath } from "next/cache";
 import { formatISO } from "date-fns";
 
 // Get all TimeSheets
@@ -201,8 +197,8 @@ export async function CreateTruckDriverTimeSheet(formData: FormData) {
           laborType === "truckDriver"
             ? truck
             : laborType === "operator"
-              ? equipmentId
-              : null,
+            ? equipmentId
+            : null,
         startingMileage: startingMileage || null,
       },
     });
@@ -218,7 +214,7 @@ export async function CreateTruckDriverTimeSheet(formData: FormData) {
   } catch (error) {
     console.error(
       "[CreateTruckDriverTimeSheet] Error creating timesheet:",
-      error,
+      error
     );
     throw error;
   }
@@ -257,7 +253,7 @@ export async function updateTruckDriverTSBySwitch(formData: FormData) {
       } else {
         console.warn(
           "[updateTruckDriverTSBySwitch] No TruckingLog found for timesheet:",
-          id,
+          id
         );
       }
     }
@@ -761,7 +757,7 @@ export async function handleTruckTimeSheet(formData: FormData) {
 //-- update TimeSheets - located in manager section
 export async function updateTimeSheets(
   updatedSheets: TimesheetHighlights[],
-  manager: string,
+  manager: string
 ) {
   try {
     // Perform individual updates for each timesheet
@@ -922,7 +918,7 @@ export async function returnToPrevWork(formData: FormData) {
 }
 
 export async function updateTimesheetHighlights(
-  updatedTimesheets: TimesheetUpdate[],
+  updatedTimesheets: TimesheetUpdate[]
 ) {
   try {
     const session = await auth();
@@ -941,7 +937,7 @@ export async function updateTimesheetHighlights(
           editedByUserId: session.user.id,
           updatedAt: new Date(),
         },
-      }),
+      })
     );
 
     await Promise.all(updatePromises);
@@ -960,7 +956,7 @@ export async function updateTimesheetHighlights(
 // Approve all pending timesheets for a user
 export async function approvePendingTimesheets(
   userId: string,
-  managerName?: string,
+  managerName?: string
 ) {
   try {
     // Find all pending timesheets for the user

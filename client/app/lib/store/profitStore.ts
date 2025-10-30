@@ -6,6 +6,7 @@ export type ProfitJobsite = {
   code?: string;
   qrId: string;
   name: string;
+  status?: string;
   approvalStatus?: string;
   archiveDate?: string | null;
 };
@@ -25,6 +26,7 @@ const sanitizeJobsites = (jobsites: any[]): ProfitJobsite[] => {
     code: site.code,
     qrId: site.qrId,
     name: site.name,
+    status: site.status,
     approvalStatus: site.approvalStatus,
     archiveDate: site.archiveDate,
   }));

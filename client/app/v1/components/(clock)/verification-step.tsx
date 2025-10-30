@@ -10,7 +10,7 @@ import { Forms } from "../(reusable)/forms";
 import { Images } from "../(reusable)/images";
 import { Holds } from "../(reusable)/holds";
 import { Grids } from "../(reusable)/grids";
-import { useCommentData } from "@/app/context/CommentContext";
+
 import {
   setCurrentPageView,
   setLaborType,
@@ -21,10 +21,12 @@ import { useRouter } from "next/navigation";
 import Spinner from "../(animations)/spinner";
 import { TitleBoxes } from "../(reusable)/titleBoxes";
 import { Texts } from "../(reusable)/texts";
-import { useTimeSheetData } from "@/app/context/TimeSheetIdContext";
-import { usePermissions } from "@/app/context/PermissionsContext";
+
 import { get } from "lodash";
 import { useUserStore } from "@/app/lib/store/userStore";
+import { useCommentData } from "@/app/lib/context/CommentContext";
+import { usePermissions } from "@/app/lib/context/permissionContext";
+import { useTimeSheetData } from "@/app/lib/context/TimeSheetIdContext";
 
 type Options = {
   id: string;
@@ -64,10 +66,10 @@ export default function VerificationStep({
   const { savedCommentData, setCommentData } = useCommentData();
   const router = useRouter();
   const { savedTimeSheetData, refetchTimesheet } = useTimeSheetData();
-  const { permissions, getStoredCoordinates } = usePermissions();
+  const { permissionStatus } = usePermissions();
 
   if (!user) return null; // Conditional rendering for session
-  const { id } = user;
+  const id = user.id;
 
   const handleSubmit = async () => {
     try {
@@ -77,11 +79,11 @@ export default function VerificationStep({
         return;
       }
       // Check if location permissions are granted if not clock in does not work
-      if (!permissions.location) {
+      if (!permissionStatus.location) {
         console.error("Location permissions are required to clock in.");
         return;
       }
-      const getStoredCoordinatesResult = getStoredCoordinates();
+      // const getStoredCoordinatesResult = getStoredCoordinates();
       const formData = new FormData();
       formData.append("submitDate", new Date().toISOString());
       formData.append("userId", id?.toString() || "");
@@ -91,14 +93,14 @@ export default function VerificationStep({
       formData.append("startTime", new Date().toISOString());
       formData.append("workType", role);
       // fetch coordinates from permissions context
-      formData.append(
-        "clockInLat",
-        getStoredCoordinatesResult?.latitude.toString() || ""
-      );
-      formData.append(
-        "clockInLong",
-        getStoredCoordinatesResult?.longitude.toString() || ""
-      );
+      // formData.append(
+      //   "clockInLat",
+      //   getStoredCoordinatesResult?.latitude.toString() || ""
+      // );
+      // formData.append(
+      //   "clockInLong",
+      //   getStoredCoordinatesResult?.longitude.toString() || ""
+      // );
 
       // If switching jobs, include the previous timesheet ID
       if (type === "switchJobs") {
@@ -119,14 +121,14 @@ export default function VerificationStep({
           savedCommentData?.id.toString() || ""
         );
         formData.append("type", "switchJobs"); // added to switch jobs
-        formData.append(
-          "clockOutLat",
-          getStoredCoordinatesResult?.latitude.toString() || ""
-        );
-        formData.append(
-          "clockOutLong",
-          getStoredCoordinatesResult?.longitude.toString() || ""
-        );
+        // formData.append(
+        //   "clockOutLat",
+        //   getStoredCoordinatesResult?.latitude.toString() || ""
+        // );
+        // formData.append(
+        //   "clockOutLong",
+        //   getStoredCoordinatesResult?.longitude.toString() || ""
+        // );
       }
 
       // Use the new transaction-based function

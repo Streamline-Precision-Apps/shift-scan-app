@@ -1,12 +1,10 @@
-"use Client";
+"use client";
 import { useUserStore } from "@/app/lib/store/userStore";
 // import ClockProcessor from "@/app/v1/components/(clock)/clockProcess";
 import NewClockProcess from "@/app/v1/components/(clock)/newclockProcess";
 import { Bases } from "@/app/v1/components/(reusable)/bases";
 import { Contents } from "@/app/v1/components/(reusable)/contents";
 import { Holds } from "@/app/v1/components/(reusable)/holds";
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 
 export default function Clock() {
   const { user } = useUserStore();
@@ -25,7 +23,7 @@ export default function Clock() {
             truckView={user?.truckView ?? false}
             laborView={user?.laborView ?? false}
             option="clockin"
-            returnpath="/"
+            returnpath="/v1"
             type={"jobsite"}
             scannerType={"jobsite"}
             locale={locale}

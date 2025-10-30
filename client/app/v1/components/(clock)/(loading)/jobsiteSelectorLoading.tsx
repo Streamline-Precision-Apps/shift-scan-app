@@ -1,8 +1,8 @@
 "use client";
 import React from "react";
-import { Grids } from "@/components/(reusable)/grids";
-import { Holds } from "@/components/(reusable)/holds";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Grids } from "@/app/v1/components/(reusable)/grids";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
+import { Skeleton } from "@/app/v1/components/ui/skeleton";
 
 export default function JobsiteSelectorLoading() {
   return (

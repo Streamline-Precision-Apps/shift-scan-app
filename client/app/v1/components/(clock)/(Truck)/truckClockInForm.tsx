@@ -1,16 +1,17 @@
 "use client";
-import { Buttons } from "@/components/(reusable)/buttons";
-import { Contents } from "@/components/(reusable)/contents";
-import { Holds } from "@/components/(reusable)/holds";
+import { Buttons } from "@/app/v1/components/(reusable)/buttons";
+import { Contents } from "@/app/v1/components/(reusable)/contents";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { Grids } from "@/components/(reusable)/grids";
+import { Grids } from "@/app/v1/components/(reusable)/grids";
 import { useTranslations } from "next-intl";
 import StepButtons from "../step-buttons";
 import { TitleBoxes } from "../../(reusable)/titleBoxes";
-import { useOperator } from "@/app/context/operatorContext";
+
 import { Titles } from "../../(reusable)/titles";
 import TruckDriverForm from "./truckDriverForm";
 import TruckEquipmentOperatorForm from "./truckEquipmentOperatorForm";
+import { useOperator } from "@/app/lib/context/operatorContext";
 
 type Option = {
   id: string;
@@ -52,7 +53,7 @@ export default function TruckClockInForm({
   const t = useTranslations("Clock");
   const { equipmentId } = useOperator();
   const [displayValue, setDisplayValue] = useState(
-    startingMileage ? `${startingMileage.toLocaleString()} Miles` : "",
+    startingMileage ? `${startingMileage.toLocaleString()} Miles` : ""
   );
 
   const [selectedOpt, setSelectedOpt] = useState<boolean>(false);

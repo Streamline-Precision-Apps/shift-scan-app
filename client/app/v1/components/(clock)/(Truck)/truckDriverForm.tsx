@@ -1,13 +1,13 @@
 "use client";
-import { Grids } from "@/components/(reusable)/grids";
-import { Holds } from "@/components/(reusable)/holds";
-import { Inputs } from "@/components/(reusable)/inputs";
+import { Grids } from "@/app/v1/components/(reusable)/grids";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
+import { Inputs } from "@/app/v1/components/(reusable)/inputs";
 import { useTranslations } from "next-intl";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import TruckSelector from "../(General)/truckSelector";
-import { Buttons } from "@/components/(reusable)/buttons";
-import { Titles } from "@/components/(reusable)/titles";
-import { Texts } from "@/components/(reusable)/texts";
+import { Buttons } from "@/app/v1/components/(reusable)/buttons";
+import { Titles } from "@/app/v1/components/(reusable)/titles";
+import { Texts } from "@/app/v1/components/(reusable)/texts";
 
 type Option = {
   id: string;
@@ -105,7 +105,7 @@ export default function TruckDriverForm({
   // Enhanced validation that handles empty values and shows appropriate messages
   const validateMileageWithData = (
     currentMileage: number,
-    data: LastMileageData | null,
+    data: LastMileageData | null
   ) => {
     // If no truck selected, no validation needed
     if (!truck.id) {
@@ -119,7 +119,7 @@ export default function TruckDriverForm({
       if (data?.lastMileage !== null && data?.lastMileage !== undefined) {
         setIsValidMileage(false);
         setValidationMessage(
-          `Starting mileage required, must be ${data.lastMileage.toLocaleString()} or greater`,
+          `Starting mileage required, must be ${data.lastMileage.toLocaleString()} or greater`
         );
       } else {
         setIsValidMileage(false);
@@ -133,7 +133,7 @@ export default function TruckDriverForm({
       if (currentMileage < data.lastMileage) {
         setIsValidMileage(false);
         setValidationMessage(
-          `Starting mileage (${currentMileage.toLocaleString()}) cannot be less than the last recorded mileage (${data.lastMileage.toLocaleString()})`,
+          `Starting mileage (${currentMileage.toLocaleString()}) cannot be less than the last recorded mileage (${data.lastMileage.toLocaleString()})`
         );
       } else {
         setIsValidMileage(true);
@@ -148,12 +148,12 @@ export default function TruckDriverForm({
   // Legacy function for backward compatibility
   const validateMileage = (
     currentMileage: number,
-    lastRecordedMileage: number,
+    lastRecordedMileage: number
   ) => {
     if (currentMileage < lastRecordedMileage) {
       setIsValidMileage(false);
       setValidationMessage(
-        `Starting mileage (${currentMileage.toLocaleString()}) cannot be less than the last recorded mileage (${lastRecordedMileage.toLocaleString()})`,
+        `Starting mileage (${currentMileage.toLocaleString()}) cannot be less than the last recorded mileage (${lastRecordedMileage.toLocaleString()})`
       );
     } else {
       setIsValidMileage(true);
@@ -229,7 +229,7 @@ export default function TruckDriverForm({
             setDisplayValue(
               startingMileage && startingMileage > 0
                 ? startingMileage.toString()
-                : "",
+                : ""
             );
           }}
           disabled={!truck.id || !selectedOpt}

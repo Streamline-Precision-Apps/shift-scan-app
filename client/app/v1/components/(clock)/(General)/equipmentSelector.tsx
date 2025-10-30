@@ -1,9 +1,10 @@
 "use client";
 import React, { useEffect, useState, Suspense } from "react";
-import NewCodeFinder from "@/components/(search)/newCodeFinder";
-import { useDBEquipment } from "@/app/context/dbCodeContext";
+import NewCodeFinder from "@/app/v1/components/(search)/newCodeFinder";
+
 import { useTranslations } from "next-intl";
 import EquipmentSelectorLoading from "../(loading)/equipmentSelectorLoading";
+import { useEquipmentStore } from "@/app/lib/store/equipmentStore";
 
 type Option = {
   id: string; // Optional ID for compatibility
@@ -24,22 +25,22 @@ export const EquipmentSelector = ({
   useEquipmentId = false,
 }: EquipmentSelectorProps) => {
   const [selectedEquipment, setSelectedEquipment] = useState<Option | null>(
-    null,
+    null
   );
   const [equipmentOptions, setEquipmentOptions] = useState<Option[]>([]);
   const t = useTranslations("Clock");
-  const { equipmentResults } = useDBEquipment();
+  const { equipments: equipmentResults } = useEquipmentStore();
 
   useEffect(() => {
     if (equipmentResults) {
-      // Filter out archived equipment for the selector
+      // Filter out archived equipment and equipment with null/undefined codes
       const activeEquipment = equipmentResults.filter(
-        (equipment) => equipment.status !== "ARCHIVED",
+        (equipment) => equipment.status !== "ARCHIVED" && equipment.code != null
       );
 
       const options = activeEquipment.map((equipment) => ({
         id: equipment.id,
-        viewpoint: equipment.code,
+        viewpoint: equipment.code!, // Non-null assertion is safe due to filter above
         code: equipment.qrId,
         label: equipment.name,
       }));
@@ -51,7 +52,7 @@ export const EquipmentSelector = ({
   useEffect(() => {
     if (initialValue && equipmentOptions.length > 0) {
       const foundOption = equipmentOptions.find(
-        (opt) => opt.code === initialValue.code,
+        (opt) => opt.code === initialValue.code
       );
       // Only update if different
       if (

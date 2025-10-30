@@ -206,7 +206,6 @@ export const PermissionsProvider: React.FC<{ children: React.ReactNode }> = ({
         requestCameraPermission,
         requestPhotosPermission,
         requestLocationPermission,
-
         permissionStatus,
         refreshPermissionStatus,
       }}

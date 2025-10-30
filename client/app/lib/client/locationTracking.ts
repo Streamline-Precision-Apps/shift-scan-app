@@ -1,4 +1,5 @@
 import { Geolocation } from "@capacitor/geolocation";
+import { Capacitor } from "@capacitor/core";
 import { getAuth } from "firebase/auth";
 
 declare const window: any;
@@ -16,7 +17,7 @@ export interface LocationLog {
     platform?: string | null;
   };
 }
-
+const isNative = Capacitor.isNativePlatform();
 // Store the watch ID globally (module scope)
 let watchId: string | null = null;
 
@@ -137,6 +138,42 @@ export function stopLocationWatch() {
   if (BackgroundGeolocation) {
     BackgroundGeolocation.stop();
     BackgroundGeolocation.removeAllListeners();
+  }
+}
+
+// Get the current coordinates of the user (for clock in/out)
+export async function getStoredCoordinates() {
+  try {
+    if (isNative) {
+      const pos = await Geolocation.getCurrentPosition();
+      if (!pos) throw new Error("Geolocation position is null");
+      return {
+        lat: pos.coords.latitude,
+        lng: pos.coords.longitude,
+      };
+    } else if (typeof navigator !== "undefined" && navigator.geolocation) {
+      // Fallback to browser geolocation API
+      return new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            resolve({
+              lat: pos.coords.latitude,
+              lng: pos.coords.longitude,
+            });
+          },
+          (err) => {
+            console.error("Browser geolocation error:", err);
+            resolve(null);
+          },
+          { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+        );
+      });
+    } else {
+      throw new Error("No geolocation API available");
+    }
+  } catch (err) {
+    console.error("Failed to get current coordinates:", err);
+    return null;
   }
 }
 

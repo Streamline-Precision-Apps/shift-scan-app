@@ -10,7 +10,7 @@ import { Grids } from "../(reusable)/grids";
 import { Images } from "../(reusable)/images";
 import { Contents } from "../(reusable)/contents";
 import { TitleBoxes } from "../(reusable)/titleBoxes";
-import { usePermissions } from "@/app/context/PermissionsContext";
+import { usePermissions } from "@/app/lib/context/permissionContext";
 
 type Option = {
   id: string;
@@ -49,26 +49,35 @@ export default function QRStep({
   const t = useTranslations("Clock");
   const [startCamera, setStartCamera] = useState<boolean>(false);
   const [failedToScan, setFailedToScan] = useState(false);
-  const { requestAllPermissions, permissions } = usePermissions();
+  const {
+    permissionStatus,
+    requestCameraPermission,
+    requestLocationPermission,
+  } = usePermissions();
 
   // Request permissions when component mounts (entering QR scan step)
   // Only request if permissions are not already granted
   useEffect(() => {
     const requestPermissions = async () => {
       // Skip if both permissions are already granted
-      if (permissions.camera && permissions.location) {
+      if (permissionStatus.camera && permissionStatus.location) {
         return;
       }
 
       try {
-        await requestAllPermissions();
+        if (!permissionStatus.camera) {
+          await requestCameraPermission();
+        }
+        if (!permissionStatus.location) {
+          await requestLocationPermission();
+        }
       } catch (error) {
         console.error("Error requesting permissions:", error);
       }
     };
 
     requestPermissions();
-  }, [requestAllPermissions, permissions]);
+  }, [permissionStatus, requestCameraPermission, requestLocationPermission]);
 
   useEffect(() => {
     setTimeout(() => {

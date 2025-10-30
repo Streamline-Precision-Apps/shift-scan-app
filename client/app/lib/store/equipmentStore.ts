@@ -6,6 +6,7 @@ export type Equipment = {
   name: string;
   qrId: string;
   status: string;
+  equipmentTag: string;
   code?: string;
   approvalStatus?: string;
 };
@@ -25,6 +26,7 @@ const sanitizeEquipments = (equipments: any[]): Equipment[] => {
     name: eq.name,
     qrId: eq.qrId,
     status: eq.status,
+    equipmentTag: eq.equipmentTag,
     code: eq.code,
     approvalStatus: eq.approvalStatus,
   }));

@@ -1,11 +1,11 @@
 "use client";
-import { useSession } from "next-auth/react";
+
 import { Buttons } from "../(reusable)/buttons";
 import { Holds } from "../(reusable)/holds";
 import { Grids } from "../(reusable)/grids";
 import { Titles } from "../(reusable)/titles";
 import { useTranslations } from "next-intl";
-import { useCommentData } from "@/app/context/CommentContext";
+
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Images } from "../(reusable)/images";
 import { Selects } from "../(reusable)/selects";
@@ -13,6 +13,8 @@ import { TextAreas } from "../(reusable)/textareas";
 import { Texts } from "../(reusable)/texts";
 import { Labels } from "../(reusable)/labels";
 import { TitleBoxes } from "../(reusable)/titleBoxes";
+import { useCommentData } from "@/app/lib/context/CommentContext";
+import { useUserStore } from "@/app/lib/store/userStore";
 
 type Props = {
   handleNextStep: () => void;
@@ -39,18 +41,19 @@ export default function SwitchJobsMultiRoles({
   clockOutComment,
 }: Props) {
   const t = useTranslations("Clock");
-  const { data: session } = useSession();
-  const tascoView = session?.user.tascoView;
-  const truckView = session?.user.truckView;
-  const mechanicView = session?.user.mechanicView;
-  const laborView = session?.user.laborView;
+  const { user } = useUserStore();
+
+  const tascoView = user?.tascoView;
+  const truckView = user?.truckView;
+  const mechanicView = user?.mechanicView;
+  const laborView = user?.laborView;
   const { setCommentData } = useCommentData();
   const [commentsValue, setCommentsValue] = useState<string>("");
   const [submittable, setSubmittable] = useState<boolean>(false);
 
   // Use a local state to store the selected main role
   const [tempClockInRole, setTempClockInRole] = useState<string | undefined>(
-    clockInRole,
+    clockInRole
   );
 
   const selectView = (selectedRoleType: string) => {
@@ -60,7 +63,8 @@ export default function SwitchJobsMultiRoles({
     if (
       selectedRoleType === "tascoAbcdLabor" ||
       selectedRoleType === "tascoAbcdEquipment" ||
-      selectedRoleType === "tascoEEquipment"
+      selectedRoleType === "tascoEEquipment" ||
+      selectedRoleType === "tascoFEquipment"
     ) {
       newRole = "tasco";
     } else if (
@@ -216,7 +220,6 @@ export default function SwitchJobsMultiRoles({
             <option value="">{t("SelectWorkType")}</option>
             {tascoView === true && (
               <>
-                <option value="general">{t("GeneralLabor")}</option>
                 <option value="tascoAbcdLabor">{t("TASCOABCDLabor")}</option>
                 <option value="tascoAbcdEquipment">
                   {t("TASCOABCDEquipmentOperator")}
@@ -224,12 +227,14 @@ export default function SwitchJobsMultiRoles({
                 <option value="tascoEEquipment">
                   {t("TASCOEEquipmentOperator")}
                 </option>
+                <option value="tascoFEquipment">
+                  {t("TASCOFEquipmentOperator")}
+                </option>
               </>
             )}
             {truckView === true && (
               <>
                 <option value="truckDriver">{t("TruckDriver")}</option>
-                <option value="general">{t("General")}</option>
                 {/* <option value="truckEquipmentOperator">
                           {t("TruckEquipmentOperator")}
                         </option>

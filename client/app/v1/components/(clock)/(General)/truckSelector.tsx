@@ -1,9 +1,9 @@
 "use client";
 import React, { useEffect, useState, Suspense } from "react";
-import NewCodeFinder from "@/components/(search)/newCodeFinder";
-import { useDBEquipment } from "@/app/context/dbCodeContext";
+import NewCodeFinder from "@/app/v1/components/(search)/newCodeFinder";
 import { useTranslations } from "next-intl";
 import TruckSelectorLoading from "../(loading)/truckSelectorLoading";
+import { useEquipmentStore } from "@/app/lib/store/equipmentStore";
 
 type Option = {
   id: string; // ID is now required
@@ -20,7 +20,7 @@ type TruckSelectorProps = {
 const TruckSelector = ({ onTruckSelect, initialValue }: TruckSelectorProps) => {
   const [selectedTruck, setSelectedTruck] = useState<Option | null>(null);
   const [truckOptions, setTruckOptions] = useState<Option[]>([]);
-  const { equipmentResults } = useDBEquipment();
+  const { equipments: equipmentResults } = useEquipmentStore();
   const t = useTranslations("Clock");
   // Initialize with the passed initialValue
   useEffect(() => {
@@ -29,11 +29,12 @@ const TruckSelector = ({ onTruckSelect, initialValue }: TruckSelectorProps) => {
         .filter(
           (equipment) =>
             equipment.equipmentTag === "TRUCK" &&
-            equipment.status !== "ARCHIVED",
+            equipment.status !== "ARCHIVED" &&
+            equipment.code != null // Filter out trucks with null codes
         )
         .map((equipment) => ({
           id: equipment.id,
-          viewpoint: equipment.code,
+          viewpoint: equipment.code!, // Non-null assertion is safe due to filter above
           code: equipment.qrId,
           label: equipment.name,
         }));
@@ -44,7 +45,7 @@ const TruckSelector = ({ onTruckSelect, initialValue }: TruckSelectorProps) => {
   useEffect(() => {
     if (initialValue && truckOptions.length > 0) {
       const foundOption = truckOptions.find(
-        (opt) => opt.code === initialValue.code,
+        (opt) => opt.code === initialValue.code
       );
       if (foundOption) {
         setSelectedTruck(foundOption);

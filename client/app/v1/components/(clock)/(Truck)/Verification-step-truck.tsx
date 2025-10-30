@@ -1,10 +1,8 @@
 "use client";
 import React, { useState } from "react";
 import { useTranslations } from "next-intl";
-import { useTimeSheetData } from "@/app/context/TimeSheetIdContext";
 import { handleTruckTimeSheet } from "@/app/lib/actions/timeSheetActions";
 
-import { useCommentData } from "@/app/context/CommentContext";
 import {
   setCurrentPageView,
   setLaborType,
@@ -22,6 +20,11 @@ import { Texts } from "@/app/v1/components/(reusable)/texts";
 import { Titles } from "@/app/v1/components/(reusable)/titles";
 import Spinner from "@/app/v1/components/(animations)/spinner";
 import { TitleBoxes } from "@/app/v1/components/(reusable)/titleBoxes";
+
+import { useUserStore } from "@/app/lib/store/userStore";
+import { usePermissions } from "@/app/lib/context/permissionContext";
+import { useCommentData } from "@/app/lib/context/CommentContext";
+import { useTimeSheetData } from "@/app/lib/context/TimeSheetIdContext";
 
 type Options = {
   id: string;
@@ -68,9 +71,9 @@ export default function TruckVerificationStep({
   const { savedCommentData, setCommentData } = useCommentData();
   const router = useRouter();
   const { savedTimeSheetData, refetchTimesheet } = useTimeSheetData();
-
+  const { permissionStatus } = usePermissions();
   if (!user) return null; // Conditional rendering for session
-  const { id } = user;
+  const id = user.id;
 
   const handleSubmit = async () => {
     try {
@@ -80,12 +83,12 @@ export default function TruckVerificationStep({
         return;
       }
       // Check if location permissions are granted if not clock in does not work
-      if (!permissions.location) {
+      if (!permissionStatus.location) {
         console.error("Location permissions are required to clock in.");
         return;
       }
 
-      const getStoredCoordinatesResult = getStoredCoordinates();
+      // const getStoredCoordinatesResult = getStoredCoordinates();
       const formData = new FormData();
       formData.append("submitDate", new Date().toISOString());
       formData.append("userId", id?.toString() || "");
@@ -100,14 +103,14 @@ export default function TruckVerificationStep({
       // formData.append("trailer", trailer?.id || ""); // sets trailer ID if applicable
       formData.append("equipment", equipment?.id || ""); // sets equipment Id if applicable
       // fetch coordinates from permissions context
-      formData.append(
-        "clockInLat",
-        getStoredCoordinatesResult?.latitude.toString() || ""
-      );
-      formData.append(
-        "clockInLong",
-        getStoredCoordinatesResult?.longitude.toString() || ""
-      );
+      // formData.append(
+      //   "clockInLat",
+      //   getStoredCoordinatesResult?.latitude.toString() || ""
+      // );
+      // formData.append(
+      //   "clockInLong",
+      //   getStoredCoordinatesResult?.longitude.toString() || ""
+      // );
 
       // If switching jobs, include the previous timesheet ID
       if (type === "switchJobs") {
@@ -129,14 +132,14 @@ export default function TruckVerificationStep({
           savedCommentData?.id.toString() || ""
         );
         formData.append("type", "switchJobs"); // added to switch jobs
-        formData.append(
-          "clockOutLat",
-          getStoredCoordinatesResult?.latitude.toString() || ""
-        );
-        formData.append(
-          "clockOutLong",
-          getStoredCoordinatesResult?.longitude.toString() || ""
-        );
+        //   formData.append(
+        //     "clockOutLat",
+        //     getStoredCoordinatesResult?.latitude.toString() || ""
+        //   );
+        //   formData.append(
+        //     "clockOutLong",
+        //     getStoredCoordinatesResult?.longitude.toString() || ""
+        //   );
       }
 
       // Use the new transaction-based function

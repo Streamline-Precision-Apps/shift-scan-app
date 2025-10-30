@@ -736,6 +736,8 @@
     "TASCOABCDLabor": "TASCO ABCD Labor",
     "TASCOABCDEquipmentOperator": "TASCO ABCD Equipment Operator",
     "TASCOEEquipmentOperator": "TASCO E Shift Equipment Operator",
+    "TASCOFEquipmentOperator": "TASCO F Shift Equipment Operator",
+    "TASCOFShift": "TASCO F Shift - Screen Lime",
     "PleaseChooseYourRole": "Please choose your role:",
     "ChangeJobsite": "Change Job Site",
     "ChangeCostCode": "Change Cost Code",

@@ -1,9 +1,10 @@
 "use client";
 import React, { useEffect, useState, Suspense } from "react";
-import NewCodeFinder from "@/components/(search)/newCodeFinder";
-import { useDBJobsite } from "@/app/context/dbCodeContext";
+import NewCodeFinder from "@/app/v1/components/(search)/newCodeFinder";
+
 import { useTranslations } from "next-intl";
 import JobsiteSelectorLoading from "../(loading)/jobsiteSelectorLoading";
+import { useProfitStore } from "@/app/lib/store/profitStore";
 
 type Option = {
   id: string;
@@ -24,12 +25,13 @@ export const JobsiteSelector = ({
 }: EquipmentSelectorProps) => {
   const [selectedJobsite, setSelectedJobsite] = useState<Option | null>(null);
   const [jobsiteOptions, setJobsiteOptions] = useState<Option[]>([]);
-  const { jobsiteResults } = useDBJobsite();
+  const { jobsites: jobsiteResults } = useProfitStore();
+
   const t = useTranslations("Clock");
   useEffect(() => {
     // Filter out archived jobsites for the selector, but keep all for QR scanning
     const activeJobsites = jobsiteResults.filter(
-      (jobSite) => jobSite.status !== "ARCHIVED",
+      (jobSite) => jobSite.status !== "ARCHIVED"
     );
 
     const options = activeJobsites.map((jobSite) => ({
@@ -45,7 +47,7 @@ export const JobsiteSelector = ({
   useEffect(() => {
     if (initialValue && jobsiteOptions.length > 0) {
       const foundOption = jobsiteOptions.find(
-        (opt) => opt.code === initialValue.code,
+        (opt) => opt.code === initialValue.code
       );
       if (foundOption) {
         setSelectedJobsite(foundOption);

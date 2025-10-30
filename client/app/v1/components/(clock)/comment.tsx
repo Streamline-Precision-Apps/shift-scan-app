@@ -8,8 +8,8 @@ import { TextAreas } from "../(reusable)/textareas";
 import { Texts } from "../(reusable)/texts";
 import { useTranslations } from "next-intl";
 import { Titles } from "../(reusable)/titles";
-import { breakOutTimeSheet } from "@/actions/timeSheetActions";
-import { setCurrentPageView } from "@/actions/cookieActions";
+import { breakOutTimeSheet } from "@/app/lib/actions/timeSheetActions";
+import { setCurrentPageView } from "@/app/lib/actions/cookieActions";
 import { useRouter } from "next/navigation";
 
 export default function Comment({

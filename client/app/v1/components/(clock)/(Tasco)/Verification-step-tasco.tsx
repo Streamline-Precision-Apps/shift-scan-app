@@ -1,9 +1,9 @@
 "use client";
 import React, { Dispatch, SetStateAction, useState } from "react";
 import { useTranslations } from "next-intl";
-import { useTimeSheetData } from "@/app/context/TimeSheetIdContext";
+
 import { handleTascoTimeSheet } from "@/app/lib/actions/timeSheetActions"; // Updated import
-import { useCommentData } from "@/app/context/CommentContext";
+
 import {
   setCurrentPageView,
   setLaborType,
@@ -21,8 +21,11 @@ import { Texts } from "@/app/v1/components/(reusable)/texts";
 import { Titles } from "@/app/v1/components/(reusable)/titles";
 import Spinner from "@/app/v1/components/(animations)/spinner";
 import { TitleBoxes } from "@/app/v1/components/(reusable)/titleBoxes";
-import { usePermissions } from "@/app/context/PermissionsContext";
+
 import { useUserStore } from "@/app/lib/store/userStore";
+import { usePermissions } from "@/app/lib/context/permissionContext";
+import { useCommentData } from "@/app/lib/context/CommentContext";
+import { useTimeSheetData } from "@/app/lib/context/TimeSheetIdContext";
 
 type Option = {
   id: string;
@@ -66,13 +69,15 @@ export default function TascoVerificationStep({
   const t = useTranslations("Clock");
   const [date] = useState(new Date());
   const [loading, setLoading] = useState<boolean>(false);
+
   const { user } = useUserStore();
   const { savedCommentData, setCommentData } = useCommentData();
   const router = useRouter();
   const { savedTimeSheetData, refetchTimesheet } = useTimeSheetData();
-  const { permissions, getStoredCoordinates } = usePermissions();
+  const { permissionStatus } = usePermissions();
+
   if (!user) return null; // Conditional rendering for session
-  const { id } = user;
+  const id = user.id;
 
   const handleSubmit = async () => {
     try {
@@ -83,12 +88,12 @@ export default function TascoVerificationStep({
         return;
       }
       // Check if location permissions are granted if not clock in does not work
-      if (!permissions.location) {
+      if (!permissionStatus.location) {
         console.error("Location permissions are required to clock in.");
         return;
       }
 
-      const getStoredCoordinatesResult = getStoredCoordinates();
+      // const getStoredCoordinatesResult = getStoredCoordinates();
       const formData = new FormData();
       formData.append("submitDate", new Date().toISOString());
       formData.append("userId", id);
@@ -97,14 +102,14 @@ export default function TascoVerificationStep({
       formData.append("costcode", cc?.code || "");
       formData.append("startTime", new Date().toISOString());
       // fetch coordinates from permissions context
-      formData.append(
-        "clockInLat",
-        getStoredCoordinatesResult?.latitude.toString() || ""
-      );
-      formData.append(
-        "clockInLong",
-        getStoredCoordinatesResult?.longitude.toString() || ""
-      );
+      // formData.append(
+      //   "clockInLat",
+      //   getStoredCoordinatesResult?.latitude.toString() || ""
+      // );
+      // formData.append(
+      //   "clockInLong",
+      //   getStoredCoordinatesResult?.longitude.toString() || ""
+      // );
 
       if (clockInRoleTypes === "tascoAbcdEquipment") {
         formData.append("materialType", materialType || "");
@@ -117,8 +122,14 @@ export default function TascoVerificationStep({
         formData.append("laborType", "Manual Labor");
       }
       if (clockInRoleTypes === "tascoEEquipment") {
+        formData.append("materialType", materialType || "");
         formData.append("shiftType", "E shift");
-        formData.append("laborType", "");
+        formData.append("laborType", "EShift");
+      }
+      if (clockInRoleTypes === "tascoFEquipment") {
+        formData.append("materialType", materialType || "");
+        formData.append("shiftType", "F Shift");
+        formData.append("laborType", "FShift");
       }
       formData.append("workType", role);
       formData.append("equipment", equipment?.id || "");
@@ -144,14 +155,14 @@ export default function TascoVerificationStep({
           savedCommentData?.id.toString() || ""
         );
         formData.append("type", "switchJobs");
-        formData.append(
-          "clockOutLat",
-          getStoredCoordinatesResult?.latitude.toString() || ""
-        );
-        formData.append(
-          "clockOutLong",
-          getStoredCoordinatesResult?.longitude.toString() || ""
-        );
+        // formData.append(
+        //   "clockOutLat",
+        //   getStoredCoordinatesResult?.latitude.toString() || ""
+        // );
+        // formData.append(
+        //   "clockOutLong",
+        //   getStoredCoordinatesResult?.longitude.toString() || ""
+        // );
       }
 
       // Use the new transaction-based function
@@ -179,7 +190,13 @@ export default function TascoVerificationStep({
       await Promise.all([
         setCurrentPageView("dashboard"),
         setWorkRole(role),
-        setLaborType(clockInRoleTypes || ""),
+        setLaborType(
+          clockInRoleTypes === "tascoEEquipment"
+            ? "EShift"
+            : clockInRoleTypes === "tascoFEquipment"
+            ? "FShift"
+            : clockInRoleTypes || ""
+        ),
         refetchTimesheet(),
       ]).then(() => router.push("/dashboard"));
     } catch (error) {
@@ -258,6 +275,8 @@ export default function TascoVerificationStep({
                               ? "TASCO ABCD EQ Operator"
                               : clockInRoleTypes === "tascoEEquipment"
                               ? "TASCO E EQ Operator"
+                              : clockInRoleTypes === "tascoFEquipment"
+                              ? "TASCO F EQ Operator"
                               : clockInRoleTypes
                           }
                           className="text-center text-base"
@@ -296,24 +315,22 @@ export default function TascoVerificationStep({
                         />
                       </Holds>
 
-                      {clockInRoleTypes !== "tascoEEquipment" && (
-                        <Holds className="pb-2">
-                          <Labels
-                            htmlFor="materialType-label"
-                            size={"p3"}
-                            position={"left"}
-                          >
-                            {t("MaterialType")}
-                          </Labels>
-                          <Inputs
-                            state="disabled"
-                            name="materialType-label"
-                            variant={"white"}
-                            data={materialType || ""}
-                            className="text-center text-base"
-                          />
-                        </Holds>
-                      )}
+                      <Holds className="pb-2">
+                        <Labels
+                          htmlFor="materialType-label"
+                          size={"p3"}
+                          position={"left"}
+                        >
+                          {t("MaterialType")}
+                        </Labels>
+                        <Inputs
+                          state="disabled"
+                          name="materialType-label"
+                          variant={"white"}
+                          data={materialType || ""}
+                          className="text-center text-base"
+                        />
+                      </Holds>
                       {equipment?.label && (
                         <Holds className="pb-2">
                           <Labels

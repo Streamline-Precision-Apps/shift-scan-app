@@ -9,9 +9,9 @@ import React, {
 } from "react";
 import QrScanner from "qr-scanner";
 import { useRouter } from "next/navigation";
-import { useEQScanData } from "@/app/context/equipmentContext";
-import { useDBJobsite } from "@/app/context/dbCodeContext";
-import { usePermissions } from "@/app/context/PermissionsContext";
+
+import { useProfitStore } from "@/app/lib/store/profitStore";
+import { useEQScanData } from "@/app/lib/context/equipmentContext";
 
 type Option = {
   id: string;
@@ -48,7 +48,8 @@ export default function QR({
   const router = useRouter();
 
   // Custom hooks
-  const { jobsiteResults } = useDBJobsite();
+  const { jobsites: jobsiteResults } = useProfitStore();
+
   const { setscanEQResult } = useEQScanData();
 
   // Performance patch: Override getContext to add willReadFrequently for 2d contexts
@@ -57,7 +58,7 @@ export default function QR({
     HTMLCanvasElement.prototype.getContext = function (
       this: HTMLCanvasElement,
       type: string,
-      options?: CanvasRenderingContext2DSettings,
+      options?: CanvasRenderingContext2DSettings
     ) {
       if (type === "2d") {
         options = { ...options, willReadFrequently: true };
@@ -79,7 +80,7 @@ export default function QR({
       qrScannerRef.current?.stop();
       handleNextStep();
     },
-    [setscanEQResult, handleNextStep],
+    [setscanEQResult, handleNextStep]
   );
 
   // In your QR component (qr-handler.tsx), update the processGeneralScan function:
@@ -87,7 +88,7 @@ export default function QR({
     (data: string) => {
       // Find the matching jobsite from the jobsiteResults (case-insensitive)
       const matchedJobsite = jobsiteResults?.find(
-        (j) => j.qrId.toLowerCase() === data.toLowerCase(),
+        (j) => j.qrId.toLowerCase() === data.toLowerCase()
       );
       if (matchedJobsite) {
         setJobsite({
@@ -104,7 +105,7 @@ export default function QR({
         throw new Error("Invalid QR code Scanned!");
       }
     },
-    [jobsiteResults, handleScanJobsite, clockInRole],
+    [jobsiteResults, handleScanJobsite, clockInRole]
   );
 
   // ----------------------- End of scan processes -------------------------------
@@ -120,7 +121,7 @@ export default function QR({
 
         if (
           !jobsiteResults?.some(
-            (j) => j.qrId.toLowerCase() === data.toLowerCase(),
+            (j) => j.qrId.toLowerCase() === data.toLowerCase()
           )
         ) {
           console.error("Error: QR code not found in jobsiteResults", data);
@@ -149,7 +150,7 @@ export default function QR({
       processGeneralScan,
       setStartCamera,
       setFailedToScan,
-    ],
+    ]
   );
 
   const handleScanFail = useCallback(() => {

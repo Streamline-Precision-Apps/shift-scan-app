@@ -1,17 +1,19 @@
 "use client";
-import { useSession } from "next-auth/react";
+
 import { Buttons } from "../(reusable)/buttons";
 import { Holds } from "../(reusable)/holds";
 import { Grids } from "../(reusable)/grids";
 import { Titles } from "../(reusable)/titles";
 import { useTranslations } from "next-intl";
-import { useCommentData } from "@/app/context/CommentContext";
+
 import { Dispatch, SetStateAction, useState } from "react";
-import Comment from "@/components/(clock)/comment";
+import Comment from "@/app/v1/components/(clock)/comment";
 import { Images } from "../(reusable)/images";
 import { Selects } from "../(reusable)/selects";
 import { Contents } from "../(reusable)/contents";
 import { TitleBoxes } from "../(reusable)/titleBoxes";
+import { useUserStore } from "@/app/lib/store/userStore";
+import { useCommentData } from "@/app/lib/context/CommentContext";
 
 type Props = {
   handleNextStep: () => void;
@@ -39,11 +41,11 @@ export default function MultipleRoles({
 }: Props) {
   const [page, setPage] = useState("");
   const t = useTranslations("Clock");
-  const { data: session } = useSession();
-  const tascoView = session?.user.tascoView;
-  const truckView = session?.user.truckView;
-  const mechanicView = session?.user.mechanicView;
-  const laborView = session?.user.laborView;
+  const { user } = useUserStore();
+  const tascoView = user?.tascoView;
+  const truckView = user?.truckView;
+  const mechanicView = user?.mechanicView;
+  const laborView = user?.laborView;
   const { setCommentData } = useCommentData();
   const [commentsValue, setCommentsValue] = useState("");
 
@@ -122,6 +124,9 @@ export default function MultipleRoles({
                           </option>
                           <option value="tascoEEquipment">
                             {t("TASCOEEquipmentOperator")}
+                          </option>
+                          <option value="tascoFEquipment">
+                            {t("TASCOFEquipmentOperator")}
                           </option>
                         </>
                       )}

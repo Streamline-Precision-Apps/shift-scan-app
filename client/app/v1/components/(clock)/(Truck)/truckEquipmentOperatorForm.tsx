@@ -1,9 +1,9 @@
-import { setEquipment } from "@/actions/cookieActions";
-import { Holds } from "@/components/(reusable)/holds";
+import { setEquipment } from "@/app/lib/actions/cookieActions";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
 
 import { Dispatch, SetStateAction, useState } from "react";
 import { EquipmentSelector } from "../(General)/equipmentSelector";
-import { Grids } from "@/components/(reusable)/grids";
+import { Grids } from "@/app/v1/components/(reusable)/grids";
 import StepButtons from "../step-buttons";
 
 type Option = {

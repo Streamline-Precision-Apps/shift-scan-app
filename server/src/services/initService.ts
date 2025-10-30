@@ -40,6 +40,7 @@ export async function getUserWithSettingsById(userId: string) {
       code: true,
       approvalStatus: true,
       archiveDate: true,
+      status: true,
     },
   });
 
@@ -52,6 +53,7 @@ export async function getUserWithSettingsById(userId: string) {
       code: true,
       approvalStatus: true,
       status: true,
+      equipmentTag: true,
     },
   });
 
