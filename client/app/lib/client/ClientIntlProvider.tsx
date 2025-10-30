@@ -95,7 +95,6 @@ export default function ClientIntlProvider({
           const newLocale = cookieLocale as Locale;
           setLocale((prev) => {
             if (prev !== newLocale) {
-              console.log(`🌍 Locale changed (cookie updated): ${prev} → ${newLocale}`);
               // Load new messages if needed
               if (newLocale !== defaultLocale) {
                 loadMessages(newLocale)

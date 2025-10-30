@@ -54,12 +54,10 @@ export default function ChangePassword() {
 
     const verifyToken = async () => {
       try {
-        console.log("🔍 Verifying password reset token...");
         const result = await verifyPasswordResetToken(token);
 
         if (result.valid) {
           setTokenStatus("valid");
-          console.log("✅ Token is valid");
         } else {
           // Determine if expired or invalid
           if (result.error?.includes("expired")) {
@@ -69,7 +67,6 @@ export default function ChangePassword() {
             setTokenStatus("invalid");
             setTokenError(result.error || "Invalid reset token");
           }
-          console.log("❌ Token invalid or expired:", result.error);
         }
       } catch (error) {
         console.error("❌ Error verifying token:", error);
@@ -86,7 +83,6 @@ export default function ChangePassword() {
     return () => {
       // If user leaves the page without resetting password, delete the token
       if (token && tokenStatus === "valid") {
-        console.log("👋 User leaving page, deleting token...");
         deleteToken(token);
       }
     };
@@ -108,12 +104,7 @@ export default function ChangePassword() {
 
       const data = await response.json();
 
-      if (response.ok) {
-        console.log("✅ Reset token deleted:", data.message);
-      } else if (response.status === 404) {
-        // Token already deleted or doesn't exist - this is okay
-        console.log("ℹ️  Token already deleted or not found");
-      } else {
+      if (!response.ok) {
         console.error(
           "❌ Failed to delete token:",
           data.error || "Unknown error"
@@ -194,7 +185,6 @@ export default function ChangePassword() {
     }
 
     try {
-      console.log("🔐 Resetting password...");
       const result = await resetUserPassword(token!, newPassword);
 
       if (result.error) {
@@ -229,7 +219,6 @@ export default function ChangePassword() {
   // Handle cancel - delete token and go back
   const handleCancel = async () => {
     if (token) {
-      console.log("❌ User cancelled reset, deleting token...");
       await deleteToken(token);
     }
     router.push("/signin");

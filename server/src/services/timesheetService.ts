@@ -187,3 +187,259 @@ export async function getTimesheetDetailsManager({
   });
   return timesheet;
 }
+
+// Get all timesheets for all users in a manager's crew
+export async function getManagerCrewTimesheets({
+  managerId,
+}: {
+  managerId: string;
+}) {
+  // Find all users in crews led by this manager
+  const crew = await prisma.user.findMany({
+    where: {
+      Crews: {
+        some: {
+          leadId: managerId,
+        },
+      },
+    },
+    select: {
+      id: true,
+      firstName: true,
+      lastName: true,
+      clockedIn: true,
+      Crews: {
+        select: {
+          id: true,
+          leadId: true,
+        },
+      },
+
+      TimeSheets: {
+        where: {
+          status: "PENDING",
+          endTime: { not: null },
+        },
+        select: {
+          id: true,
+          date: true,
+          startTime: true,
+          endTime: true,
+          jobsiteId: true,
+          workType: true,
+          Jobsite: {
+            select: {
+              name: true,
+            },
+          },
+          CostCode: {
+            select: {
+              name: true,
+            },
+          },
+          TascoLogs: {
+            select: {
+              id: true,
+              shiftType: true,
+              laborType: true,
+              materialType: true,
+              LoadQuantity: true,
+              Equipment: {
+                select: {
+                  id: true,
+                  name: true,
+                },
+              },
+              RefuelLogs: {
+                select: {
+                  id: true,
+                  gallonsRefueled: true,
+                  TascoLog: {
+                    select: {
+                      Equipment: {
+                        select: {
+                          name: true,
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          TruckingLogs: {
+            select: {
+              id: true,
+              laborType: true,
+              Truck: {
+                select: { id: true, name: true },
+              },
+              Trailer: {
+                select: { id: true, name: true },
+              },
+              Equipment: {
+                select: {
+                  id: true,
+                  name: true,
+                },
+              },
+              startingMileage: true,
+              endingMileage: true,
+              Materials: {
+                select: {
+                  id: true,
+                  name: true,
+                  quantity: true,
+                  loadType: true,
+                  unit: true,
+                  LocationOfMaterial: true,
+                  materialWeight: true,
+                },
+              },
+              EquipmentHauled: {
+                select: {
+                  id: true,
+                  source: true,
+                  destination: true,
+                  Equipment: {
+                    select: {
+                      name: true,
+                    },
+                  },
+                },
+              },
+              RefuelLogs: {
+                select: {
+                  id: true,
+                  gallonsRefueled: true,
+                  milesAtFueling: true,
+                  TruckingLog: {
+                    select: {
+                      Equipment: {
+                        select: {
+                          name: true,
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+              StateMileages: {
+                select: {
+                  id: true,
+                  state: true,
+                  stateLineMileage: true,
+                  TruckingLog: {
+                    select: {
+                      Equipment: {
+                        select: {
+                          name: true,
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          EmployeeEquipmentLogs: {
+            select: {
+              id: true,
+              startTime: true,
+              endTime: true,
+              Equipment: {
+                select: {
+                  id: true,
+                  name: true,
+                },
+              },
+              RefuelLog: {
+                select: {
+                  id: true,
+                  gallonsRefueled: true,
+                },
+              },
+            },
+          },
+          status: true,
+        },
+      },
+    },
+  });
+  return crew;
+}
+// Batch approve timesheets and handle notifications
+export async function approveTimesheetsBatchService({
+  userId,
+  timesheetIds,
+  statusComment,
+  editorId,
+}: {
+  userId: string;
+  timesheetIds: number[];
+  statusComment: string;
+  editorId: string;
+}) {
+  try {
+    // Update all matching timesheets with the same values
+    await prisma.timeSheet.updateMany({
+      where: {
+        id: { in: timesheetIds },
+        userId,
+      },
+      data: {
+        status: "APPROVED",
+        statusComment,
+      },
+    });
+
+    // check for notifications
+    const notifications = await prisma.notification.findMany({
+      where: {
+        topic: "timecard-submission",
+        referenceId: { in: timesheetIds.map(String) },
+        Response: { is: null },
+      },
+    });
+
+    if (notifications.length > 0) {
+      // Filter out notifications that already have a notificationRead for this user
+      const existingReads = await prisma.notificationRead.findMany({
+        where: {
+          notificationId: { in: notifications.map((n) => n.id) },
+          userId: editorId,
+        },
+        select: { notificationId: true },
+      });
+      const alreadyReadIds = new Set(
+        existingReads.map((r) => r.notificationId)
+      );
+      const unreadNotifications = notifications.filter(
+        (n) => !alreadyReadIds.has(n.id)
+      );
+      await prisma.$transaction(async (tx) => {
+        if (unreadNotifications.length > 0) {
+          await tx.notificationRead.createMany({
+            data: unreadNotifications.map((n) => ({
+              notificationId: n.id,
+              userId: editorId,
+              readAt: new Date(),
+            })),
+          });
+        }
+        await tx.notificationResponse.createMany({
+          data: notifications.map((n) => ({
+            notificationId: n.id,
+            userId: editorId,
+            response: "Approved",
+            respondedAt: new Date(),
+          })),
+        });
+      });
+    }
+    return { success: true };
+  } catch (error) {
+    console.error("Error updating timesheets:", error);
+    return { success: false, error: "Failed to update timesheets" };
+  }
+}

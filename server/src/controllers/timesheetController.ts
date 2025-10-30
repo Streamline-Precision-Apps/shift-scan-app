@@ -1,7 +1,9 @@
 import {
+  approveTimesheetsBatchService,
   updateTimesheetService,
   getUserTimesheetsByDate,
   getTimesheetDetailsManager,
+  getManagerCrewTimesheets,
 } from "../services/timesheetService.js";
 
 import Express from "express";
@@ -71,12 +73,10 @@ export async function updateTimesheet(
     return res.json(result);
   } catch (error) {
     console.error("[UpdateTimesheet] Unexpected error:", error);
-    return res
-      .status(500)
-      .json({
-        error: "Failed to update timesheet.",
-        details: error instanceof Error ? error.message : String(error),
-      });
+    return res.status(500).json({
+      error: "Failed to update timesheet.",
+      details: error instanceof Error ? error.message : String(error),
+    });
   }
 }
 
@@ -125,5 +125,77 @@ export async function getTimesheetDetailsManagerController(
     return res
       .status(500)
       .json({ error: "Failed to fetch timesheet details." });
+  }
+}
+
+// GET /v1/timesheet/manager/:managerId/crew-timesheets
+export async function getManagerCrewTimesheetsController(
+  req: Express.Request,
+  res: Express.Response
+) {
+  try {
+    const managerId = req.params.managerId;
+    if (!managerId) {
+      return res
+        .status(400)
+        .json({ error: "managerId parameter is required." });
+    }
+    // Call the service to get all timesheets for all users in the manager's crew
+    const crewTimesheets = await getManagerCrewTimesheets({ managerId });
+    return res.json({ success: true, data: crewTimesheets });
+  } catch (error) {
+    return res.status(500).json({ error: "Failed to fetch crew timesheets." });
+  }
+}
+
+// POST /v1/timesheet/approve-batch
+export async function approveTimesheetsBatchController(
+  req: Express.Request,
+  res: Express.Response
+) {
+  try {
+    let { id: userId, timesheetIds, statusComment, editorId } = req.body;
+    // Log incoming body for debugging
+    console.log("[approveTimesheetsBatchController] Incoming body:", req.body);
+    // If timesheetIds is a string (from FormData), try to parse it
+    if (typeof timesheetIds === "string") {
+      try {
+        timesheetIds = JSON.parse(timesheetIds);
+      } catch (e) {
+        return res.status(400).json({ error: "Invalid timesheetIds format." });
+      }
+    }
+    // Coerce all timesheetIds to numbers
+    if (Array.isArray(timesheetIds)) {
+      timesheetIds = timesheetIds.map((id) => Number(id));
+    }
+    if (
+      !userId ||
+      !Array.isArray(timesheetIds) ||
+      timesheetIds.length === 0 ||
+      !editorId
+    ) {
+      return res.status(400).json({
+        error: "userId, timesheetIds (array), and editorId are required.",
+      });
+    }
+    const result = await approveTimesheetsBatchService({
+      userId,
+      timesheetIds,
+      statusComment: statusComment || "",
+      editorId,
+    });
+    if (!result.success) {
+      return res
+        .status(400)
+        .json({ error: result.error || "Failed to approve timesheets." });
+    }
+    return res.json({ success: true });
+  } catch (error) {
+    console.error(
+      "[approveTimesheetsBatchController] Unexpected error:",
+      error
+    );
+    return res.status(500).json({ error: "Failed to approve timesheets." });
   }
 }

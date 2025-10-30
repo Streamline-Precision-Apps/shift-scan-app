@@ -70,7 +70,7 @@ export default function NotificationModal({ open, setOpen }: Props) {
   // Simplified state - either we're showing settings or we have a permission issue
   const [showPermissionOverlay, setShowPermissionOverlay] = useState(false);
   const [permissionType, setPermissionType] = useState<"blocked" | "needed">(
-    "needed",
+    "needed"
   );
 
   // Load current preferences
@@ -129,7 +129,7 @@ export default function NotificationModal({ open, setOpen }: Props) {
         const prefsRecord: Record<string, boolean> = {};
         AVAILABLE_TOPICS.forEach((topic) => {
           prefsRecord[topic.id] = userPrefs.some(
-            (pref) => pref.topic === topic.id,
+            (pref) => pref.topic === topic.id
           );
         });
 
@@ -168,30 +168,23 @@ export default function NotificationModal({ open, setOpen }: Props) {
   // Save preferences to server
   const handleSave = async () => {
     if (!token) {
-      console.log("Saving failed, no token available");
-
       toast.error("You need to allow notifications to save preferences");
       return;
     }
 
     try {
       setIsLoading(true);
-      console.log("Saving notification preferences1");
       // Get topics to subscribe to (enabled preferences)
       const topicsToSubscribe = Object.entries(preferences)
         .filter(([_, enabled]) => enabled)
         .map(([topic]) => topic);
-      console.log("Saving notification preferences2");
 
       // Get topics to unsubscribe from (disabled preferences)
       const userPrefs = await getUserTopicPreferences();
 
-      console.log("Current user prefs:", userPrefs); // Debug log
-      console.log("Topics to subscribe:", topicsToSubscribe); // Debug log
-
       const currentTopics = userPrefs.map((pref) => pref.topic);
       const topicsToUnsubscribe = currentTopics.filter(
-        (topic) => !topicsToSubscribe.includes(topic),
+        (topic) => !topicsToSubscribe.includes(topic)
       );
       // First, handle subscriptions if there are any
       if (topicsToSubscribe.length > 0) {
@@ -320,7 +313,7 @@ export default function NotificationModal({ open, setOpen }: Props) {
                     onClick={() => {
                       window.open(
                         "https://support.google.com/chrome/answer/3220216?hl=en",
-                        "_blank",
+                        "_blank"
                       );
                     }}
                   >
@@ -351,14 +344,14 @@ export default function NotificationModal({ open, setOpen }: Props) {
                         } else {
                           // Still denied, show appropriate message
                           setPermissionType(
-                            permission === "denied" ? "blocked" : "needed",
+                            permission === "denied" ? "blocked" : "needed"
                           );
                           setIsDataLoading(false);
                         }
                       } catch (error) {
                         console.error("Error requesting permission:", error);
                         toast.error(
-                          "Unable to request notification permission",
+                          "Unable to request notification permission"
                         );
                         setIsDataLoading(false);
                       }

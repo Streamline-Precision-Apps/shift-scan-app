@@ -132,10 +132,13 @@ import { useRouter, useSearchParams } from "next/navigation";
 import TinderSwipe from "@/app/v1/components/(animations)/tinderSwipe";
 import Spinner from "@/app/v1/components/(animations)/spinner";
 import EquipmentLogsSection from "./EquipmentLogsSection";
-import { ApproveUsersTimeSheets } from "@/actions/ManagerTimeCardActions";
+
 import { PullToRefresh } from "@/app/v1/components/(animations)/pullToRefresh";
-import { useScrollSwipeHandlers } from "@/hooks/useScrollSwipeHandlers";
+
 import { useUserStore } from "@/app/lib/store/userStore";
+import { ApproveUsersTimeSheets } from "@/app/lib/actions/ManagerTimeCardActions";
+import { useScrollSwipeHandlers } from "@/app/lib/hooks/useScrollSwipeHandlers";
+import { apiRequest } from "@/app/lib/utils/api-Utils";
 
 export default function TimeCardApprover({
   loading,
@@ -204,14 +207,15 @@ export default function TimeCardApprover({
 
   // Memoized fetchCrewTimeCards for stable reference
   const fetchCrewTimeCards = useCallback(async () => {
+    if (!managerId) return;
     try {
       setLoading(true);
-      const response = await fetch(
-        `/api/getPendingTeamTimeSheets?managerId=${managerId}`
+      // Use the apiRequest helper and new endpoint
+      const result = await apiRequest(
+        `/api/v1/timesheet/manager/${managerId}/crew-timesheets`,
+        "GET"
       );
-      if (!response.ok)
-        throw new Error(`HTTP error! status: ${response.status}`);
-      const data: TeamMember[] = await response.json();
+      const data: TeamMember[] = result.data || [];
       const membersWithTotals = data
         .map((member) => ({
           ...member,

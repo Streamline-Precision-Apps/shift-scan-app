@@ -245,7 +245,7 @@ export default function MyTeam() {
                     <Holds className="row-start-7 row-end-8 w-full ">
                       <Buttons
                         background="green"
-                        href={`/dashboard/myTeam/timecards?rPath=${url}`}
+                        href={`/v1/dashboard/myTeam/timecards?rPath=${url}`}
                         className=" w-full py-3"
                       >
                         <Titles size="lg">{t("TimeCards")}</Titles>

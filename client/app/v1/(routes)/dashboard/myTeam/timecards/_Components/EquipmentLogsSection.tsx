@@ -80,11 +80,12 @@ type TimeSheet = {
   }[];
 };
 
+import { formatDurationStrings } from "@/app/lib/utils/formatDurationStrings";
 import { Grids } from "@/app/v1/components/(reusable)/grids";
 import { Holds } from "@/app/v1/components/(reusable)/holds";
 import { Texts } from "@/app/v1/components/(reusable)/texts";
 import { Titles } from "@/app/v1/components/(reusable)/titles";
-import { formatDurationStrings } from "@/utils/formatDurationStrings";
+
 import { useTranslations } from "next-intl";
 
 export default function EquipmentLogsSection({

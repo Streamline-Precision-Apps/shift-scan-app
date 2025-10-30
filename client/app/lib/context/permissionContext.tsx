@@ -36,9 +36,7 @@ interface PermissionsContextType {
   requestCameraPermission: () => Promise<boolean>;
   requestPhotosPermission: () => Promise<boolean>;
   requestLocationPermission: () => Promise<{ success: boolean }>;
-  resetCameraPermission: () => void;
-  resetPhotosPermission: () => void;
-  resetLocationPermission: () => void;
+
   permissionStatus: PermissionState;
   refreshPermissionStatus: () => Promise<void>;
 }
@@ -202,38 +200,13 @@ export const PermissionsProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, [refreshPermissionStatus]);
 
-  // Reset permissions (note: No direct API to reset permissions in Capacitor)
-  // These functions can be used to clear app state or trigger permission re-request
-  const resetCameraPermission = useCallback(() => {
-    // No direct API to reset; document directs users to device settings
-    console.log(
-      "Camera permission reset not available. Please reset in device settings."
-    );
-  }, []);
-
-  const resetPhotosPermission = useCallback(() => {
-    // No direct API to reset; document directs users to device settings
-    console.log(
-      "Photos permission reset not available. Please reset in device settings."
-    );
-  }, []);
-
-  const resetLocationPermission = useCallback(() => {
-    // No direct API to reset; document directs users to device settings
-    console.log(
-      "Location permission reset not available. Please reset in device settings."
-    );
-  }, []);
-
   return (
     <PermissionsContext.Provider
       value={{
         requestCameraPermission,
         requestPhotosPermission,
         requestLocationPermission,
-        resetCameraPermission,
-        resetPhotosPermission,
-        resetLocationPermission,
+
         permissionStatus,
         refreshPermissionStatus,
       }}

@@ -33,7 +33,6 @@ export default function WidgetSection() {
     const fetchUser = async () => {
       try {
         if (!user) {
-          console.log("No user in store, attempting to load from localStorage");
           try {
             // Try to load all stores from localStorage
             let allStoresLoaded = false;

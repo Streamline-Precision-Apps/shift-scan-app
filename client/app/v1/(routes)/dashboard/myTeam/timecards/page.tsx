@@ -29,7 +29,7 @@ export default function TimeCards() {
         >
           <Holds className="row-span-1 h-full">
             <TitleBoxes
-              onClick={() => router.push(`/dashboard/myTeam?rPath=${url}`)}
+              onClick={() => router.push(`/v1/dashboard/myTeam?rPath=${url}`)}
             >
               <Holds className="h-full justify-end">
                 <Titles size={"h2"}>{t("ReviewYourTeam")}</Titles>

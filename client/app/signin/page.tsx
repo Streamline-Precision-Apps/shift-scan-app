@@ -92,9 +92,6 @@ export default function SignInPage() {
       } else if (data && data.error) {
         setError(data.error || "Sign in failed");
       } else {
-        // Debug: Log the response to see what structure we're getting
-        console.log("Sign in response:", data);
-
         // Handle different response structures
         const userId = data.user?.id || data.userId || data.id;
 
