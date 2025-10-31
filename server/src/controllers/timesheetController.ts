@@ -1,4 +1,3 @@
-import type { Prisma } from "../../generated/prisma/client.js";
 import {
   createGeneralTimesheetService,
   approveTimesheetsBatchService,
@@ -13,6 +12,13 @@ import {
   getTimesheetActiveStatus,
   getBannerDataForTimesheet,
   getLogsForDashboard,
+  getClockOutComment,
+  getEquipmentLogs,
+  getRecentJobDetails,
+  createEmployeeEquipmentLogService,
+  getEmployeeEquipmentLogDetails,
+  deleteEmployeeEquipmentLog,
+  updateEmployeeEquipmentLogService,
 } from "../services/timesheetService.js";
 // GET /v1/timesheet/user/:userId/active-status
 export async function getTimesheetActiveStatusController(
@@ -336,5 +342,201 @@ export async function getDashboardLogsController(
   } catch (error) {
     console.error("[getDashboardLogsController] Error:", error);
     return res.status(500).json({ error: "Failed to fetch dashboard logs." });
+  }
+}
+
+// GET /v1/timesheet/user/:userId/clockOutComment
+export async function getClockOutCommentController(
+  req: Express.Request,
+  res: Express.Response
+) {
+  try {
+    const userId = req.params.userId;
+    if (!userId) {
+      return res.status(400).json({ error: "userId parameter is required." });
+    }
+    const comment = await getClockOutComment(userId);
+    return res.json({ success: true, data: comment });
+  } catch (error) {
+    console.error("[getClockOutCommentController] Error:", error);
+    return res
+      .status(500)
+      .json({ error: "Failed to fetch clock out comment." });
+  }
+}
+
+// GET /v1/timesheet/user/:userId/equipmentLogs
+export async function getUserEquipmentLogsController(
+  req: Express.Request,
+  res: Express.Response
+) {
+  try {
+    const userId = req.params.userId;
+    if (!userId) {
+      return res.status(400).json({ error: "userId parameter is required." });
+    }
+    const logs = await getEquipmentLogs(userId);
+    return res.json({ success: true, data: logs });
+  } catch (error) {
+    console.error("[getUserEquipmentLogsController] Error:", error);
+    return res.status(500).json({ error: "Failed to fetch equipment logs." });
+  }
+}
+
+// GET /v1/timesheet/user/:userId/equipmentLogs
+export async function getUserRecentJobsiteDetailsController(
+  req: Express.Request,
+  res: Express.Response
+) {
+  try {
+    const userId = req.params.userId;
+    if (!userId) {
+      return res.status(400).json({ error: "userId parameter is required." });
+    }
+    const logs = await getRecentJobDetails(userId);
+    return res.json({ success: true, data: logs });
+  } catch (error) {
+    console.error("[getUserRecentJobsiteDetailsController] Error:", error);
+    return res
+      .status(500)
+      .json({ error: "Failed to fetch recent jobsite details." });
+  }
+}
+
+// POST /v1/timesheet/equipment-log
+export async function createEmployeeEquipmentLogController(
+  req: Express.Request,
+  res: Express.Response
+) {
+  try {
+    const { equipmentId, timeSheetId, endTime, comment } = req.body;
+
+    console.log("server", equipmentId);
+
+    if (!equipmentId) {
+      return res.status(400).json({
+        error: "Equipment ID  are required.",
+      });
+    }
+
+    if (!timeSheetId) {
+      return res.status(400).json({ error: "TimeSheet ID is required." });
+    }
+
+    const newLog = await createEmployeeEquipmentLogService({
+      equipmentId,
+      timeSheetId,
+      endTime,
+      comment,
+    });
+
+    return res.status(201).json({ success: true, data: newLog });
+  } catch (error) {
+    console.error("[createEmployeeEquipmentLogController] Error:", error);
+    return res.status(500).json({
+      error: "Failed to create employee equipment log.",
+      details: error instanceof Error ? error.message : String(error),
+    });
+  }
+}
+
+// GET /v1/timesheet/equipment-log/:logId
+export async function getEmployeeEquipmentLogDetailsController(
+  req: Express.Request,
+  res: Express.Response
+) {
+  try {
+    const logId = req.params.logId;
+    if (!logId) {
+      return res.status(400).json({ error: "logId parameter is required." });
+    }
+
+    const logDetails = await getEmployeeEquipmentLogDetails(logId);
+    if (!logDetails) {
+      return res.status(404).json({ error: "Log not found." });
+    }
+
+    return res.json({ success: true, data: logDetails });
+  } catch (error) {
+    console.error("[getEmployeeEquipmentLogDetailsController] Error:", error);
+    return res.status(500).json({
+      error: "Failed to fetch employee equipment log details.",
+      details: error instanceof Error ? error.message : String(error),
+    });
+  }
+}
+
+// Delete/v1/timesheet/equipment-log/:logId
+export async function deleteEmployeeEquipmentLogController(
+  req: Express.Request,
+  res: Express.Response
+) {
+  try {
+    const logId = req.params.logId;
+    if (!logId) {
+      return res.status(400).json({ error: "logId parameter is required." });
+    }
+
+    // Call the service to delete the log
+    await deleteEmployeeEquipmentLog(logId);
+
+    // Return a success response
+    return res.status(200).json({
+      success: true,
+      message: `Log with ID ${logId} has been successfully deleted.`,
+    });
+  } catch (error) {
+    console.error("[deleteEmployeeEquipmentLogController] Error:", error);
+    return res.status(500).json({
+      error: "Failed to delete employee equipment log.",
+      details: error instanceof Error ? error.message : String(error),
+    });
+  }
+}
+
+// PUT /v1/timesheet/equipment-log/:logId
+export async function updateEmployeeEquipmentLogController(
+  req: Express.Request,
+  res: Express.Response
+) {
+  try {
+    const id = req.params.logId;
+
+    const {
+      equipmentId,
+      startTime,
+      endTime,
+      comment,
+      status,
+      disconnectRefuelLog,
+      refuelLogId,
+      gallonsRefueled,
+    } = req.body;
+
+    if (!id || !equipmentId || !startTime) {
+      return res.status(400).json({
+        error: "Missing required fields: id, equipmentId, or startTime",
+      });
+    }
+
+    const result = await updateEmployeeEquipmentLogService({
+      id,
+      equipmentId,
+      startTime,
+      endTime,
+      comment,
+      status,
+      disconnectRefuelLog,
+      refuelLogId,
+      gallonsRefueled,
+    });
+
+    return res.status(200).json(result);
+  } catch (error) {
+    console.error("[updateEmployeeEquipmentLogController] Error:", error);
+    return res.status(500).json({
+      error: "Failed to update employee equipment log.",
+      details: error instanceof Error ? error.message : String(error),
+    });
   }
 }

@@ -1,10 +1,10 @@
 "use client";
-import { updateEmployeeEquipmentLog } from "@/actions/equipmentActions";
-import { useNotification } from "@/app/context/NotificationContext";
-import { Contents } from "@/components/(reusable)/contents";
-import { Grids } from "@/components/(reusable)/grids";
-import { Holds } from "@/components/(reusable)/holds";
-import { TitleBoxes } from "@/components/(reusable)/titleBoxes";
+import { updateEmployeeEquipmentLog } from "@/app/lib/actions/equipmentActions";
+
+import { Contents } from "@/app/v1/components/(reusable)/contents";
+import { Grids } from "@/app/v1/components/(reusable)/grids";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
+import { TitleBoxes } from "@/app/v1/components/(reusable)/titleBoxes";
 import { useRouter } from "next/navigation";
 import { use, useCallback, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
@@ -13,12 +13,11 @@ import {
   deleteEmployeeEquipmentLog,
   deleteRefuelLog,
   updateRefuelLog,
-} from "@/actions/truckingActions";
-import Spinner from "@/components/(animations)/spinner";
-import { NewTab } from "@/components/(reusable)/newTabs";
+} from "@/app/lib/actions/truckingActions";
+import Spinner from "@/app/v1/components/(animations)/spinner";
 import UsageData from "./../_components/UsageData";
-import { Buttons } from "@/components/(reusable)/buttons";
-import { Titles } from "@/components/(reusable)/titles";
+import { Buttons } from "@/app/v1/components/(reusable)/buttons";
+import { Titles } from "@/app/v1/components/(reusable)/titles";
 
 import {
   UnifiedEquipmentState,
@@ -28,11 +27,14 @@ import {
   Refueled,
   EquipmentState,
 } from "./../types";
-import { FormStatus } from "../../../../../../../prisma/generated/prisma/client";
 
+import { useNotification } from "@/app/lib/context/NotificationContext";
+import { apiRequest } from "@/app/lib/utils/api-Utils";
+
+export type FormStatus = "DRAFT" | "PENDING" | "APPROVED" | "DENIED";
 // Helper function to transform API response to form state
 function transformApiToFormState(
-  apiData: EmployeeEquipmentLogData,
+  apiData: EmployeeEquipmentLogData
 ): EquipmentLog {
   return {
     id: apiData.id,
@@ -93,8 +95,9 @@ export default function CombinedForm({ id }: { id: string }) {
 
   const { setNotification } = useNotification();
   const t = useTranslations("Equipment");
-  const [state, setState] =
-    useState<UnifiedEquipmentState>(createInitialState());
+  const [state, setState] = useState<UnifiedEquipmentState>(
+    createInitialState()
+  );
 
   // Fetch equipment log data
   useEffect(() => {
@@ -102,14 +105,14 @@ export default function CombinedForm({ id }: { id: string }) {
       try {
         setState((prev) => ({ ...prev, isLoading: true, error: null }));
 
-        const response = await fetch(`/api/getEqUserLogs/${id}`);
-        if (!response.ok) {
-          throw new Error(
-            `Failed to fetch equipment log: ${response.statusText}`,
-          );
-        }
+        const response = await apiRequest(
+          `/api/v1/timesheet/equipment-log/${id}`,
+          "GET"
+        );
 
-        const apiData = (await response.json()) as EmployeeEquipmentLogData;
+        const apiData = response.data as EmployeeEquipmentLogData;
+        console.log("Fetched equipment log data:", apiData);
+
         const formState = transformApiToFormState(apiData);
 
         // If the log isn't finished, set the end time to now when opening the form
@@ -148,7 +151,7 @@ export default function CombinedForm({ id }: { id: string }) {
       | FormStatus
       | EquipmentState
       | Refueled
-      | null,
+      | null
   ) => {
     setState((prev) => {
       if (field.startsWith("equipment.")) {
@@ -280,7 +283,7 @@ export default function CombinedForm({ id }: { id: string }) {
     try {
       await deleteEmployeeEquipmentLog(state.formState.id);
       setNotification(t("Deleted"), "success");
-      router.replace("/dashboard/equipment");
+      router.replace("/v1/dashboard/equipment");
     } catch (error) {
       console.error("Error deleting equipment log:", error);
       setNotification(t("FailedToDelete"), "error");
@@ -316,11 +319,11 @@ export default function CombinedForm({ id }: { id: string }) {
           }
           formData.append(
             "equipmentIssue",
-            state.formState.maintenanceId.equipmentIssue || "",
+            state.formState.maintenanceId.equipmentIssue || ""
           );
           formData.append(
             "additionalInfo",
-            state.formState.maintenanceId.additionalInfo || "",
+            state.formState.maintenanceId.additionalInfo || ""
           );
         }
       }
@@ -335,11 +338,11 @@ export default function CombinedForm({ id }: { id: string }) {
           "refuelLogId",
           state.formState.refuelLogs.id.startsWith("temp-")
             ? "__NULL__" // This indicates we need to create a new log
-            : state.formState.refuelLogs.id,
+            : state.formState.refuelLogs.id
         );
         formData.append(
           "gallonsRefueled",
-          state.formState.refuelLogs.gallonsRefueled?.toString() || "__NULL__",
+          state.formState.refuelLogs.gallonsRefueled?.toString() || "__NULL__"
         );
       }
 
@@ -347,15 +350,28 @@ export default function CombinedForm({ id }: { id: string }) {
       formData.append("priority", "LOW");
       formData.append("repaired", String(false));
 
-      // Make a single server call to update everything
-      await updateEmployeeEquipmentLog(formData);
+      const body = {
+        equipmentId: state.formState.equipmentId,
+        startTime: state.formState.startTime,
+        endTime: state.formState.endTime,
+        comment: state.formState.comment,
+        disconnectRefuelLog: state.formState.refuelLogs === null,
+        refuelLogId: state.formState.refuelLogs?.id,
+        gallonsRefueled: state.formState.refuelLogs?.gallonsRefueled,
+      };
+
+      await apiRequest(
+        `/api/v1/timesheet/equipment-log/${state.formState.id}`,
+        "PUT",
+        body
+      );
 
       setState((prev) => ({
         ...prev,
         hasChanged: false,
       }));
 
-      router.replace("/dashboard/equipment");
+      router.replace("/v1/dashboard/equipment");
       setNotification(t("Saved"), "success");
     } catch (error) {
       console.error("Error saving equipment log:", error);
@@ -385,15 +401,11 @@ export default function CombinedForm({ id }: { id: string }) {
     return true;
   }, []);
 
-  const setTab = (newTab: number) => {
-    setState((prev) => ({ ...prev, tab: newTab }));
-  };
-
   const setRefuelLog = (
     updater:
       | ((prev: RefuelLogData | null) => RefuelLogData | null)
       | RefuelLogData
-      | null,
+      | null
   ) => {
     setState((prev) => {
       const newRefuelLog =
@@ -420,7 +432,7 @@ export default function CombinedForm({ id }: { id: string }) {
         <Holds className="h-full w-full justify-center items-center row-span-1">
           <Titles size="lg">Error: {state.error}</Titles>
           <Buttons
-            onClick={() => router.push("/dashboard/equipment")}
+            onClick={() => router.push("/v1/dashboard/equipment")}
             background="lightBlue"
           >
             <Titles size="h5">{t("BacktoEquipment")}</Titles>
@@ -441,7 +453,7 @@ export default function CombinedForm({ id }: { id: string }) {
             : "row-span-1 h-full justify-center"
         }
       >
-        <TitleBoxes onClick={() => router.push("/dashboard/equipment")}>
+        <TitleBoxes onClick={() => router.push("/v1/dashboard/equipment")}>
           <Titles size={"md"}>
             {state.isLoading
               ? "Loading..."
@@ -504,7 +516,7 @@ export default function CombinedForm({ id }: { id: string }) {
                           if (!isFormValid()) {
                             setNotification(
                               "Please complete maintenance requirements",
-                              "error",
+                              "error"
                             );
                             return;
                           }

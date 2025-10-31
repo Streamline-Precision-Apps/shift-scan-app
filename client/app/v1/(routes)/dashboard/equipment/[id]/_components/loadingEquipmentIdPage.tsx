@@ -1,9 +1,9 @@
-import Spinner from "@/components/(animations)/spinner";
-import { Grids } from "@/components/(reusable)/grids";
-import { Holds } from "@/components/(reusable)/holds";
-import { NewTab } from "@/components/(reusable)/newTabs";
-import { TitleBoxes } from "@/components/(reusable)/titleBoxes";
-import { Titles } from "@/components/(reusable)/titles";
+import Spinner from "@/app/v1/components/(animations)/spinner";
+import { Grids } from "@/app/v1/components/(reusable)/grids";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
+import { NewTab } from "@/app/v1/components/(reusable)/newTabs";
+import { TitleBoxes } from "@/app/v1/components/(reusable)/titleBoxes";
+import { Titles } from "@/app/v1/components/(reusable)/titles";
 import { useTranslations } from "next-intl";
 
 export default function LoadingEquipmentIdPage() {

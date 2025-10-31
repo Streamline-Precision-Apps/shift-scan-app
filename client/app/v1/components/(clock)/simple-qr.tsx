@@ -55,13 +55,15 @@ export default function SimpleQr({
         hasScanned.current = false; // Reset on error
       }
     },
-    [setScanned, setScannedId, onScanComplete],
+    [setScanned, setScannedId, onScanComplete]
   );
 
   useEffect(() => {
     if (videoRef.current) {
+      const videoElement = videoRef.current;
+
       // Initialize the QR scanner with a callback that saves scanned data
-      const scanner = new QrScanner(videoRef.current, handleScanSuccess, {
+      const scanner = new QrScanner(videoElement, handleScanSuccess, {
         highlightScanRegion: true,
         highlightCodeOutline: true,
         returnDetailedScanResult: true,
@@ -89,19 +91,27 @@ export default function SimpleQr({
       // Check for camera availability before starting
       QrScanner.hasCamera().then((hasCamera) => {
         if (hasCamera) {
-          scanner
-            .start()
-            .catch((err) => console.error("Error starting scanner:", err));
+          scanner.start().catch((err) => {
+            if (err.name !== "AbortError") {
+              console.error("Error starting scanner:", err);
+            }
+          });
         } else {
           console.error("No camera found");
         }
       });
-    }
 
-    // Clean up: stop the scanner when the component unmounts
-    return () => {
-      qrScannerRef.current?.stop();
-    };
+      // Clean up: stop the scanner when the component unmounts
+      return () => {
+        try {
+          qrScannerRef.current?.stop();
+        } catch (err) {
+          if (err instanceof Error && err.name !== "AbortError") {
+            console.error("Error stopping scanner:", err);
+          }
+        }
+      };
+    }
   }, [handleScanSuccess]);
 
   // Reset scanner on component mount if resetOnMount is true

@@ -1,7 +1,6 @@
-"use server";
-import { materialUnit } from "../../prisma/generated/prisma/client";
-import prisma from "@/lib/prisma";
-import { revalidatePath, revalidateTag } from "next/cache";
+"use client";
+
+import { apiRequest } from "../utils/api-Utils";
 
 export async function createEquipmentHauled(formData: FormData) {
   const truckingLogId = formData.get("truckingLogId") as string;
@@ -289,7 +288,7 @@ export async function createRefuelLog(formData: FormData) {
 
 export async function createRefuelEquipmentLog(formData: FormData) {
   const employeeEquipmentLogId = formData.get(
-    "employeeEquipmentLogId",
+    "employeeEquipmentLogId"
   ) as string;
 
   const gallonsRefueledStr = formData.get("gallonsRefueled") as string | null;
@@ -314,9 +313,7 @@ export async function createRefuelEquipmentLog(formData: FormData) {
 
 export async function deleteEmployeeEquipmentLog(id: string) {
   try {
-    await prisma.employeeEquipmentLog.delete({
-      where: { id },
-    });
+    await apiRequest(`/api/v1/timesheet/equipment-log/${id}`, "DELETE");
     return true;
   } catch (error) {
     console.error("Error deleting employee equipment log:", error);

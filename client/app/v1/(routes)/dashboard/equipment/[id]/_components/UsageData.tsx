@@ -1,22 +1,21 @@
-import { CheckBox } from "@/components/(inputs)/checkBox";
-import { Buttons } from "@/components/(reusable)/buttons";
-import { Holds } from "@/components/(reusable)/holds";
-import { Inputs } from "@/components/(reusable)/inputs";
-import { Labels } from "@/components/(reusable)/labels";
-import { Texts } from "@/components/(reusable)/texts";
+import { CheckBox } from "@/app/v1/components/(inputs)/checkBox";
+import { Buttons } from "@/app/v1/components/(reusable)/buttons";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
+import { Inputs } from "@/app/v1/components/(reusable)/inputs";
+import { Labels } from "@/app/v1/components/(reusable)/labels";
+import { Texts } from "@/app/v1/components/(reusable)/texts";
 import { format, parseISO } from "date-fns";
-import { TextAreas } from "@/components/(reusable)/textareas";
-import { useNotification } from "@/app/context/NotificationContext";
+import { TextAreas } from "@/app/v1/components/(reusable)/textareas";
+import { useNotification } from "@/app/lib/context/NotificationContext";
 import { Dispatch, SetStateAction, useState } from "react";
 import { EquipmentLog, RefuelLogData } from "../types";
-import { Images } from "@/components/(reusable)/images";
-import { EquipmentState } from "../../../../../../../prisma/generated/prisma/client";
+import { Images } from "@/app/v1/components/(reusable)/images";
 
 interface UsageDataProps {
   formState: EquipmentLog;
   handleFieldChange: (
     field: string,
-    value: string | number | boolean | EquipmentState | RefuelLogData | null,
+    value: string | number | boolean | RefuelLogData | null
   ) => void;
   formattedTime: string;
   handleChangeRefueled: () => void;
@@ -75,7 +74,7 @@ export default function UsageData({
                   newHours,
                   newMinutes,
                   0,
-                  0,
+                  0
                 );
                 handleFieldChange("startTime", updatedDate.toISOString());
               }}
@@ -104,7 +103,7 @@ export default function UsageData({
                   newHours,
                   newMinutes,
                   0,
-                  0,
+                  0
                 );
                 handleFieldChange("endTime", updatedDate.toISOString());
               }}
@@ -177,7 +176,7 @@ export default function UsageData({
                 setRefuelLog(null);
                 setNotification(
                   t("RefuelLogRemoved") || t("RefuelLogCleared"),
-                  "success",
+                  "success"
                 );
               }}
             >

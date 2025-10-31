@@ -1,5 +1,5 @@
 import { formatISO } from "date-fns";
-import type { Prisma } from "../../generated/prisma/client.js";
+import type { EquipmentState, Prisma } from "../../generated/prisma/client.js";
 import type { GeneralTimesheetInput } from "../controllers/timesheetController.js";
 import prisma from "../lib/prisma.js";
 
@@ -974,4 +974,315 @@ export async function getLogsForDashboard(userId: string) {
   ];
 
   return combinedLogs;
+}
+
+export async function getClockOutComment(userId: string) {
+  const timesheet = await prisma.timeSheet.findFirst({
+    where: {
+      userId,
+      endTime: null, // Ensure timesheet is still active
+    },
+    orderBy: {
+      createdAt: "desc", // Sort by most recent submission date
+    },
+    select: {
+      comment: true,
+    },
+  });
+  return timesheet?.comment || "";
+}
+
+export async function getEquipmentLogs(userId: string) {
+  const currentDate = new Date();
+  const past24Hours = new Date(currentDate.getTime() - 24 * 60 * 60 * 1000);
+
+  const timeSheetId = await prisma.timeSheet.findFirst({
+    where: {
+      userId: userId,
+      endTime: null,
+    },
+  });
+  if (!timeSheetId) {
+    throw new Error("No active timesheet found.");
+  }
+
+  const logs = await prisma.employeeEquipmentLog.findMany({
+    where: {
+      startTime: { gte: past24Hours, lte: currentDate },
+      timeSheetId: timeSheetId.id,
+    },
+    include: {
+      Equipment: true,
+    },
+  });
+
+  return logs;
+}
+
+export async function getRecentJobDetails(userId: string) {
+  const timesheet = await prisma.timeSheet.findFirst({
+    where: {
+      userId,
+      endTime: null, // Ensure timesheet is still active
+    },
+    orderBy: {
+      createdAt: "desc", // Sort by most recent submission date
+    },
+    select: {
+      Jobsite: {
+        select: {
+          id: true,
+          name: true,
+          qrId: true,
+        },
+      },
+    },
+  });
+  const job = timesheet?.Jobsite;
+  if (!job) {
+    throw new Error("No active job found.");
+  }
+  return job;
+}
+
+export async function createEmployeeEquipmentLogService({
+  equipmentId,
+  timeSheetId,
+  endTime,
+  comment,
+}: {
+  equipmentId: string;
+  timeSheetId: string;
+  endTime?: string | null;
+  comment?: string | null;
+}) {
+  try {
+    // Validate equipment existence and status
+    let equipmentExists = await prisma.equipment.findFirst({
+      where: { id: equipmentId, status: "ACTIVE" },
+    });
+
+    if (!equipmentExists) {
+      equipmentExists = await prisma.equipment.findFirst({
+        where: { qrId: equipmentId, status: "ACTIVE" },
+      });
+    }
+
+    if (!equipmentExists) {
+      const equipmentAnyStatus = await prisma.equipment.findFirst({
+        where: { OR: [{ id: equipmentId }, { qrId: equipmentId }] },
+        select: { status: true },
+      });
+
+      if (equipmentAnyStatus) {
+        throw new Error(
+          `Equipment with ID ${equipmentId} is ${equipmentAnyStatus.status.toLowerCase()}. Please scan an active equipment QR code.`
+        );
+      } else {
+        throw new Error(
+          `Equipment with ID ${equipmentId} not found. Please scan a valid equipment QR code.`
+        );
+      }
+    }
+
+    // Validate timesheet existence and status
+    const timeSheet = await prisma.timeSheet.findUnique({
+      where: { id: parseInt(timeSheetId, 10) },
+      select: { id: true, endTime: true },
+    });
+
+    if (!timeSheet) {
+      throw new Error("Invalid timesheet ID. Please clock in again.");
+    }
+
+    if (timeSheet.endTime) {
+      throw new Error(
+        "This timesheet has been closed. Please clock in again before logging equipment."
+      );
+    }
+
+    // Create the employee equipment log
+    const newLog = await prisma.employeeEquipmentLog.create({
+      data: {
+        equipmentId: equipmentExists.id,
+        timeSheetId: timeSheet.id,
+        startTime: new Date().toISOString(),
+        endTime: endTime ? new Date(endTime) : null,
+        comment: comment ?? null,
+      },
+    });
+
+    return newLog;
+  } catch (error) {
+    console.error("Error in createEmployeeEquipmentLogService:", error);
+    throw error;
+  }
+}
+
+export async function getEmployeeEquipmentLogDetails(logId: string) {
+  const usersLog = await prisma.employeeEquipmentLog.findFirst({
+    where: {
+      id: logId,
+    },
+    select: {
+      id: true,
+      equipmentId: true,
+      startTime: true,
+      endTime: true,
+      comment: true,
+      Equipment: {
+        select: {
+          id: true,
+          name: true,
+          state: true,
+          equipmentTag: true,
+          make: true,
+          model: true,
+          year: true,
+          licensePlate: true,
+        },
+      },
+      RefuelLog: {
+        select: {
+          id: true,
+          gallonsRefueled: true,
+        },
+      },
+      Maintenance: {
+        select: {
+          id: true,
+          equipmentIssue: true,
+          additionalInfo: true,
+        },
+      },
+    },
+  });
+  return usersLog;
+}
+
+export async function deleteEmployeeEquipmentLog(logId: string) {
+  try {
+    await prisma.employeeEquipmentLog.delete({
+      where: {
+        id: logId,
+      },
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error deleting equipment log:", error);
+    return { success: false, error: "Failed to delete equipment log." };
+  }
+}
+
+export async function updateEmployeeEquipmentLogService({
+  id,
+  equipmentId,
+  startTime,
+  endTime,
+  comment,
+  status,
+  disconnectRefuelLog,
+  refuelLogId,
+  gallonsRefueled,
+}: {
+  id: string;
+  equipmentId: string;
+  startTime: string;
+  endTime?: string;
+  comment?: string;
+  status?: EquipmentState;
+  disconnectRefuelLog?: boolean;
+  refuelLogId?: string | null;
+  gallonsRefueled?: number | null;
+}) {
+  try {
+    const result = await prisma.$transaction(async (prisma) => {
+      const actualRefuelLogId = refuelLogId === "__NULL__" ? null : refuelLogId;
+      const actualGallonsRefueled =
+        gallonsRefueled === null ? null : gallonsRefueled;
+
+      let refuelLogUpdate = {};
+      if (disconnectRefuelLog) {
+        refuelLogUpdate = { disconnect: true };
+      } else if (actualGallonsRefueled && actualRefuelLogId) {
+        // Check if RefuelLog exists for this EmployeeEquipmentLog
+        const existingRefuelLog = await prisma.refuelLog.findFirst({
+          where: { id: actualRefuelLogId, employeeEquipmentLogId: id },
+        });
+        if (existingRefuelLog) {
+          refuelLogUpdate = {
+            update: {
+              where: { id: actualRefuelLogId },
+              data: { gallonsRefueled: actualGallonsRefueled },
+            },
+          };
+        } else {
+          // Fallback to create if not found
+          refuelLogUpdate = {
+            create: {
+              gallonsRefueled: actualGallonsRefueled,
+            },
+          };
+        }
+      } else if (actualGallonsRefueled) {
+        refuelLogUpdate = {
+          create: {
+            gallonsRefueled: actualGallonsRefueled,
+          },
+        };
+      }
+
+      // Build update data object conditionally
+      const updateData: Prisma.EmployeeEquipmentLogUpdateInput = {};
+      if (typeof startTime !== "undefined") updateData.startTime = startTime;
+      if (typeof endTime !== "undefined")
+        updateData.endTime = endTime || new Date().toISOString();
+      if (typeof comment !== "undefined") updateData.comment = comment ?? null;
+      if (Object.keys(refuelLogUpdate).length > 0)
+        updateData.RefuelLog = refuelLogUpdate;
+
+      const log = await prisma.employeeEquipmentLog.update({
+        where: { id },
+        data: updateData,
+        include: {
+          Equipment: true,
+          TimeSheet: {
+            include: {
+              User: { select: { firstName: true, lastName: true } },
+            },
+          },
+        },
+      });
+
+      if (!log) {
+        throw new Error("Equipment log not found");
+      }
+
+      if (status) {
+        await prisma.equipment.update({
+          where: { id: equipmentId },
+          data: { state: status },
+        });
+      }
+
+      return {
+        name: log.Equipment ? log.Equipment.name : null,
+        id: log.Equipment ? log.Equipment.id : null,
+        createdBy:
+          log.TimeSheet && log.TimeSheet.User
+            ? `${log.TimeSheet.User.firstName} ${log.TimeSheet.User.lastName}`
+            : null,
+      };
+    });
+
+    return {
+      success: true,
+      message: "Equipment log updated successfully",
+      data: result,
+    };
+  } catch (error) {
+    console.error("Error updating employee equipment log:", error);
+    throw new Error(`Failed to update employee equipment log: ${error}`);
+  }
 }

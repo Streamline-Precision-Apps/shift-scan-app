@@ -961,17 +961,18 @@ export async function approvePendingTimesheets(
 }
 
 export async function ClockOutComment({ userId }: { userId: string }) {
-  const timesheet = await prisma.timeSheet.findFirst({
-    where: {
-      userId,
-      endTime: null, // Ensure timesheet is still active
-    },
-    orderBy: {
-      createdAt: "desc", // Sort by most recent submission date
-    },
-    select: {
-      comment: true,
-    },
-  });
-  return timesheet?.comment || "";
+  try {
+    const response = await apiRequest(
+      `/api/v1/timesheet/user/${userId}/clockOutComment`,
+      "GET"
+    );
+
+    if (response.success && response.data) {
+      return response.data || "";
+    }
+    return "";
+  } catch (error) {
+    console.error("Error fetching clock out comment:", error);
+    return "";
+  }
 }

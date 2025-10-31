@@ -27,6 +27,34 @@ export function getCookie(req: express.Request, res: express.Response) {
   res.json({ value });
 }
 
+// GET /api/cookies?name=key1&name=key2&name=key3
+export function getCookieList(req: express.Request, res: express.Response) {
+  let { name } = req.query;
+  if (!name) {
+    console.warn("❌ GET cookies: Missing cookie name parameter");
+    return res.status(400).json({ error: "Missing cookie name(s)" });
+  }
+  if (typeof name === "string") {
+    name = [name];
+  }
+  if (!Array.isArray(name) || !name.every((n) => typeof n === "string")) {
+    console.warn("❌ GET cookies: Invalid cookie name type");
+    return res.status(400).json({ error: "Invalid cookie name(s)" });
+  }
+
+  const values: Record<string, string | undefined> = {};
+  name.forEach((cookieName) => {
+    values[cookieName] = req.cookies?.[cookieName];
+    console.log(
+      `📖 GET cookie: ${cookieName} = ${
+        values[cookieName] ? values[cookieName] : "(not found)"
+      }`
+    );
+  });
+
+  res.json({ value: values });
+}
+
 // POST or PUT /api/cookies { name, value, options }
 // UPSERT: Creates cookie if it doesn't exist, updates if it does
 export function setCookie(req: express.Request, res: express.Response) {

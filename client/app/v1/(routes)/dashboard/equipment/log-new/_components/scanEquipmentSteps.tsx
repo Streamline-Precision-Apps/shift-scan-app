@@ -1,5 +1,5 @@
 "use client";
-import { Holds } from "@/components/(reusable)/holds";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
 import { useEffect, useState, useRef } from "react";
 import { Suspense } from "react";
 import SelectEquipment from "./SelectEquipment";
@@ -7,12 +7,15 @@ import EquipmentScanner from "./EquipmentScanner";
 import EquipmentSelectorView from "./EquipmentSelector";
 import LoadingScannerFallback from "./LoadingScannerFallback";
 import LoadingSelectorFallback from "./LoadingSelectorFallback";
+import { apiRequest } from "@/app/lib/utils/api-Utils";
+import { useUserStore } from "@/app/lib/store/userStore";
 type Option = {
   id: string;
   label: string;
   code: string;
 };
 export default function ScanEquipment() {
+  const { user } = useUserStore();
   const [step, setStep] = useState(1);
   const [error, setError] = useState<string | null>(null);
   const [method, setMethod] = useState<"Scan" | "Select" | "">("");
@@ -32,9 +35,13 @@ export default function ScanEquipment() {
   const submitRef = useRef(false);
 
   useEffect(() => {
+    if (!user) return;
     const getJobsite = async () => {
-      const jobsiteResult = await fetch("/api/getRecentJobDetails");
-      const jobsiteData = await jobsiteResult.json();
+      const jobsiteData = await apiRequest(
+        `/api/v1/timesheet/user/${user?.id}/recentJobDetails`,
+        "GET"
+      );
+
       setJobSite({
         id: jobsiteData.id,
         label: jobsiteData.name,
@@ -42,7 +49,7 @@ export default function ScanEquipment() {
       });
     };
     getJobsite();
-  }, []);
+  }, [user]);
 
   return (
     <>

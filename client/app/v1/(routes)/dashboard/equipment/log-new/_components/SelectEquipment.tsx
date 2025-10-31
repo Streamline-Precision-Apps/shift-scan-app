@@ -1,11 +1,11 @@
-import { Buttons } from "@/components/(reusable)/buttons";
-import { Contents } from "@/components/(reusable)/contents";
-import { Grids } from "@/components/(reusable)/grids";
-import { Holds } from "@/components/(reusable)/holds";
-import { Images } from "@/components/(reusable)/images";
-import { Texts } from "@/components/(reusable)/texts";
-import { TitleBoxes } from "@/components/(reusable)/titleBoxes";
-import { Titles } from "@/components/(reusable)/titles";
+import { Buttons } from "@/app/v1/components/(reusable)/buttons";
+import { Contents } from "@/app/v1/components/(reusable)/contents";
+import { Grids } from "@/app/v1/components/(reusable)/grids";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
+import { Images } from "@/app/v1/components/(reusable)/images";
+import { Texts } from "@/app/v1/components/(reusable)/texts";
+import { TitleBoxes } from "@/app/v1/components/(reusable)/titleBoxes";
+import { Titles } from "@/app/v1/components/(reusable)/titles";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { Dispatch, SetStateAction, use, useEffect } from "react";
@@ -34,7 +34,7 @@ export default function SelectEquipment({
     <Holds className="h-full">
       <Grids rows={"7"} gap={"5"}>
         <Holds className="h-full row-start-1 row-end-2 ">
-          <TitleBoxes onClick={() => router.push("/dashboard/equipment")}>
+          <TitleBoxes onClick={() => router.push("/v1/dashboard/equipment")}>
             <Holds className="h-full justify-end">
               <Titles size={"h2"}>{t("ScanEquipment")}</Titles>
             </Holds>

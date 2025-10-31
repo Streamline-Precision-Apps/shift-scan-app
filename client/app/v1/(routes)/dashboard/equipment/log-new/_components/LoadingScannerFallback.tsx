@@ -1,8 +1,8 @@
-import { Holds } from "@/components/(reusable)/holds";
-import { Grids } from "@/components/(reusable)/grids";
-import { TitleBoxes } from "@/components/(reusable)/titleBoxes";
-import { Titles } from "@/components/(reusable)/titles";
-import Spinner from "@/components/(animations)/spinner";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
+import { Grids } from "@/app/v1/components/(reusable)/grids";
+import { TitleBoxes } from "@/app/v1/components/(reusable)/titleBoxes";
+import { Titles } from "@/app/v1/components/(reusable)/titles";
+import Spinner from "@/app/v1/components/(animations)/spinner";
 import { useTranslations } from "next-intl";
 
 export default function LoadingScannerFallback() {

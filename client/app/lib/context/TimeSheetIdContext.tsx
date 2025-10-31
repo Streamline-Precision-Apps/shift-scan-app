@@ -12,6 +12,7 @@ import React, {
 
 type TimeSheetData = {
   id: number;
+  endTime: string | null;
 };
 
 type TimeSheetDataContextType = {
@@ -46,7 +47,7 @@ export const TimeSheetDataProvider: React.FC<{ children: ReactNode }> = ({
         try {
           const timesheetId = await getCookies({ cookieName: "timeSheetId" });
           if (timesheetId) {
-            setTimeSheetData({ id: parseInt(timesheetId, 10) });
+            setTimeSheetData({ id: parseInt(timesheetId, 10), endTime: null });
           }
         } catch {}
       } else {
@@ -79,7 +80,10 @@ export const TimeSheetDataProvider: React.FC<{ children: ReactNode }> = ({
         "GET"
       );
       if (response && response.success && response.data && response.data.id) {
-        setTimeSheetData(response.data);
+        setTimeSheetData({
+          id: response.data.id,
+          endTime: response.data.endTime || null,
+        });
       } else {
         setTimeSheetData(null);
       }

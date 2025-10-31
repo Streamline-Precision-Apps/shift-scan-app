@@ -1,11 +1,12 @@
-import { CreateEmployeeEquipmentLog } from "@/actions/equipmentActions";
-import Spinner from "@/components/(animations)/spinner";
-import SimpleQr from "@/components/(clock)/simple-qr";
-import { Grids } from "@/components/(reusable)/grids";
-import { Holds } from "@/components/(reusable)/holds";
-import { TitleBoxes } from "@/components/(reusable)/titleBoxes";
-import { Titles } from "@/components/(reusable)/titles";
-import { useSession } from "next-auth/react";
+"use client";
+import { useUserStore } from "@/app/lib/store/userStore";
+import { apiRequest } from "@/app/lib/utils/api-Utils";
+import Spinner from "@/app/v1/components/(animations)/spinner";
+import SimpleQr from "@/app/v1/components/(clock)/simple-qr";
+import { Grids } from "@/app/v1/components/(reusable)/grids";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
+import { TitleBoxes } from "@/app/v1/components/(reusable)/titleBoxes";
+import { Titles } from "@/app/v1/components/(reusable)/titles";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import React, {
@@ -37,10 +38,11 @@ export default function EquipmentScanner({
   jobSite: Option;
   submitRef: RefObject<boolean>;
 }) {
+  const { user } = useUserStore();
   const [scanned, setScanned] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { data: session } = useSession();
-  const id = session?.user?.id || ""; // Get the user ID from the session
+
+  const id = user?.id || ""; // Get the user ID from the session
   const router = useRouter();
   const t = useTranslations("Equipment");
 
@@ -87,9 +89,19 @@ export default function EquipmentScanner({
       formData.append("startTime", new Date().toString());
       formData.append("timeSheetId", timeSheetId);
 
-      const result = await CreateEmployeeEquipmentLog(formData);
-      if (result) {
-        router.push("/dashboard/equipment");
+      const response = await apiRequest(
+        "/api/v1/timesheet/equipment-log",
+        "POST",
+        {
+          equipmentId: formattedId,
+          timeSheetId: timeSheetId,
+          jobsiteId: jobSite?.code || "",
+          userId: id,
+        }
+      );
+
+      if (response.success) {
+        router.push("/v1/dashboard/equipment");
       }
     } catch (error) {
       console.error("Error submitting equipment log:", error);

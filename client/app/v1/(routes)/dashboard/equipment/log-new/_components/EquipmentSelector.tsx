@@ -1,13 +1,14 @@
 "use client";
-import { CreateEmployeeEquipmentLog } from "@/actions/equipmentActions";
-import { EquipmentSelector } from "@/components/(clock)/(General)/equipmentSelector";
-import { Buttons } from "@/components/(reusable)/buttons";
-import { Contents } from "@/components/(reusable)/contents";
-import { Grids } from "@/components/(reusable)/grids";
-import { Holds } from "@/components/(reusable)/holds";
-import { TitleBoxes } from "@/components/(reusable)/titleBoxes";
-import { Titles } from "@/components/(reusable)/titles";
-import { useSession } from "next-auth/react";
+import { useUserStore } from "@/app/lib/store/userStore";
+import { apiRequest } from "@/app/lib/utils/api-Utils";
+import { EquipmentSelector } from "@/app/v1/components/(clock)/(General)/equipmentSelector";
+import { Buttons } from "@/app/v1/components/(reusable)/buttons";
+import { Contents } from "@/app/v1/components/(reusable)/contents";
+import { Grids } from "@/app/v1/components/(reusable)/grids";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
+import { TitleBoxes } from "@/app/v1/components/(reusable)/titleBoxes";
+import { Titles } from "@/app/v1/components/(reusable)/titles";
+
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { Dispatch, SetStateAction, RefObject } from "react";
@@ -32,14 +33,11 @@ export default function EquipmentSelectorView({
   jobSite: Option;
   submitRef: RefObject<boolean>;
 }) {
+  const { user } = useUserStore();
   const router = useRouter();
   const t = useTranslations("Equipment");
-  const { data: session } = useSession();
-  if (!session) {
-    router.push("/signin"); // Redirect to sign-in if not authenticated
-  }
 
-  const id = session?.user?.id || ""; // Get the user ID from the session
+  const id = user?.id || ""; // Get the user ID from the session
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,15 +62,19 @@ export default function EquipmentSelectorView({
         throw new Error("No active timesheet found. Please clock in first.");
       }
 
-      const formData = new FormData();
-      formData.append("equipmentId", equipment?.id || "");
-      formData.append("jobsiteId", jobSite?.id || "");
-      formData.append("userId", id);
-      formData.append("timeSheetId", timeSheetId);
+      const response = await apiRequest(
+        "/api/v1/timesheet/equipment-log",
+        "POST",
+        {
+          equipmentId: equipment?.id || "",
+          timeSheetId: timeSheetId,
+          jobsiteId: jobSite?.id || "",
+          userId: id,
+        }
+      );
 
-      const result = await CreateEmployeeEquipmentLog(formData);
-      if (result) {
-        router.push("/dashboard/equipment");
+      if (response.success) {
+        router.push("/v1/dashboard/equipment");
       }
     } catch (error) {
       console.error("Error creating equipment log:", error);

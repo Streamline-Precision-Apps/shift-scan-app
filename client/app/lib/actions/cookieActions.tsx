@@ -18,6 +18,25 @@ export async function getCookies({ cookieName }: { cookieName: string }) {
     return null;
   }
 }
+
+export async function getCookieList({
+  cookieNames,
+}: {
+  cookieNames: string[];
+}) {
+  try {
+    // Build query string with multiple cookie names
+    const queryParams = cookieNames
+      .map((name) => `name=${encodeURIComponent(name)}`)
+      .join("&");
+
+    const res = await apiRequest(`/api/cookies/list?${queryParams}`, "GET");
+    return res.value || res; // Return the values or the entire response
+  } catch (error) {
+    console.error("Failed to get cookies:", error);
+    return null;
+  }
+}
 /*-----------------------------------------------------------------------------------------------------------------
 -------------------------------------------------------------------------------------------------------------------
 LOCALE COOKIES
