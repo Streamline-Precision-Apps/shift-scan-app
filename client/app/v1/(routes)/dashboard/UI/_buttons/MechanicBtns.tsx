@@ -1,8 +1,5 @@
 "use client";
-import { Buttons } from "@/components/(reusable)/buttons";
-import { Holds } from "@/components/(reusable)/holds";
-import { Images } from "@/components/(reusable)/images";
-import { Texts } from "@/components/(reusable)/texts";
+
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import VerticalLayout from "./verticalLayout";
@@ -18,19 +15,7 @@ export default function MechanicBtn({
 }) {
   const router = useRouter();
   const t = useTranslations("Widgets");
-  const [projectID, setProjectID] = useState("");
 
-  useEffect(() => {
-    const checkCookie = async () => {
-      const response = await fetch(
-        "/api/cookies?method=get&name=mechanicProjectID",
-      );
-      const data = await response.json();
-      setProjectID(data);
-    };
-
-    checkCookie();
-  });
   return (
     <>
       {permission !== "USER" && view === "mechanic" ? (
@@ -41,11 +26,7 @@ export default function MechanicBtn({
           color={"green"}
           textSize={"h6"}
           handleEvent={() => {
-            router.push(
-              projectID
-                ? `/dashboard/mechanic/projects/${projectID}`
-                : "/dashboard/mechanic",
-            );
+            router.push("/v1/dashboard/mechanic");
           }}
         />
       ) : (
@@ -56,11 +37,7 @@ export default function MechanicBtn({
           color={"green"}
           textSize={"h6"}
           handleEvent={() => {
-            router.push(
-              projectID
-                ? `/dashboard/mechanic/projects/${projectID}`
-                : "/dashboard/mechanic",
-            );
+            router.push("/v1/dashboard/mechanic");
           }}
         />
       )}

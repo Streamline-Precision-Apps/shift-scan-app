@@ -15,7 +15,7 @@ export default function EquipmentBtn({ permission }: { permission: string }) {
       text={"Equipment"}
       background={"green"}
       translation={"Widgets"}
-      href="/dashboard/equipment"
+      href="/v1/dashboard/equipment"
     />
   ) : (
     <Holds className="h-full w-full col-span-2">
@@ -26,7 +26,7 @@ export default function EquipmentBtn({ permission }: { permission: string }) {
         text={t("Equipment")}
         background={"green"}
         translation={"Widgets"}
-        href="/dashboard/equipment"
+        href="/v1/dashboard/equipment"
       />
     </Holds>
   );

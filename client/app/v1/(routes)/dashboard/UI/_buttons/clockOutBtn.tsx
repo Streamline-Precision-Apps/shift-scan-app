@@ -112,7 +112,7 @@ export default function ClockOutBtn({
                   textSize={"h6"}
                   handleEvent={() => {
                     if (logs.length === 0) {
-                      router.push("/dashboard/clock-out");
+                      router.push("/v1/dashboard/clock-out");
                     } else {
                       modalState.handleOpenModal();
                     }
@@ -128,7 +128,7 @@ export default function ClockOutBtn({
                   textSize={"h6"}
                   handleEvent={() => {
                     if (logs.length === 0) {
-                      router.push("/dashboard/clock-out");
+                      router.push("/v1/dashboard/clock-out");
                     } else {
                       modalState.handleOpenModal();
                     }
@@ -145,7 +145,7 @@ export default function ClockOutBtn({
                   titleImgAlt={"clock Out Icon"}
                   handleEvent={() => {
                     if (logs.length === 0) {
-                      router.push("/dashboard/clock-out");
+                      router.push("/v1/dashboard/clock-out");
                     } else {
                       modalState.handleOpenModal();
                     }
@@ -167,9 +167,9 @@ export default function ClockOutBtn({
                 // handleEvent={() => handleShowAdditionalButtons("clockOut")}
                 handleEvent={() => {
                   if (logs.length === 0) {
-                    router.push("/dashboard/clock-out");
+                    router.push("/v1/dashboard/clock-out");
                   } else if (mechanicProjectID === "") {
-                    router.push("/dashboard/clock-out");
+                    router.push("/v1/dashboard/clock-out");
                   } else {
                     modalState.handleOpenModal();
                   }
@@ -187,7 +187,7 @@ export default function ClockOutBtn({
                 textSize={"h6"}
                 handleEvent={() => {
                   if (logs.length === 0) {
-                    router.push("/dashboard/clock-out");
+                    router.push("/v1/dashboard/clock-out");
                   } else {
                     modalState.handleOpenModal();
                   }
@@ -205,7 +205,7 @@ export default function ClockOutBtn({
                 textSize={"h6"}
                 handleEvent={() => {
                   if (logs.length === 0) {
-                    router.push("/dashboard/clock-out");
+                    router.push("/v1/dashboard/clock-out");
                   } else {
                     modalState.handleOpenModal();
                   }
@@ -226,7 +226,7 @@ export default function ClockOutBtn({
               color={"red"}
               handleEvent={() => {
                 if (logs.length === 0) {
-                  router.push("/dashboard/clock-out");
+                  router.push("/v1/dashboard/clock-out");
                 } else {
                   modalState.handleOpenModal();
                 }
@@ -242,7 +242,7 @@ export default function ClockOutBtn({
               color={"red"}
               handleEvent={() => {
                 if (logs.length === 0) {
-                  router.push("/dashboard/clock-out");
+                  router.push("/v1/dashboard/clock-out");
                 } else {
                   modalState.handleOpenModal();
                 }
@@ -259,7 +259,7 @@ export default function ClockOutBtn({
                 textSize={"h6"}
                 handleEvent={() => {
                   if (logs.length === 0) {
-                    router.push("/dashboard/clock-out");
+                    router.push("/v1/dashboard/clock-out");
                   } else {
                     modalState.handleOpenModal();
                   }
@@ -277,7 +277,7 @@ export default function ClockOutBtn({
                 textSize={"h6"}
                 handleEvent={() => {
                   if (logs.length === 0) {
-                    router.push("/dashboard/clock-out");
+                    router.push("/v1/dashboard/clock-out");
                   } else {
                     modalState.handleOpenModal();
                   }
@@ -352,16 +352,13 @@ export default function ClockOutBtn({
                         background="lightBlue"
                         href={
                           type === "equipment"
-                            ? "/dashboard/equipment"
+                            ? "/v1/dashboard/equipment"
                             : type === "mechanic"
-                            ? `/dashboard/mechanic/projects/${
-                                logs.find((log) => log.type === type)
-                                  ?.maintenanceId
-                              }`
+                            ? `/v1/dashboard/mechanic`
                             : type === "Trucking Assistant"
-                            ? "/dashboard/truckingAssistant"
+                            ? "/v1/dashboard/truckingAssistant"
                             : type === "tasco"
-                            ? "/dashboard/tasco"
+                            ? "/v1/dashboard/tasco"
                             : undefined
                         }
                         className="w-full py-3"

@@ -78,12 +78,12 @@ const useFetchLogs = (
           console.warn("User ID not available");
           return;
         }
-        
+
         const response = await apiRequest(
           `/api/v1/timesheet/user/${user.id}/dashboard-logs`,
           "GET"
         );
-        
+
         if (response.success && response.data) {
           setLogs(response.data);
         }
@@ -114,7 +114,7 @@ export default function DbWidgetSection({
 
   const verifyLogsCompletion = useCallback(() => {
     if (logs.length === 0) {
-      router.push("/dashboard/clock-out");
+      router.push("/v1/dashboard/clock-out");
     } else {
       modalState.handleOpenModal();
     }

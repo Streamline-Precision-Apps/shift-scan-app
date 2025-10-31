@@ -13,7 +13,7 @@ export default function GeneratorBtn() {
       textSize={"h6"}
       background={"lightBlue"}
       translation={"Widgets"}
-      href="/dashboard/qr-generator?rPath=/dashboard"
+      href="/v1/dashboard/qr-generator?rPath=/v1/dashboard"
     />
   );
 }

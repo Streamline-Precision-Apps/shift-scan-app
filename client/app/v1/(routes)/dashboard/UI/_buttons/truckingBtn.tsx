@@ -1,8 +1,5 @@
 "use client";
-import { Buttons } from "@/components/(reusable)/buttons";
-import { Holds } from "@/components/(reusable)/holds";
-import { Images } from "@/components/(reusable)/images";
-import { Texts } from "@/components/(reusable)/texts";
+
 import { useTranslations } from "next-intl";
 import HorizontalLayout from "./horizontalLayout";
 import VerticalLayout from "./verticalLayout";
@@ -27,16 +24,16 @@ export default function TruckingBtn({
             laborType === "truckDriver"
               ? "TruckDriver"
               : laborType === "manualLabor"
-                ? "ManualLabor"
-                : laborType === "operator"
-                  ? "Operator"
-                  : "TruckingAssistant"
+              ? "ManualLabor"
+              : laborType === "operator"
+              ? "Operator"
+              : "TruckingAssistant"
           }
           textSize={"h6"}
           titleImg={"/trucking.svg"}
           titleImgAlt={"Trucking Icon"}
           color={"green"}
-          handleEvent={() => router.push("/dashboard/truckingAssistant")}
+          handleEvent={() => router.push("/v1/dashboard/truckingAssistant")}
         />
       )}
       {permission !== "USER" && (
@@ -45,16 +42,16 @@ export default function TruckingBtn({
             laborType === "truckDriver"
               ? "TruckDriver"
               : laborType === "manualLabor"
-                ? "ManualLabor"
-                : laborType === "operator"
-                  ? "Operator"
-                  : "TruckingAssistant"
+              ? "ManualLabor"
+              : laborType === "operator"
+              ? "Operator"
+              : "TruckingAssistant"
           }
           textSize={"h6"}
           titleImg={"/trucking.svg"}
           titleImgAlt={"Trucking Icon"}
           color={"green"}
-          handleEvent={() => router.push("/dashboard/truckingAssistant")}
+          handleEvent={() => router.push("/v1/dashboard/truckingAssistant")}
         />
       )}
     </>

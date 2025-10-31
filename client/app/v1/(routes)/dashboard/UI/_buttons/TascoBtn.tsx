@@ -1,7 +1,3 @@
-import { Buttons } from "@/components/(reusable)/buttons";
-import { Holds } from "@/components/(reusable)/holds";
-import { Images } from "@/components/(reusable)/images";
-import { Texts } from "@/components/(reusable)/texts";
 import { useTranslations } from "next-intl";
 import VerticalLayout from "./verticalLayout";
 import { useRouter } from "next/navigation";
@@ -28,7 +24,7 @@ export default function TascoBtn({
             textSize={"h6"}
             titleImg={"/tasco.svg"}
             titleImgAlt={"Tasco Assistant Icon"}
-            handleEvent={() => router.push("/dashboard/tasco")}
+            handleEvent={() => router.push("/v1/dashboard/tasco")}
           />
         </>
       ) : (
@@ -39,7 +35,7 @@ export default function TascoBtn({
             textSize={"h6"}
             titleImg={"/tasco.svg"}
             titleImgAlt={"Tasco Assistant Icon"}
-            handleEvent={() => router.push("/dashboard/tasco")}
+            handleEvent={() => router.push("/v1/dashboard/tasco")}
           />
         </>
       )}

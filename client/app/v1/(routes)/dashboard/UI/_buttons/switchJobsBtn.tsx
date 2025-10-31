@@ -108,9 +108,9 @@ export default function SwitchJobsBtn({
               color={"orange"}
               handleEvent={() => {
                 if (logs.length === 0) {
-                  router.push("/dashboard/switch-jobs");
+                  router.push("/v1/dashboard/switch-jobs");
                 } else if (mechanicProjectID === "") {
-                  router.push("/dashboard/switch-jobs");
+                  router.push("/v1/dashboard/switch-jobs");
                 } else {
                   modalState.handleOpenModal();
                 }
@@ -125,9 +125,9 @@ export default function SwitchJobsBtn({
               color={"orange"}
               handleEvent={() => {
                 if (logs.length === 0) {
-                  router.push("/dashboard/switch-jobs");
+                  router.push("/v1/dashboard/switch-jobs");
                 } else if (mechanicProjectID === "") {
-                  router.push("/dashboard/switch-jobs");
+                  router.push("/v1/dashboard/switch-jobs");
                 } else {
                   modalState.handleOpenModal();
                 }
@@ -145,9 +145,9 @@ export default function SwitchJobsBtn({
           color={"orange"}
           handleEvent={() => {
             if (logs.length === 0) {
-              router.push("/dashboard/switch-jobs");
+              router.push("/v1/dashboard/switch-jobs");
             } else if (mechanicProjectID === "") {
-              router.push("/dashboard/switch-jobs");
+              router.push("/v1/dashboard/switch-jobs");
             } else {
               modalState.handleOpenModal();
             }
@@ -220,16 +220,13 @@ export default function SwitchJobsBtn({
                         background="lightBlue"
                         href={
                           type === "equipment"
-                            ? "/dashboard/equipment"
+                            ? "/v1/dashboard/equipment"
                             : type === "mechanic"
-                            ? `/dashboard/mechanic/projects/${
-                                logs.find((log) => log.type === type)
-                                  ?.maintenanceId
-                              }`
+                            ? `/v1/dashboard/mechanic`
                             : type === "Trucking Assistant"
-                            ? "/dashboard/truckingAssistant"
+                            ? "/v1/dashboard/truckingAssistant"
                             : type === "tasco"
-                            ? "/dashboard/tasco"
+                            ? "/v1/dashboard/tasco"
                             : undefined
                         }
                         className="w-full py-3"

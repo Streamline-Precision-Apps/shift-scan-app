@@ -12,7 +12,7 @@ export default function MyTeamWidget() {
       text={"MyTeam"}
       background={"lightBlue"}
       translation={"Widgets"}
-      href="/dashboard/myTeam?rPath=/dashboard"
+      href="/v1/dashboard/myTeam?rPath=/v1/dashboard"
     />
   );
 }
