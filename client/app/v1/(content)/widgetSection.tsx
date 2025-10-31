@@ -177,7 +177,7 @@ export default function WidgetSection() {
     // Match the main layout: BannerSection (row-start-2 row-end-4), MainContentSection (row-start-4 row-end-9)
     return (
       <>
-        <Holds className="row-start-2 row-end-4 bg-app-blue bg-opacity-20 w-full h-full justify-center items-center rounded-[10px] relative">
+        <Holds className="row-start-2 row-end-4 bg-app-blue/10  w-full h-full justify-center items-center rounded-[10px] relative">
           <Banners />
         </Holds>
         <Holds
@@ -225,7 +225,7 @@ function BannerSection({
   date: string;
 }) {
   return (
-    <Holds className="row-start-2 row-end-4 bg-app-blue bg-opacity-20 w-full h-full justify-center items-center rounded-[10px] relative">
+    <Holds className="row-start-2 row-end-4 bg-app-blue/10 w-full h-full justify-center items-center rounded-[10px] relative">
       {pageView === "" && (
         <DisplayBanner firstName={user.firstName} date={date} />
       )}

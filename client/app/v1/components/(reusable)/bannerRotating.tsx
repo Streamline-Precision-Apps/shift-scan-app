@@ -280,7 +280,7 @@ export default function BannerRotating() {
   }, [savedTimeSheetData]);
 
   return (
-    <div className="w-[80%]  h-full mx-auto">
+    <div className="w-[80%] h-full mx-auto">
       {bannerData ? (
         <Slider {...settings}>{buildSlides()}</Slider>
       ) : (

@@ -21,7 +21,7 @@ export default function Hours({ setToggle, display, loading }: HoursProps) {
   const t = useTranslations("Home");
   const payPeriodTimeSheet = useUserStore((state) => state.payPeriodTimeSheet);
   // Calculate total hours from payPeriodTimeSheet
-  const payPeriodHours = Array.isArray(payPeriodTimeSheet)
+  const payPeriodHoursRaw = Array.isArray(payPeriodTimeSheet)
     ? payPeriodTimeSheet.reduce((total, sheet) => {
         if (sheet.startTime && sheet.endTime) {
           return (
@@ -34,6 +34,7 @@ export default function Hours({ setToggle, display, loading }: HoursProps) {
         return total;
       }, 0)
     : 0;
+  const payPeriodHours = Math.round(payPeriodHoursRaw * 10) / 10;
 
   const handler = () => {
     setToggle(!display);

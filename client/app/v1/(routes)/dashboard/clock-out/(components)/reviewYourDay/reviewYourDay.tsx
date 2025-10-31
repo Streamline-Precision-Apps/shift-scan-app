@@ -1,19 +1,19 @@
-import Spinner from "@/components/(animations)/spinner";
-import { Bases } from "@/components/(reusable)/bases";
-import { Buttons } from "@/components/(reusable)/buttons";
-import { Contents } from "@/components/(reusable)/contents";
-import { Grids } from "@/components/(reusable)/grids";
-import { Holds } from "@/components/(reusable)/holds";
-import { Images } from "@/components/(reusable)/images";
-import { Texts } from "@/components/(reusable)/texts";
-import { TitleBoxes } from "@/components/(reusable)/titleBoxes";
-import { Titles } from "@/components/(reusable)/titles";
+import Spinner from "@/app/v1/components/(animations)/spinner";
+import { Bases } from "@/app/v1/components/(reusable)/bases";
+import { Buttons } from "@/app/v1/components/(reusable)/buttons";
+import { Contents } from "@/app/v1/components/(reusable)/contents";
+import { Grids } from "@/app/v1/components/(reusable)/grids";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
+import { Images } from "@/app/v1/components/(reusable)/images";
+import { Texts } from "@/app/v1/components/(reusable)/texts";
+import { TitleBoxes } from "@/app/v1/components/(reusable)/titleBoxes";
+import { Titles } from "@/app/v1/components/(reusable)/titles";
 import {
   Accordion,
   AccordionItem,
   AccordionTrigger,
   AccordionContent,
-} from "@/components/ui/accordion";
+} from "@/app/v1/components/ui/accordion";
 import { now } from "lodash";
 import { useTranslations } from "next-intl";
 import { Dispatch, SetStateAction } from "react";
@@ -56,19 +56,19 @@ export default function ReviewYourDay({
       <Contents>
         <Holds background={"white"} className="row-span-1 h-full ">
           <Holds className="h-full w-full flex flex-col justify-center items-center">
-            <TitleBoxes onClick={prevStep} className="h-24 flex-shrink-0">
+            <TitleBoxes onClick={prevStep} className="h-24 shrink-0">
               <Holds className="h-full justify-end">
                 <Titles size={"md"}>{t("ReviewYourDay")}</Titles>
               </Holds>
             </TitleBoxes>
-            <Texts size={"sm"} className="p-2 flex-shrink-0">
+            <Texts size={"sm"} className="p-2 shrink-0">
               {t("ReviewYourDayDirections")}
             </Texts>
-            <div className="w-[90%] flex-grow flex flex-col pb-5">
+            <div className="w-[90%] grow flex flex-col pb-5">
               <Holds className="flex flex-col border-[3px] rounded-[10px] border-black h-full">
                 <Holds
                   position={"row"}
-                  className="border-b-[3px] border-black py-1 px-2 flex-shrink-0"
+                  className="border-b-[3px] border-black py-1 px-2 shrink-0"
                 >
                   <Grids cols={"3"} gap={"2"} className="w-full">
                     <Titles position={"left"} size={"h6"}>
@@ -84,11 +84,11 @@ export default function ReviewYourDay({
                   <Holds className="w-4"></Holds>
                 </Holds>
                 {loading ? (
-                  <Holds className="flex-grow w-full justify-center">
+                  <Holds className="grow w-full justify-center">
                     <Spinner />
                   </Holds>
                 ) : (
-                  <div className="flex-grow overflow-y-auto no-scrollbar min-h-0 max-h-[calc(100%-40px)]">
+                  <div className="grow overflow-y-auto no-scrollbar min-h-0 max-h-[calc(100%-40px)]">
                     <Accordion type="single" collapsible className="w-full">
                       {timesheets
                         .slice()
@@ -109,7 +109,7 @@ export default function ReviewYourDay({
                                     <Texts size="sm" className="text-xs">
                                       {timesheet.startTime
                                         ? new Date(
-                                            timesheet.startTime,
+                                            timesheet.startTime
                                           ).toLocaleTimeString([], {
                                             hour: "2-digit",
                                             minute: "2-digit",
@@ -122,22 +122,22 @@ export default function ReviewYourDay({
                                       {"-"}{" "}
                                       {timesheet.endTime
                                         ? new Date(
-                                            timesheet.endTime,
+                                            timesheet.endTime
                                           ).toLocaleTimeString([], {
                                             hour: "2-digit",
                                             minute: "2-digit",
                                             hour12: true,
                                           })
                                         : !timesheet.endTime &&
-                                            currentTimesheetId ===
-                                              Number(timesheet.id)
-                                          ? `(${t("Now")})`
-                                          : "-"}
+                                          currentTimesheetId ===
+                                            Number(timesheet.id)
+                                        ? `(${t("Now")})`
+                                        : "-"}
                                     </Texts>
                                   </div>
                                   <Texts
                                     size="sm"
-                                    className="text-xs text-center truncate max-w-[80px] "
+                                    className="text-xs text-center truncate max-w-20 "
                                   >
                                     {timesheet.Jobsite.name}
                                   </Texts>
@@ -157,10 +157,10 @@ export default function ReviewYourDay({
                                     timesheet.workType === "TRUCK_DRIVER"
                                       ? "/trucking.svg"
                                       : timesheet.workType === "MECHANIC"
-                                        ? "/mechanic.svg"
-                                        : timesheet.workType === "TASCO"
-                                          ? "/tasco.svg"
-                                          : "/equipment.svg"
+                                      ? "/mechanic.svg"
+                                      : timesheet.workType === "TASCO"
+                                      ? "/tasco.svg"
+                                      : "/equipment.svg"
                                   }
                                   titleImgAlt="WorkType Icon"
                                   className="w-7 h-7 mb-1 absolute top-1 right-1"
@@ -169,7 +169,7 @@ export default function ReviewYourDay({
                                   <strong>Start:</strong>{" "}
                                   {timesheet.startTime
                                     ? new Date(
-                                        timesheet.startTime,
+                                        timesheet.startTime
                                       ).toLocaleTimeString([], {
                                         hour: "2-digit",
                                         minute: "2-digit",
@@ -181,24 +181,24 @@ export default function ReviewYourDay({
                                   <strong>End:</strong>{" "}
                                   {timesheet.endTime
                                     ? new Date(
-                                        timesheet.endTime,
+                                        timesheet.endTime
                                       ).toLocaleTimeString([], {
                                         hour: "2-digit",
                                         minute: "2-digit",
                                         hour12: true,
                                       })
                                     : !timesheet.endTime &&
-                                        currentTimesheetId ===
-                                          Number(timesheet.id)
-                                      ? `${new Date(now()).toLocaleTimeString(
-                                          [],
-                                          {
-                                            hour: "2-digit",
-                                            minute: "2-digit",
-                                            hour12: true,
-                                          },
-                                        )} (${t("Now")})`
-                                      : "-"}
+                                      currentTimesheetId ===
+                                        Number(timesheet.id)
+                                    ? `${new Date(now()).toLocaleTimeString(
+                                        [],
+                                        {
+                                          hour: "2-digit",
+                                          minute: "2-digit",
+                                          hour12: true,
+                                        }
+                                      )} (${t("Now")})`
+                                    : "-"}
                                 </Texts>
                                 <Texts
                                   size="sm"

@@ -1,18 +1,20 @@
 "use client";
-import { updateTimeSheet } from "@/actions/timeSheetActions";
-import { usePermissions } from "@/app/context/PermissionsContext";
-import Spinner from "@/components/(animations)/spinner";
-import { Bases } from "@/components/(reusable)/bases";
-import { Buttons } from "@/components/(reusable)/buttons";
-import { Contents } from "@/components/(reusable)/contents";
-import { Holds } from "@/components/(reusable)/holds";
-import { Images } from "@/components/(reusable)/images";
-import { Inputs } from "@/components/(reusable)/inputs";
-import { Labels } from "@/components/(reusable)/labels";
-import { Texts } from "@/components/(reusable)/texts";
-import { TitleBoxes } from "@/components/(reusable)/titleBoxes";
-import { Titles } from "@/components/(reusable)/titles";
-import { useSession } from "next-auth/react";
+import { sendNotification } from "@/app/lib/actions/generatorActions";
+// import { updateTimeSheet } from "@/app/lib/actions/timeSheetActions";
+import { useUserStore } from "@/app/lib/store/userStore";
+import { apiRequest } from "@/app/lib/utils/api-Utils";
+
+import Spinner from "@/app/v1/components/(animations)/spinner";
+import { Bases } from "@/app/v1/components/(reusable)/bases";
+import { Buttons } from "@/app/v1/components/(reusable)/buttons";
+import { Contents } from "@/app/v1/components/(reusable)/contents";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
+import { Images } from "@/app/v1/components/(reusable)/images";
+import { Inputs } from "@/app/v1/components/(reusable)/inputs";
+import { Labels } from "@/app/v1/components/(reusable)/labels";
+import { Texts } from "@/app/v1/components/(reusable)/texts";
+import { TitleBoxes } from "@/app/v1/components/(reusable)/titleBoxes";
+import { Titles } from "@/app/v1/components/(reusable)/titles";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -55,59 +57,57 @@ export const LaborClockOut = ({
   const [date] = useState(new Date());
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
-  const { data: session } = useSession();
-  const { permissions, getStoredCoordinates } = usePermissions();
+  const { user } = useUserStore();
+  // const { permissions, getStoredCoordinates } = usePermissions();
 
   async function handleSubmitTimeSheet() {
+    if (!timeSheetId || isNaN(Number(timeSheetId))) {
+      alert("Timesheet ID is missing or invalid. Cannot submit timesheet.");
+      return;
+    }
     try {
       setLoading(true);
-      // Step 1: Get the recent timecard ID.
-      if (!permissions.location) {
-        console.error("Location permissions are required to clock in.");
-        return;
-      }
+      // Prepare body for API request
+      const body = {
+        userId: user?.id,
+        endTime: new Date().toISOString(),
+        timeSheetComments: commentsValue,
+        wasInjured,
+        clockOutLat: null,
+        clockOutLng: null,
+      };
 
-      const coordinates = getStoredCoordinates();
-      const formData = new FormData();
-      formData.append("id", timeSheetId?.toString() || "");
-      formData.append("userId", session?.user.id?.toString() || "");
-      formData.append("endTime", new Date().toISOString());
-      formData.append("timeSheetComments", commentsValue);
-      formData.append("wasInjured", wasInjured.toString());
-      formData.append("clockOutLat", coordinates?.latitude.toString() || "");
-      formData.append("clockOutLng", coordinates?.longitude.toString() || "");
-
-      const result = await updateTimeSheet(formData);
+      // Use apiRequest to call the backend update route
+      const result = await apiRequest(
+        `/api/v1/timesheet/${timeSheetId}/clock-out`,
+        "PUT",
+        body
+      );
       if (result.success) {
         try {
-          await fetch("/api/notifications/send-multicast", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              topic: "timecard-submission",
-              title: "Timecard Approval Needed",
-              message: `#${result.timesheetId} has been submitted by ${result.userFullName} for approval.`,
-              link: `/admins/timesheets?id=${result.timesheetId}`,
-              referenceId: result.timesheetId,
-            }),
+          await sendNotification({
+            topic: "timecard-submission",
+            title: "Timecard Approval Needed",
+            message: `#${result.timesheetId} has been submitted by ${result.userFullName} for approval.`,
+            link: `/admins/timesheets?id=${result.timesheetId}`,
+            referenceId: result.timesheetId,
           });
         } catch (error) {
           console.error("🔴 Failed to send notification:", error);
           return;
         } finally {
-          setLoading(false);
-          await Promise.all([refetchTimesheet(), router.push("/")]);
+          await Promise.all([refetchTimesheet(), router.push("/v1")]);
           // clear the saved storage after navigation
           setTimeout(() => {
             fetch("/api/cookies?method=deleteAll");
-            localStorage.clear();
+            localStorage.removeItem("timesheetId");
           }, 500);
         }
       }
     } catch (error) {
       console.error("🔴 Failed to process the time sheet:", error);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -143,7 +143,7 @@ export const LaborClockOut = ({
             </Holds>
           </TitleBoxes>
 
-          <div className="w-[90%] flex-grow flex flex-col pb-5">
+          <div className="w-[90%] grow flex flex-col pb-5">
             <Holds
               background={"timeCardYellow"}
               className="h-full w-full rounded-[10px] border-[3px] border-black mt-8"
@@ -189,10 +189,10 @@ export const LaborClockOut = ({
                         pendingTimeSheets?.workType === "LABOR"
                           ? t("GeneralLabor")
                           : pendingTimeSheets?.workType === "TRUCK_DRIVER"
-                            ? t("TruckDriver")
-                            : pendingTimeSheets?.workType === "MECHANIC"
-                              ? t("Mechanic")
-                              : ""
+                          ? t("TruckDriver")
+                          : pendingTimeSheets?.workType === "MECHANIC"
+                          ? t("Mechanic")
+                          : ""
                       }
                     />
                   )}

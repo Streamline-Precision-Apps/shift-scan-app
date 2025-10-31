@@ -1,14 +1,14 @@
-import Spinner from "@/components/(animations)/spinner";
-import { CheckBox } from "@/components/(inputs)/checkBox";
-import { Bases } from "@/components/(reusable)/bases";
-import { Buttons } from "@/components/(reusable)/buttons";
-import { Contents } from "@/components/(reusable)/contents";
-import { Grids } from "@/components/(reusable)/grids";
-import { Holds } from "@/components/(reusable)/holds";
-import { Images } from "@/components/(reusable)/images";
-import { Texts } from "@/components/(reusable)/texts";
-import { TitleBoxes } from "@/components/(reusable)/titleBoxes";
-import { Titles } from "@/components/(reusable)/titles";
+import Spinner from "@/app/v1/components/(animations)/spinner";
+import { CheckBox } from "@/app/v1/components/(inputs)/checkBox";
+import { Bases } from "@/app/v1/components/(reusable)/bases";
+import { Buttons } from "@/app/v1/components/(reusable)/buttons";
+import { Contents } from "@/app/v1/components/(reusable)/contents";
+import { Grids } from "@/app/v1/components/(reusable)/grids";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
+import { Images } from "@/app/v1/components/(reusable)/images";
+import { Texts } from "@/app/v1/components/(reusable)/texts";
+import { TitleBoxes } from "@/app/v1/components/(reusable)/titleBoxes";
+import { Titles } from "@/app/v1/components/(reusable)/titles";
 import { useTranslations } from "next-intl";
 
 export const PreInjuryReport = ({
@@ -47,7 +47,7 @@ export const PreInjuryReport = ({
             </Holds>
           </TitleBoxes>
 
-          <div className="w-[90%] flex-grow flex flex-col py-5">
+          <div className="w-[90%] grow flex flex-col py-5">
             <Texts size={"p5"}>{t("SignatureAcknowledgement")}</Texts>
             <Holds className="border-[3px] border-black rounded-[10px] h-32 my-5">
               {loading ? (

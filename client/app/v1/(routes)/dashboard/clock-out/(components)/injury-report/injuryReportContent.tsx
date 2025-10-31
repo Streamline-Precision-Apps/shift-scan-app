@@ -2,19 +2,19 @@
 import "@/app/globals.css";
 import { useState, ChangeEvent, Dispatch, SetStateAction } from "react";
 import { useTranslations } from "next-intl";
-import { Contents } from "@/components/(reusable)/contents";
-import { Holds } from "@/components/(reusable)/holds";
-import { Titles } from "@/components/(reusable)/titles";
-import { Buttons } from "@/components/(reusable)/buttons";
-import { useSession } from "next-auth/react";
-import { Grids } from "@/components/(reusable)/grids";
-import { TextAreas } from "@/components/(reusable)/textareas";
-import { CheckBox } from "@/components/(inputs)/checkBox";
-import { Texts } from "@/components/(reusable)/texts";
-import { Bases } from "@/components/(reusable)/bases";
-import { Images } from "@/components/(reusable)/images";
-import { Labels } from "@/components/(reusable)/labels";
-import { TitleBoxes } from "@/components/(reusable)/titleBoxes";
+import { Contents } from "@/app/v1/components/(reusable)/contents";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
+import { Titles } from "@/app/v1/components/(reusable)/titles";
+import { Buttons } from "@/app/v1/components/(reusable)/buttons";
+import { Grids } from "@/app/v1/components/(reusable)/grids";
+import { TextAreas } from "@/app/v1/components/(reusable)/textareas";
+import { CheckBox } from "@/app/v1/components/(inputs)/checkBox";
+import { Texts } from "@/app/v1/components/(reusable)/texts";
+import { Bases } from "@/app/v1/components/(reusable)/bases";
+import { Images } from "@/app/v1/components/(reusable)/images";
+import { Labels } from "@/app/v1/components/(reusable)/labels";
+import { TitleBoxes } from "@/app/v1/components/(reusable)/titleBoxes";
+import { useUserStore } from "@/app/lib/store/userStore";
 
 type FormProps = {
   base64String: string | null;
@@ -38,25 +38,23 @@ export const InjuryReportContent = ({
   const [textarea, setTextarea] = useState<string>("");
   const [error, setError] = useState<string | undefined>(undefined);
   const t = useTranslations("ClockOut");
-  const { data: session } = useSession();
-  if (!session) {
-    return null;
-  }
-  const { id } = session.user;
+  const { user } = useUserStore();
+
+  const id = user?.id;
 
   const handleSupervisorCheckboxChange = (
-    event: ChangeEvent<HTMLInputElement>,
+    event: ChangeEvent<HTMLInputElement>
   ) => {
     setSupervisorChecked(event.currentTarget.checked);
   };
 
   const handleCompleteFormCheckboxChange = (
-    event: ChangeEvent<HTMLInputElement>,
+    event: ChangeEvent<HTMLInputElement>
   ) => {
     setCompletedForm(event.currentTarget.checked);
   };
   const handleSignatureCheckboxChange = (
-    event: ChangeEvent<HTMLInputElement>,
+    event: ChangeEvent<HTMLInputElement>
   ) => {
     setSignatureChecked(event.currentTarget.checked);
   };
@@ -103,7 +101,7 @@ export const InjuryReportContent = ({
 
           {/* Describe What Happened */}
 
-          <div className="w-[90%] flex-grow flex flex-col">
+          <div className="w-[90%] grow flex flex-col">
             <Holds position={"row"} className="w-full  my-5">
               <Holds className="w-fit pr-5">
                 <CheckBox

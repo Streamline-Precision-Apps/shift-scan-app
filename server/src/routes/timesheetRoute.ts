@@ -17,6 +17,7 @@ import {
   getEmployeeEquipmentLogDetailsController,
   deleteEmployeeEquipmentLogController,
   updateEmployeeEquipmentLogController,
+  updateClockOutController,
 } from "../controllers/timesheetController.js";
 
 const router = Router();
@@ -31,7 +32,11 @@ router.get("/user/:userId/active-status", getTimesheetActiveStatusController);
 // Get dashboard logs for a user
 router.get("/user/:userId/dashboard-logs", getDashboardLogsController);
 router.get("/user/:userId/clockOutComment", getClockOutCommentController);
+// Get today's timesheets and signature for a user
+import { getClockOutDetailsController } from "../controllers/timesheetController.js";
+router.get("/user/:userId/clock-out-details", getClockOutDetailsController);
 // Update a timesheet
+router.put("/:id/clock-out", updateClockOutController);
 router.put("/:id", updateTimesheet);
 
 // Update a timesheet

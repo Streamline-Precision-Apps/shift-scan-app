@@ -89,7 +89,7 @@ export default function Dashboard() {
           <Suspense fallback={<LoadingHamburgerMenuNew />}>
             <HamburgerMenuNew isHome={false} />
           </Suspense>
-          <div className="row-start-2 row-end-4 bg-app-blue/20 w-full h-full justify-center items-center rounded-[10px]">
+          <div className="row-start-2 row-end-4 bg-app-blue/10 w-full h-full justify-center items-center rounded-[10px]">
             <Suspense fallback={<BannerRotatingSkeleton />}>
               <BannerRotating />
             </Suspense>

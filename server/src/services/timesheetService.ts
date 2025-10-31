@@ -1286,3 +1286,91 @@ export async function updateEmployeeEquipmentLogService({
     throw new Error(`Failed to update employee equipment log: ${error}`);
   }
 }
+
+export async function getClockOutDetailsService(userId: string) {
+  // Get today's date range
+  const startOfDay = new Date();
+  startOfDay.setHours(0, 0, 0, 0);
+  const endOfDay = new Date();
+  endOfDay.setHours(23, 59, 59, 999);
+
+  // Fetch all required data in parallel
+  const [timesheets, user] = await Promise.all([
+    prisma.timeSheet.findMany({
+      where: {
+        userId,
+        startTime: { gte: startOfDay, lte: endOfDay },
+      },
+      include: {
+        Jobsite: true,
+        TascoLogs: true,
+        TruckingLogs: true,
+      },
+      orderBy: { startTime: "desc" },
+    }),
+
+    prisma.user.findUnique({
+      where: { id: userId },
+      select: { signature: true },
+    }),
+  ]);
+
+  const signature = user?.signature || "";
+
+  return { timesheets, signature };
+}
+export async function updateClockOutService(
+  timeSheetId: string,
+  userId: string,
+  endTime: string,
+  timeSheetComments?: string,
+  wasInjured?: boolean,
+  clockOutLat?: number,
+  clockOutLong?: number
+) {
+  try {
+    const transactionResult = await prisma.$transaction(async (prisma) => {
+      // Update the timesheet with clock-out details
+      const updatedTimeSheet = await prisma.timeSheet.update({
+        where: { id: parseInt(timeSheetId, 10), userId },
+        data: {
+          endTime: new Date(endTime),
+          comment: timeSheetComments || null,
+          wasInjured: wasInjured || false,
+          clockOutLat: clockOutLat || null,
+          clockOutLng: clockOutLong || null,
+          status: "PENDING",
+        },
+        include: {
+          User: {
+            select: {
+              firstName: true,
+              lastName: true,
+            },
+          },
+        },
+      });
+
+      // Update user status to clocked out
+      await prisma.user.update({
+        where: { id: userId },
+        data: {
+          clockedIn: false,
+        },
+      });
+
+      return { updatedTimeSheet };
+    });
+
+    return {
+      success: true,
+      data: transactionResult.updatedTimeSheet,
+    };
+  } catch (error) {
+    console.error("Error updating clock-out details:", error);
+    return {
+      success: false,
+      error: "Failed to update clock-out details.",
+    };
+  }
+}

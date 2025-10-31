@@ -1,20 +1,20 @@
 "use client";
 import { useTranslations } from "next-intl";
-import { breakOutTimeSheet } from "@/actions/timeSheetActions";
-import { setCurrentPageView } from "@/actions/cookieActions";
+import { breakOutTimeSheet } from "@/app/lib/actions/timeSheetActions";
+import { setCurrentPageView } from "@/app/lib/actions/cookieActions";
 import { useRouter } from "next/navigation";
-import { Holds } from "@/components/(reusable)/holds";
-import { TextAreas } from "@/components/(reusable)/textareas";
-import { Texts } from "@/components/(reusable)/texts";
-import { CheckBox } from "@/components/(inputs)/checkBox";
-import { Buttons } from "@/components/(reusable)/buttons";
-import { Titles } from "@/components/(reusable)/titles";
-import { TitleBoxes } from "@/components/(reusable)/titleBoxes";
-import { Contents } from "@/components/(reusable)/contents";
-import { Images } from "@/components/(reusable)/images";
-import { useTimeSheetData } from "@/app/context/TimeSheetIdContext";
-import { Bases } from "@/components/(reusable)/bases";
-import { usePermissions } from "@/app/context/PermissionsContext";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
+import { TextAreas } from "@/app/v1/components/(reusable)/textareas";
+import { Texts } from "@/app/v1/components/(reusable)/texts";
+import { CheckBox } from "@/app/v1/components/(inputs)/checkBox";
+import { Buttons } from "@/app/v1/components/(reusable)/buttons";
+import { Titles } from "@/app/v1/components/(reusable)/titles";
+import { TitleBoxes } from "@/app/v1/components/(reusable)/titleBoxes";
+import { Contents } from "@/app/v1/components/(reusable)/contents";
+import { Images } from "@/app/v1/components/(reusable)/images";
+import { useTimeSheetData } from "@/app/lib/context/TimeSheetIdContext";
+import { Bases } from "@/app/v1/components/(reusable)/bases";
+import { usePermissions } from "@/app/lib/context/permissionContext";
 
 export default function Comment({
   handleClick,
@@ -37,7 +37,7 @@ export default function Comment({
   currentTimesheetId: number | undefined;
 }) {
   const c = useTranslations("Clock");
-  const { permissions, getStoredCoordinates } = usePermissions();
+  const { permissionStatus: permissions } = usePermissions();
   const { refetchTimesheet, savedTimeSheetData, setTimeSheetData } =
     useTimeSheetData();
   const router = useRouter();
@@ -61,13 +61,13 @@ export default function Comment({
         console.error("Location permissions are required to clock in.");
         return;
       }
-      const coordinates = getStoredCoordinates();
+      // const coordinates = getStoredCoordinates();
       const formData2 = new FormData();
       formData2.append("id", timeSheetId.toString());
       formData2.append("endTime", new Date().toISOString());
       formData2.append("timesheetComments", commentsValue);
-      formData2.append("clockOutLat", coordinates?.latitude.toString() || "");
-      formData2.append("clockOutLng", coordinates?.longitude.toString() || "");
+      // formData2.append("clockOutLat", coordinates || "");
+      // formData2.append("clockOutLng", coordinates?.longitude.toString() || "");
 
       const isUpdated = await breakOutTimeSheet(formData2);
       if (isUpdated) {
@@ -90,7 +90,7 @@ export default function Comment({
                 <Titles size={"md"}>{c("PreviousJobComments")}</Titles>
               </Holds>
             </TitleBoxes>
-            <div className="w-[90%] flex-grow flex flex-col">
+            <div className="w-[90%] grow flex flex-col">
               <Holds className="h-fit w-full relative mt-5">
                 <TextAreas
                   value={commentsValue}

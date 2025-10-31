@@ -19,6 +19,8 @@ import {
   getEmployeeEquipmentLogDetails,
   deleteEmployeeEquipmentLog,
   updateEmployeeEquipmentLogService,
+  getClockOutDetailsService,
+  updateClockOutService,
 } from "../services/timesheetService.js";
 // GET /v1/timesheet/user/:userId/active-status
 export async function getTimesheetActiveStatusController(
@@ -53,7 +55,7 @@ export async function getRecentTimesheetController(
     }
     const timesheet = await getRecentTimeSheetForUser(userId);
     if (!timesheet) {
-      return res.status(404).json({ error: "No recent timesheet found." });
+      return res.status(204).json();
     }
     return res.json({ success: true, data: timesheet });
   } catch (error) {
@@ -536,6 +538,65 @@ export async function updateEmployeeEquipmentLogController(
     console.error("[updateEmployeeEquipmentLogController] Error:", error);
     return res.status(500).json({
       error: "Failed to update employee equipment log.",
+      details: error instanceof Error ? error.message : String(error),
+    });
+  }
+}
+
+// GET /v1/timesheet/user/:userId/clock-out-details
+export async function getClockOutDetailsController(
+  req: Express.Request,
+  res: Express.Response
+) {
+  try {
+    const userId = req.params.userId;
+    if (!userId) {
+      return res.status(400).json({ error: "userId parameter is required." });
+    }
+    const details = await getClockOutDetailsService(userId);
+    return res.json({ success: true, data: details });
+  } catch (error) {
+    console.error("[getClockOutDetailsController] Error:", error);
+    return res.status(500).json({
+      error: "Failed to fetch clock out details.",
+      details: error instanceof Error ? error.message : String(error),
+    });
+  }
+}
+
+export async function updateClockOutController(
+  req: Express.Request,
+  res: Express.Response
+) {
+  try {
+    const timeSheetId = req.params.id;
+    const {
+      userId,
+      endTime,
+      timeSheetComments,
+      wasInjured,
+      clockOutLat,
+      clockOutLong,
+    } = req.body;
+    if (!timeSheetId) {
+      return res
+        .status(400)
+        .json({ error: "timeSheetId parameter is required." });
+    }
+    const details = await updateClockOutService(
+      timeSheetId,
+      userId,
+      endTime,
+      timeSheetComments,
+      wasInjured,
+      clockOutLat,
+      clockOutLong
+    );
+    return res.json({ success: true, data: details });
+  } catch (error) {
+    console.error("[updateClockOutController] Error:", error);
+    return res.status(500).json({
+      error: "Failed to update clock out details.",
       details: error instanceof Error ? error.message : String(error),
     });
   }

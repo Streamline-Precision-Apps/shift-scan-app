@@ -111,7 +111,6 @@ export default function CombinedForm({ id }: { id: string }) {
         );
 
         const apiData = response.data as EmployeeEquipmentLogData;
-        console.log("Fetched equipment log data:", apiData);
 
         const formState = transformApiToFormState(apiData);
 
