@@ -12,6 +12,7 @@ import GeneralDashboardView from "./UI/_dashboards/generalDashboardView";
 
 import { useUserStore } from "@/app/lib/store/userStore";
 import useModalState from "@/app/lib/hooks/useModalState";
+import { apiRequest } from "@/app/lib/utils/api-Utils";
 
 type props = {
   view: string;
@@ -68,19 +69,30 @@ const useFetchLogs = (
   setLogs: React.Dispatch<React.SetStateAction<LogItem[]>>
 ) => {
   const e = useTranslations("Err-Msg");
+  const { user } = useUserStore();
 
   useEffect(() => {
     const fetchLogs = async () => {
       try {
-        const response = await fetch("/api/getLogs");
-        const logsData = await response.json();
-        setLogs(logsData);
+        if (!user?.id) {
+          console.warn("User ID not available");
+          return;
+        }
+        
+        const response = await apiRequest(
+          `/api/v1/timesheet/user/${user.id}/dashboard-logs`,
+          "GET"
+        );
+        
+        if (response.success && response.data) {
+          setLogs(response.data);
+        }
       } catch (error) {
-        console.error(e("Logs-Fetch"));
+        console.error(e("Logs-Fetch"), error);
       }
     };
     fetchLogs();
-  }, [e, setLogs]);
+  }, [e, setLogs, user?.id]);
 };
 
 export default function DbWidgetSection({

@@ -380,9 +380,18 @@ model TascoLog {
   screenType         LoadType?
   timeSheetId        Int
   RefuelLogs         RefuelLog[]
+  TascoFLoads        TascoFLoads[]
   Equipment          Equipment?          @relation(fields: [equipmentId], references: [id])
   TascoMaterialTypes TascoMaterialTypes? @relation(fields: [materialType], references: [name], onDelete: Cascade)
   TimeSheet          TimeSheet           @relation(fields: [timeSheetId], references: [id], onDelete: Cascade)
+}
+
+model TascoFLoads {
+  id         Int       @id @default(autoincrement())
+  tascoLogId String
+  weight     Float?
+  screenType LoadType?
+  TascoLog   TascoLog  @relation(fields: [tascoLogId], references: [id], onDelete: Cascade)
 }
 
 model TascoMaterialTypes {

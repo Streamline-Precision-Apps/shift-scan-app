@@ -402,6 +402,13 @@ exports.Prisma.TascoLogScalarFieldEnum = {
   timeSheetId: 'timeSheetId'
 };
 
+exports.Prisma.TascoFLoadsScalarFieldEnum = {
+  id: 'id',
+  tascoLogId: 'tascoLogId',
+  weight: 'weight',
+  screenType: 'screenType'
+};
+
 exports.Prisma.TascoMaterialTypesScalarFieldEnum = {
   id: 'id',
   name: 'name'
@@ -772,6 +779,7 @@ exports.Prisma.ModelName = {
   MaintenanceLog: 'MaintenanceLog',
   Maintenance: 'Maintenance',
   TascoLog: 'TascoLog',
+  TascoFLoads: 'TascoFLoads',
   TascoMaterialTypes: 'TascoMaterialTypes',
   TruckingLog: 'TruckingLog',
   StateMileage: 'StateMileage',

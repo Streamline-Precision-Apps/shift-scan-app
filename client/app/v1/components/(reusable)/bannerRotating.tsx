@@ -123,7 +123,6 @@ export default function BannerRotating() {
 
     // 2. Cost Code
     if (bannerData.costCode && bannerData.costCode.name) {
-      console.log("Adding costCode slide:", bannerData.costCode);
       slides.push(
         <div
           key={`costcode-${slideKey++}`}
@@ -241,7 +240,6 @@ export default function BannerRotating() {
       </div>
     );
 
-    console.log(`Building slider with ${slides.length} slides`);
     return slides;
   };
 
@@ -251,7 +249,6 @@ export default function BannerRotating() {
       try {
         let timeSheetId = savedTimeSheetData?.id;
         if (!timeSheetId) {
-          console.log("No active timesheet in context, refetching...");
           await refetchTimesheet();
           timeSheetId = savedTimeSheetData?.id;
           if (!timeSheetId) {
@@ -269,11 +266,8 @@ export default function BannerRotating() {
           `/api/v1/timesheet/${timeSheetId}/user/${userId}`,
           "GET"
         );
-        console.log("BannerData for render:", response);
 
         if (response && response.success && response.data) {
-          console.log("Full response data:", response.data);
-          console.log("costCode from response:", response.data.costCode);
           setBannerData(response.data);
         }
       } catch (error) {

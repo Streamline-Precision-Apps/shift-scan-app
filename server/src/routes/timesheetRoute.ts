@@ -9,6 +9,7 @@ import {
   getRecentTimesheetController,
   getTimesheetActiveStatusController,
   getBannerDataController,
+  getDashboardLogsController,
 } from "../controllers/timesheetController.js";
 
 const router = Router();
@@ -20,6 +21,8 @@ router.post("/create", createTimesheetAndSwitchJobsController);
 router.get("/user/:userId/recent", getRecentTimesheetController);
 // Get active timesheet status for a user
 router.get("/user/:userId/active-status", getTimesheetActiveStatusController);
+// Get dashboard logs for a user
+router.get("/user/:userId/dashboard-logs", getDashboardLogsController);
 
 // Update a timesheet
 router.put("/:id", updateTimesheet);

@@ -12,6 +12,7 @@ import {
   getRecentTimeSheetForUser,
   getTimesheetActiveStatus,
   getBannerDataForTimesheet,
+  getLogsForDashboard,
 } from "../services/timesheetService.js";
 // GET /v1/timesheet/user/:userId/active-status
 export async function getTimesheetActiveStatusController(
@@ -317,5 +318,23 @@ export async function getBannerDataController(
     return res.json({ success: true, data: bannerData });
   } catch (error) {
     return res.status(500).json({ error: "Failed to fetch banner data." });
+  }
+}
+
+// GET /v1/timesheet/user/:userId/dashboard-logs
+export async function getDashboardLogsController(
+  req: Express.Request,
+  res: Express.Response
+) {
+  try {
+    const userId = req.params.userId;
+    if (!userId) {
+      return res.status(400).json({ error: "userId parameter is required." });
+    }
+    const logs = await getLogsForDashboard(userId);
+    return res.json({ success: true, data: logs });
+  } catch (error) {
+    console.error("[getDashboardLogsController] Error:", error);
+    return res.status(500).json({ error: "Failed to fetch dashboard logs." });
   }
 }

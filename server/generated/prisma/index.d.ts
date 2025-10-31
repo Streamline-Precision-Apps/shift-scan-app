@@ -124,6 +124,11 @@ export type Maintenance = $Result.DefaultSelection<Prisma.$MaintenancePayload>
  */
 export type TascoLog = $Result.DefaultSelection<Prisma.$TascoLogPayload>
 /**
+ * Model TascoFLoads
+ * 
+ */
+export type TascoFLoads = $Result.DefaultSelection<Prisma.$TascoFLoadsPayload>
+/**
  * Model TascoMaterialTypes
  * 
  */
@@ -859,6 +864,16 @@ export class PrismaClient<
   get tascoLog(): Prisma.TascoLogDelegate<ExtArgs, ClientOptions>;
 
   /**
+   * `prisma.tascoFLoads`: Exposes CRUD operations for the **TascoFLoads** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more TascoFLoads
+    * const tascoFLoads = await prisma.tascoFLoads.findMany()
+    * ```
+    */
+  get tascoFLoads(): Prisma.TascoFLoadsDelegate<ExtArgs, ClientOptions>;
+
+  /**
    * `prisma.tascoMaterialTypes`: Exposes CRUD operations for the **TascoMaterialTypes** model.
     * Example usage:
     * ```ts
@@ -1500,6 +1515,7 @@ export namespace Prisma {
     MaintenanceLog: 'MaintenanceLog',
     Maintenance: 'Maintenance',
     TascoLog: 'TascoLog',
+    TascoFLoads: 'TascoFLoads',
     TascoMaterialTypes: 'TascoMaterialTypes',
     TruckingLog: 'TruckingLog',
     StateMileage: 'StateMileage',
@@ -1536,7 +1552,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "company" | "costCode" | "cCTag" | "crew" | "pdfDocument" | "documentTag" | "equipment" | "employeeEquipmentLog" | "formTemplate" | "formGrouping" | "formField" | "formFieldOption" | "formSubmission" | "formApproval" | "jobsite" | "report" | "reportRun" | "timeSheet" | "mechanicProjects" | "maintenanceLog" | "maintenance" | "tascoLog" | "tascoMaterialTypes" | "truckingLog" | "stateMileage" | "material" | "refuelLog" | "equipmentHauled" | "timeSheetChangeLog" | "user" | "userSettings" | "contacts" | "passwordResetToken" | "accountSetupToken" | "address" | "fCMToken" | "topicSubscription" | "notification" | "notificationResponse" | "notificationRead"
+      modelProps: "company" | "costCode" | "cCTag" | "crew" | "pdfDocument" | "documentTag" | "equipment" | "employeeEquipmentLog" | "formTemplate" | "formGrouping" | "formField" | "formFieldOption" | "formSubmission" | "formApproval" | "jobsite" | "report" | "reportRun" | "timeSheet" | "mechanicProjects" | "maintenanceLog" | "maintenance" | "tascoLog" | "tascoFLoads" | "tascoMaterialTypes" | "truckingLog" | "stateMileage" | "material" | "refuelLog" | "equipmentHauled" | "timeSheetChangeLog" | "user" | "userSettings" | "contacts" | "passwordResetToken" | "accountSetupToken" | "address" | "fCMToken" | "topicSubscription" | "notification" | "notificationResponse" | "notificationRead"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -3168,6 +3184,80 @@ export namespace Prisma {
           }
         }
       }
+      TascoFLoads: {
+        payload: Prisma.$TascoFLoadsPayload<ExtArgs>
+        fields: Prisma.TascoFLoadsFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.TascoFLoadsFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TascoFLoadsPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.TascoFLoadsFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TascoFLoadsPayload>
+          }
+          findFirst: {
+            args: Prisma.TascoFLoadsFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TascoFLoadsPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.TascoFLoadsFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TascoFLoadsPayload>
+          }
+          findMany: {
+            args: Prisma.TascoFLoadsFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TascoFLoadsPayload>[]
+          }
+          create: {
+            args: Prisma.TascoFLoadsCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TascoFLoadsPayload>
+          }
+          createMany: {
+            args: Prisma.TascoFLoadsCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.TascoFLoadsCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TascoFLoadsPayload>[]
+          }
+          delete: {
+            args: Prisma.TascoFLoadsDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TascoFLoadsPayload>
+          }
+          update: {
+            args: Prisma.TascoFLoadsUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TascoFLoadsPayload>
+          }
+          deleteMany: {
+            args: Prisma.TascoFLoadsDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.TascoFLoadsUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.TascoFLoadsUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TascoFLoadsPayload>[]
+          }
+          upsert: {
+            args: Prisma.TascoFLoadsUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TascoFLoadsPayload>
+          }
+          aggregate: {
+            args: Prisma.TascoFLoadsAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateTascoFLoads>
+          }
+          groupBy: {
+            args: Prisma.TascoFLoadsGroupByArgs<ExtArgs>
+            result: $Utils.Optional<TascoFLoadsGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.TascoFLoadsCountArgs<ExtArgs>
+            result: $Utils.Optional<TascoFLoadsCountAggregateOutputType> | number
+          }
+        }
+      }
       TascoMaterialTypes: {
         payload: Prisma.$TascoMaterialTypesPayload<ExtArgs>
         fields: Prisma.TascoMaterialTypesFieldRefs
@@ -4618,6 +4708,7 @@ export namespace Prisma {
     maintenanceLog?: MaintenanceLogOmit
     maintenance?: MaintenanceOmit
     tascoLog?: TascoLogOmit
+    tascoFLoads?: TascoFLoadsOmit
     tascoMaterialTypes?: TascoMaterialTypesOmit
     truckingLog?: TruckingLogOmit
     stateMileage?: StateMileageOmit
@@ -5380,10 +5471,12 @@ export namespace Prisma {
 
   export type TascoLogCountOutputType = {
     RefuelLogs: number
+    TascoFLoads: number
   }
 
   export type TascoLogCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     RefuelLogs?: boolean | TascoLogCountOutputTypeCountRefuelLogsArgs
+    TascoFLoads?: boolean | TascoLogCountOutputTypeCountTascoFLoadsArgs
   }
 
   // Custom InputTypes
@@ -5402,6 +5495,13 @@ export namespace Prisma {
    */
   export type TascoLogCountOutputTypeCountRefuelLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: RefuelLogWhereInput
+  }
+
+  /**
+   * TascoLogCountOutputType without action
+   */
+  export type TascoLogCountOutputTypeCountTascoFLoadsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TascoFLoadsWhereInput
   }
 
 
@@ -31182,6 +31282,7 @@ export namespace Prisma {
     screenType?: boolean
     timeSheetId?: boolean
     RefuelLogs?: boolean | TascoLog$RefuelLogsArgs<ExtArgs>
+    TascoFLoads?: boolean | TascoLog$TascoFLoadsArgs<ExtArgs>
     Equipment?: boolean | TascoLog$EquipmentArgs<ExtArgs>
     TascoMaterialTypes?: boolean | TascoLog$TascoMaterialTypesArgs<ExtArgs>
     TimeSheet?: boolean | TimeSheetDefaultArgs<ExtArgs>
@@ -31230,6 +31331,7 @@ export namespace Prisma {
   export type TascoLogOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "shiftType" | "equipmentId" | "laborType" | "materialType" | "LoadQuantity" | "screenType" | "timeSheetId", ExtArgs["result"]["tascoLog"]>
   export type TascoLogInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     RefuelLogs?: boolean | TascoLog$RefuelLogsArgs<ExtArgs>
+    TascoFLoads?: boolean | TascoLog$TascoFLoadsArgs<ExtArgs>
     Equipment?: boolean | TascoLog$EquipmentArgs<ExtArgs>
     TascoMaterialTypes?: boolean | TascoLog$TascoMaterialTypesArgs<ExtArgs>
     TimeSheet?: boolean | TimeSheetDefaultArgs<ExtArgs>
@@ -31250,6 +31352,7 @@ export namespace Prisma {
     name: "TascoLog"
     objects: {
       RefuelLogs: Prisma.$RefuelLogPayload<ExtArgs>[]
+      TascoFLoads: Prisma.$TascoFLoadsPayload<ExtArgs>[]
       Equipment: Prisma.$EquipmentPayload<ExtArgs> | null
       TascoMaterialTypes: Prisma.$TascoMaterialTypesPayload<ExtArgs> | null
       TimeSheet: Prisma.$TimeSheetPayload<ExtArgs>
@@ -31658,6 +31761,7 @@ export namespace Prisma {
   export interface Prisma__TascoLogClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     RefuelLogs<T extends TascoLog$RefuelLogsArgs<ExtArgs> = {}>(args?: Subset<T, TascoLog$RefuelLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RefuelLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    TascoFLoads<T extends TascoLog$TascoFLoadsArgs<ExtArgs> = {}>(args?: Subset<T, TascoLog$TascoFLoadsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TascoFLoadsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     Equipment<T extends TascoLog$EquipmentArgs<ExtArgs> = {}>(args?: Subset<T, TascoLog$EquipmentArgs<ExtArgs>>): Prisma__EquipmentClient<$Result.GetResult<Prisma.$EquipmentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     TascoMaterialTypes<T extends TascoLog$TascoMaterialTypesArgs<ExtArgs> = {}>(args?: Subset<T, TascoLog$TascoMaterialTypesArgs<ExtArgs>>): Prisma__TascoMaterialTypesClient<$Result.GetResult<Prisma.$TascoMaterialTypesPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     TimeSheet<T extends TimeSheetDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TimeSheetDefaultArgs<ExtArgs>>): Prisma__TimeSheetClient<$Result.GetResult<Prisma.$TimeSheetPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
@@ -32118,6 +32222,30 @@ export namespace Prisma {
   }
 
   /**
+   * TascoLog.TascoFLoads
+   */
+  export type TascoLog$TascoFLoadsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TascoFLoads
+     */
+    select?: TascoFLoadsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TascoFLoads
+     */
+    omit?: TascoFLoadsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TascoFLoadsInclude<ExtArgs> | null
+    where?: TascoFLoadsWhereInput
+    orderBy?: TascoFLoadsOrderByWithRelationInput | TascoFLoadsOrderByWithRelationInput[]
+    cursor?: TascoFLoadsWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TascoFLoadsScalarFieldEnum | TascoFLoadsScalarFieldEnum[]
+  }
+
+  /**
    * TascoLog.Equipment
    */
   export type TascoLog$EquipmentArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -32171,6 +32299,1089 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: TascoLogInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model TascoFLoads
+   */
+
+  export type AggregateTascoFLoads = {
+    _count: TascoFLoadsCountAggregateOutputType | null
+    _avg: TascoFLoadsAvgAggregateOutputType | null
+    _sum: TascoFLoadsSumAggregateOutputType | null
+    _min: TascoFLoadsMinAggregateOutputType | null
+    _max: TascoFLoadsMaxAggregateOutputType | null
+  }
+
+  export type TascoFLoadsAvgAggregateOutputType = {
+    id: number | null
+    weight: number | null
+  }
+
+  export type TascoFLoadsSumAggregateOutputType = {
+    id: number | null
+    weight: number | null
+  }
+
+  export type TascoFLoadsMinAggregateOutputType = {
+    id: number | null
+    tascoLogId: string | null
+    weight: number | null
+    screenType: $Enums.LoadType | null
+  }
+
+  export type TascoFLoadsMaxAggregateOutputType = {
+    id: number | null
+    tascoLogId: string | null
+    weight: number | null
+    screenType: $Enums.LoadType | null
+  }
+
+  export type TascoFLoadsCountAggregateOutputType = {
+    id: number
+    tascoLogId: number
+    weight: number
+    screenType: number
+    _all: number
+  }
+
+
+  export type TascoFLoadsAvgAggregateInputType = {
+    id?: true
+    weight?: true
+  }
+
+  export type TascoFLoadsSumAggregateInputType = {
+    id?: true
+    weight?: true
+  }
+
+  export type TascoFLoadsMinAggregateInputType = {
+    id?: true
+    tascoLogId?: true
+    weight?: true
+    screenType?: true
+  }
+
+  export type TascoFLoadsMaxAggregateInputType = {
+    id?: true
+    tascoLogId?: true
+    weight?: true
+    screenType?: true
+  }
+
+  export type TascoFLoadsCountAggregateInputType = {
+    id?: true
+    tascoLogId?: true
+    weight?: true
+    screenType?: true
+    _all?: true
+  }
+
+  export type TascoFLoadsAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which TascoFLoads to aggregate.
+     */
+    where?: TascoFLoadsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TascoFLoads to fetch.
+     */
+    orderBy?: TascoFLoadsOrderByWithRelationInput | TascoFLoadsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: TascoFLoadsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TascoFLoads from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TascoFLoads.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned TascoFLoads
+    **/
+    _count?: true | TascoFLoadsCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: TascoFLoadsAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: TascoFLoadsSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: TascoFLoadsMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: TascoFLoadsMaxAggregateInputType
+  }
+
+  export type GetTascoFLoadsAggregateType<T extends TascoFLoadsAggregateArgs> = {
+        [P in keyof T & keyof AggregateTascoFLoads]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateTascoFLoads[P]>
+      : GetScalarType<T[P], AggregateTascoFLoads[P]>
+  }
+
+
+
+
+  export type TascoFLoadsGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TascoFLoadsWhereInput
+    orderBy?: TascoFLoadsOrderByWithAggregationInput | TascoFLoadsOrderByWithAggregationInput[]
+    by: TascoFLoadsScalarFieldEnum[] | TascoFLoadsScalarFieldEnum
+    having?: TascoFLoadsScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: TascoFLoadsCountAggregateInputType | true
+    _avg?: TascoFLoadsAvgAggregateInputType
+    _sum?: TascoFLoadsSumAggregateInputType
+    _min?: TascoFLoadsMinAggregateInputType
+    _max?: TascoFLoadsMaxAggregateInputType
+  }
+
+  export type TascoFLoadsGroupByOutputType = {
+    id: number
+    tascoLogId: string
+    weight: number | null
+    screenType: $Enums.LoadType | null
+    _count: TascoFLoadsCountAggregateOutputType | null
+    _avg: TascoFLoadsAvgAggregateOutputType | null
+    _sum: TascoFLoadsSumAggregateOutputType | null
+    _min: TascoFLoadsMinAggregateOutputType | null
+    _max: TascoFLoadsMaxAggregateOutputType | null
+  }
+
+  type GetTascoFLoadsGroupByPayload<T extends TascoFLoadsGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<TascoFLoadsGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof TascoFLoadsGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], TascoFLoadsGroupByOutputType[P]>
+            : GetScalarType<T[P], TascoFLoadsGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type TascoFLoadsSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tascoLogId?: boolean
+    weight?: boolean
+    screenType?: boolean
+    TascoLog?: boolean | TascoLogDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["tascoFLoads"]>
+
+  export type TascoFLoadsSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tascoLogId?: boolean
+    weight?: boolean
+    screenType?: boolean
+    TascoLog?: boolean | TascoLogDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["tascoFLoads"]>
+
+  export type TascoFLoadsSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tascoLogId?: boolean
+    weight?: boolean
+    screenType?: boolean
+    TascoLog?: boolean | TascoLogDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["tascoFLoads"]>
+
+  export type TascoFLoadsSelectScalar = {
+    id?: boolean
+    tascoLogId?: boolean
+    weight?: boolean
+    screenType?: boolean
+  }
+
+  export type TascoFLoadsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "tascoLogId" | "weight" | "screenType", ExtArgs["result"]["tascoFLoads"]>
+  export type TascoFLoadsInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    TascoLog?: boolean | TascoLogDefaultArgs<ExtArgs>
+  }
+  export type TascoFLoadsIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    TascoLog?: boolean | TascoLogDefaultArgs<ExtArgs>
+  }
+  export type TascoFLoadsIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    TascoLog?: boolean | TascoLogDefaultArgs<ExtArgs>
+  }
+
+  export type $TascoFLoadsPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "TascoFLoads"
+    objects: {
+      TascoLog: Prisma.$TascoLogPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      tascoLogId: string
+      weight: number | null
+      screenType: $Enums.LoadType | null
+    }, ExtArgs["result"]["tascoFLoads"]>
+    composites: {}
+  }
+
+  type TascoFLoadsGetPayload<S extends boolean | null | undefined | TascoFLoadsDefaultArgs> = $Result.GetResult<Prisma.$TascoFLoadsPayload, S>
+
+  type TascoFLoadsCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<TascoFLoadsFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: TascoFLoadsCountAggregateInputType | true
+    }
+
+  export interface TascoFLoadsDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['TascoFLoads'], meta: { name: 'TascoFLoads' } }
+    /**
+     * Find zero or one TascoFLoads that matches the filter.
+     * @param {TascoFLoadsFindUniqueArgs} args - Arguments to find a TascoFLoads
+     * @example
+     * // Get one TascoFLoads
+     * const tascoFLoads = await prisma.tascoFLoads.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends TascoFLoadsFindUniqueArgs>(args: SelectSubset<T, TascoFLoadsFindUniqueArgs<ExtArgs>>): Prisma__TascoFLoadsClient<$Result.GetResult<Prisma.$TascoFLoadsPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one TascoFLoads that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {TascoFLoadsFindUniqueOrThrowArgs} args - Arguments to find a TascoFLoads
+     * @example
+     * // Get one TascoFLoads
+     * const tascoFLoads = await prisma.tascoFLoads.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends TascoFLoadsFindUniqueOrThrowArgs>(args: SelectSubset<T, TascoFLoadsFindUniqueOrThrowArgs<ExtArgs>>): Prisma__TascoFLoadsClient<$Result.GetResult<Prisma.$TascoFLoadsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first TascoFLoads that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TascoFLoadsFindFirstArgs} args - Arguments to find a TascoFLoads
+     * @example
+     * // Get one TascoFLoads
+     * const tascoFLoads = await prisma.tascoFLoads.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends TascoFLoadsFindFirstArgs>(args?: SelectSubset<T, TascoFLoadsFindFirstArgs<ExtArgs>>): Prisma__TascoFLoadsClient<$Result.GetResult<Prisma.$TascoFLoadsPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first TascoFLoads that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TascoFLoadsFindFirstOrThrowArgs} args - Arguments to find a TascoFLoads
+     * @example
+     * // Get one TascoFLoads
+     * const tascoFLoads = await prisma.tascoFLoads.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends TascoFLoadsFindFirstOrThrowArgs>(args?: SelectSubset<T, TascoFLoadsFindFirstOrThrowArgs<ExtArgs>>): Prisma__TascoFLoadsClient<$Result.GetResult<Prisma.$TascoFLoadsPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more TascoFLoads that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TascoFLoadsFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all TascoFLoads
+     * const tascoFLoads = await prisma.tascoFLoads.findMany()
+     * 
+     * // Get first 10 TascoFLoads
+     * const tascoFLoads = await prisma.tascoFLoads.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const tascoFLoadsWithIdOnly = await prisma.tascoFLoads.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends TascoFLoadsFindManyArgs>(args?: SelectSubset<T, TascoFLoadsFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TascoFLoadsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a TascoFLoads.
+     * @param {TascoFLoadsCreateArgs} args - Arguments to create a TascoFLoads.
+     * @example
+     * // Create one TascoFLoads
+     * const TascoFLoads = await prisma.tascoFLoads.create({
+     *   data: {
+     *     // ... data to create a TascoFLoads
+     *   }
+     * })
+     * 
+     */
+    create<T extends TascoFLoadsCreateArgs>(args: SelectSubset<T, TascoFLoadsCreateArgs<ExtArgs>>): Prisma__TascoFLoadsClient<$Result.GetResult<Prisma.$TascoFLoadsPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many TascoFLoads.
+     * @param {TascoFLoadsCreateManyArgs} args - Arguments to create many TascoFLoads.
+     * @example
+     * // Create many TascoFLoads
+     * const tascoFLoads = await prisma.tascoFLoads.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends TascoFLoadsCreateManyArgs>(args?: SelectSubset<T, TascoFLoadsCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many TascoFLoads and returns the data saved in the database.
+     * @param {TascoFLoadsCreateManyAndReturnArgs} args - Arguments to create many TascoFLoads.
+     * @example
+     * // Create many TascoFLoads
+     * const tascoFLoads = await prisma.tascoFLoads.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many TascoFLoads and only return the `id`
+     * const tascoFLoadsWithIdOnly = await prisma.tascoFLoads.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends TascoFLoadsCreateManyAndReturnArgs>(args?: SelectSubset<T, TascoFLoadsCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TascoFLoadsPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a TascoFLoads.
+     * @param {TascoFLoadsDeleteArgs} args - Arguments to delete one TascoFLoads.
+     * @example
+     * // Delete one TascoFLoads
+     * const TascoFLoads = await prisma.tascoFLoads.delete({
+     *   where: {
+     *     // ... filter to delete one TascoFLoads
+     *   }
+     * })
+     * 
+     */
+    delete<T extends TascoFLoadsDeleteArgs>(args: SelectSubset<T, TascoFLoadsDeleteArgs<ExtArgs>>): Prisma__TascoFLoadsClient<$Result.GetResult<Prisma.$TascoFLoadsPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one TascoFLoads.
+     * @param {TascoFLoadsUpdateArgs} args - Arguments to update one TascoFLoads.
+     * @example
+     * // Update one TascoFLoads
+     * const tascoFLoads = await prisma.tascoFLoads.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends TascoFLoadsUpdateArgs>(args: SelectSubset<T, TascoFLoadsUpdateArgs<ExtArgs>>): Prisma__TascoFLoadsClient<$Result.GetResult<Prisma.$TascoFLoadsPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more TascoFLoads.
+     * @param {TascoFLoadsDeleteManyArgs} args - Arguments to filter TascoFLoads to delete.
+     * @example
+     * // Delete a few TascoFLoads
+     * const { count } = await prisma.tascoFLoads.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends TascoFLoadsDeleteManyArgs>(args?: SelectSubset<T, TascoFLoadsDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more TascoFLoads.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TascoFLoadsUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many TascoFLoads
+     * const tascoFLoads = await prisma.tascoFLoads.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends TascoFLoadsUpdateManyArgs>(args: SelectSubset<T, TascoFLoadsUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more TascoFLoads and returns the data updated in the database.
+     * @param {TascoFLoadsUpdateManyAndReturnArgs} args - Arguments to update many TascoFLoads.
+     * @example
+     * // Update many TascoFLoads
+     * const tascoFLoads = await prisma.tascoFLoads.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more TascoFLoads and only return the `id`
+     * const tascoFLoadsWithIdOnly = await prisma.tascoFLoads.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends TascoFLoadsUpdateManyAndReturnArgs>(args: SelectSubset<T, TascoFLoadsUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TascoFLoadsPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one TascoFLoads.
+     * @param {TascoFLoadsUpsertArgs} args - Arguments to update or create a TascoFLoads.
+     * @example
+     * // Update or create a TascoFLoads
+     * const tascoFLoads = await prisma.tascoFLoads.upsert({
+     *   create: {
+     *     // ... data to create a TascoFLoads
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the TascoFLoads we want to update
+     *   }
+     * })
+     */
+    upsert<T extends TascoFLoadsUpsertArgs>(args: SelectSubset<T, TascoFLoadsUpsertArgs<ExtArgs>>): Prisma__TascoFLoadsClient<$Result.GetResult<Prisma.$TascoFLoadsPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of TascoFLoads.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TascoFLoadsCountArgs} args - Arguments to filter TascoFLoads to count.
+     * @example
+     * // Count the number of TascoFLoads
+     * const count = await prisma.tascoFLoads.count({
+     *   where: {
+     *     // ... the filter for the TascoFLoads we want to count
+     *   }
+     * })
+    **/
+    count<T extends TascoFLoadsCountArgs>(
+      args?: Subset<T, TascoFLoadsCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], TascoFLoadsCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a TascoFLoads.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TascoFLoadsAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends TascoFLoadsAggregateArgs>(args: Subset<T, TascoFLoadsAggregateArgs>): Prisma.PrismaPromise<GetTascoFLoadsAggregateType<T>>
+
+    /**
+     * Group by TascoFLoads.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TascoFLoadsGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends TascoFLoadsGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: TascoFLoadsGroupByArgs['orderBy'] }
+        : { orderBy?: TascoFLoadsGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, TascoFLoadsGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetTascoFLoadsGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the TascoFLoads model
+   */
+  readonly fields: TascoFLoadsFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for TascoFLoads.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__TascoFLoadsClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    TascoLog<T extends TascoLogDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TascoLogDefaultArgs<ExtArgs>>): Prisma__TascoLogClient<$Result.GetResult<Prisma.$TascoLogPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the TascoFLoads model
+   */
+  interface TascoFLoadsFieldRefs {
+    readonly id: FieldRef<"TascoFLoads", 'Int'>
+    readonly tascoLogId: FieldRef<"TascoFLoads", 'String'>
+    readonly weight: FieldRef<"TascoFLoads", 'Float'>
+    readonly screenType: FieldRef<"TascoFLoads", 'LoadType'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * TascoFLoads findUnique
+   */
+  export type TascoFLoadsFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TascoFLoads
+     */
+    select?: TascoFLoadsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TascoFLoads
+     */
+    omit?: TascoFLoadsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TascoFLoadsInclude<ExtArgs> | null
+    /**
+     * Filter, which TascoFLoads to fetch.
+     */
+    where: TascoFLoadsWhereUniqueInput
+  }
+
+  /**
+   * TascoFLoads findUniqueOrThrow
+   */
+  export type TascoFLoadsFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TascoFLoads
+     */
+    select?: TascoFLoadsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TascoFLoads
+     */
+    omit?: TascoFLoadsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TascoFLoadsInclude<ExtArgs> | null
+    /**
+     * Filter, which TascoFLoads to fetch.
+     */
+    where: TascoFLoadsWhereUniqueInput
+  }
+
+  /**
+   * TascoFLoads findFirst
+   */
+  export type TascoFLoadsFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TascoFLoads
+     */
+    select?: TascoFLoadsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TascoFLoads
+     */
+    omit?: TascoFLoadsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TascoFLoadsInclude<ExtArgs> | null
+    /**
+     * Filter, which TascoFLoads to fetch.
+     */
+    where?: TascoFLoadsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TascoFLoads to fetch.
+     */
+    orderBy?: TascoFLoadsOrderByWithRelationInput | TascoFLoadsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for TascoFLoads.
+     */
+    cursor?: TascoFLoadsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TascoFLoads from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TascoFLoads.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TascoFLoads.
+     */
+    distinct?: TascoFLoadsScalarFieldEnum | TascoFLoadsScalarFieldEnum[]
+  }
+
+  /**
+   * TascoFLoads findFirstOrThrow
+   */
+  export type TascoFLoadsFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TascoFLoads
+     */
+    select?: TascoFLoadsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TascoFLoads
+     */
+    omit?: TascoFLoadsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TascoFLoadsInclude<ExtArgs> | null
+    /**
+     * Filter, which TascoFLoads to fetch.
+     */
+    where?: TascoFLoadsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TascoFLoads to fetch.
+     */
+    orderBy?: TascoFLoadsOrderByWithRelationInput | TascoFLoadsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for TascoFLoads.
+     */
+    cursor?: TascoFLoadsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TascoFLoads from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TascoFLoads.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TascoFLoads.
+     */
+    distinct?: TascoFLoadsScalarFieldEnum | TascoFLoadsScalarFieldEnum[]
+  }
+
+  /**
+   * TascoFLoads findMany
+   */
+  export type TascoFLoadsFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TascoFLoads
+     */
+    select?: TascoFLoadsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TascoFLoads
+     */
+    omit?: TascoFLoadsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TascoFLoadsInclude<ExtArgs> | null
+    /**
+     * Filter, which TascoFLoads to fetch.
+     */
+    where?: TascoFLoadsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TascoFLoads to fetch.
+     */
+    orderBy?: TascoFLoadsOrderByWithRelationInput | TascoFLoadsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing TascoFLoads.
+     */
+    cursor?: TascoFLoadsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TascoFLoads from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TascoFLoads.
+     */
+    skip?: number
+    distinct?: TascoFLoadsScalarFieldEnum | TascoFLoadsScalarFieldEnum[]
+  }
+
+  /**
+   * TascoFLoads create
+   */
+  export type TascoFLoadsCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TascoFLoads
+     */
+    select?: TascoFLoadsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TascoFLoads
+     */
+    omit?: TascoFLoadsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TascoFLoadsInclude<ExtArgs> | null
+    /**
+     * The data needed to create a TascoFLoads.
+     */
+    data: XOR<TascoFLoadsCreateInput, TascoFLoadsUncheckedCreateInput>
+  }
+
+  /**
+   * TascoFLoads createMany
+   */
+  export type TascoFLoadsCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many TascoFLoads.
+     */
+    data: TascoFLoadsCreateManyInput | TascoFLoadsCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * TascoFLoads createManyAndReturn
+   */
+  export type TascoFLoadsCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TascoFLoads
+     */
+    select?: TascoFLoadsSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the TascoFLoads
+     */
+    omit?: TascoFLoadsOmit<ExtArgs> | null
+    /**
+     * The data used to create many TascoFLoads.
+     */
+    data: TascoFLoadsCreateManyInput | TascoFLoadsCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TascoFLoadsIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * TascoFLoads update
+   */
+  export type TascoFLoadsUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TascoFLoads
+     */
+    select?: TascoFLoadsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TascoFLoads
+     */
+    omit?: TascoFLoadsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TascoFLoadsInclude<ExtArgs> | null
+    /**
+     * The data needed to update a TascoFLoads.
+     */
+    data: XOR<TascoFLoadsUpdateInput, TascoFLoadsUncheckedUpdateInput>
+    /**
+     * Choose, which TascoFLoads to update.
+     */
+    where: TascoFLoadsWhereUniqueInput
+  }
+
+  /**
+   * TascoFLoads updateMany
+   */
+  export type TascoFLoadsUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update TascoFLoads.
+     */
+    data: XOR<TascoFLoadsUpdateManyMutationInput, TascoFLoadsUncheckedUpdateManyInput>
+    /**
+     * Filter which TascoFLoads to update
+     */
+    where?: TascoFLoadsWhereInput
+    /**
+     * Limit how many TascoFLoads to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * TascoFLoads updateManyAndReturn
+   */
+  export type TascoFLoadsUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TascoFLoads
+     */
+    select?: TascoFLoadsSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the TascoFLoads
+     */
+    omit?: TascoFLoadsOmit<ExtArgs> | null
+    /**
+     * The data used to update TascoFLoads.
+     */
+    data: XOR<TascoFLoadsUpdateManyMutationInput, TascoFLoadsUncheckedUpdateManyInput>
+    /**
+     * Filter which TascoFLoads to update
+     */
+    where?: TascoFLoadsWhereInput
+    /**
+     * Limit how many TascoFLoads to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TascoFLoadsIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * TascoFLoads upsert
+   */
+  export type TascoFLoadsUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TascoFLoads
+     */
+    select?: TascoFLoadsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TascoFLoads
+     */
+    omit?: TascoFLoadsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TascoFLoadsInclude<ExtArgs> | null
+    /**
+     * The filter to search for the TascoFLoads to update in case it exists.
+     */
+    where: TascoFLoadsWhereUniqueInput
+    /**
+     * In case the TascoFLoads found by the `where` argument doesn't exist, create a new TascoFLoads with this data.
+     */
+    create: XOR<TascoFLoadsCreateInput, TascoFLoadsUncheckedCreateInput>
+    /**
+     * In case the TascoFLoads was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<TascoFLoadsUpdateInput, TascoFLoadsUncheckedUpdateInput>
+  }
+
+  /**
+   * TascoFLoads delete
+   */
+  export type TascoFLoadsDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TascoFLoads
+     */
+    select?: TascoFLoadsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TascoFLoads
+     */
+    omit?: TascoFLoadsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TascoFLoadsInclude<ExtArgs> | null
+    /**
+     * Filter which TascoFLoads to delete.
+     */
+    where: TascoFLoadsWhereUniqueInput
+  }
+
+  /**
+   * TascoFLoads deleteMany
+   */
+  export type TascoFLoadsDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which TascoFLoads to delete
+     */
+    where?: TascoFLoadsWhereInput
+    /**
+     * Limit how many TascoFLoads to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * TascoFLoads without action
+   */
+  export type TascoFLoadsDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TascoFLoads
+     */
+    select?: TascoFLoadsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TascoFLoads
+     */
+    omit?: TascoFLoadsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TascoFLoadsInclude<ExtArgs> | null
   }
 
 
@@ -53359,6 +54570,16 @@ export namespace Prisma {
   export type TascoLogScalarFieldEnum = (typeof TascoLogScalarFieldEnum)[keyof typeof TascoLogScalarFieldEnum]
 
 
+  export const TascoFLoadsScalarFieldEnum: {
+    id: 'id',
+    tascoLogId: 'tascoLogId',
+    weight: 'weight',
+    screenType: 'screenType'
+  };
+
+  export type TascoFLoadsScalarFieldEnum = (typeof TascoFLoadsScalarFieldEnum)[keyof typeof TascoFLoadsScalarFieldEnum]
+
+
   export const TascoMaterialTypesScalarFieldEnum: {
     id: 'id',
     name: 'name'
@@ -55824,6 +57045,7 @@ export namespace Prisma {
     screenType?: EnumLoadTypeNullableFilter<"TascoLog"> | $Enums.LoadType | null
     timeSheetId?: IntFilter<"TascoLog"> | number
     RefuelLogs?: RefuelLogListRelationFilter
+    TascoFLoads?: TascoFLoadsListRelationFilter
     Equipment?: XOR<EquipmentNullableScalarRelationFilter, EquipmentWhereInput> | null
     TascoMaterialTypes?: XOR<TascoMaterialTypesNullableScalarRelationFilter, TascoMaterialTypesWhereInput> | null
     TimeSheet?: XOR<TimeSheetScalarRelationFilter, TimeSheetWhereInput>
@@ -55839,6 +57061,7 @@ export namespace Prisma {
     screenType?: SortOrderInput | SortOrder
     timeSheetId?: SortOrder
     RefuelLogs?: RefuelLogOrderByRelationAggregateInput
+    TascoFLoads?: TascoFLoadsOrderByRelationAggregateInput
     Equipment?: EquipmentOrderByWithRelationInput
     TascoMaterialTypes?: TascoMaterialTypesOrderByWithRelationInput
     TimeSheet?: TimeSheetOrderByWithRelationInput
@@ -55857,6 +57080,7 @@ export namespace Prisma {
     screenType?: EnumLoadTypeNullableFilter<"TascoLog"> | $Enums.LoadType | null
     timeSheetId?: IntFilter<"TascoLog"> | number
     RefuelLogs?: RefuelLogListRelationFilter
+    TascoFLoads?: TascoFLoadsListRelationFilter
     Equipment?: XOR<EquipmentNullableScalarRelationFilter, EquipmentWhereInput> | null
     TascoMaterialTypes?: XOR<TascoMaterialTypesNullableScalarRelationFilter, TascoMaterialTypesWhereInput> | null
     TimeSheet?: XOR<TimeSheetScalarRelationFilter, TimeSheetWhereInput>
@@ -55890,6 +57114,58 @@ export namespace Prisma {
     LoadQuantity?: IntWithAggregatesFilter<"TascoLog"> | number
     screenType?: EnumLoadTypeNullableWithAggregatesFilter<"TascoLog"> | $Enums.LoadType | null
     timeSheetId?: IntWithAggregatesFilter<"TascoLog"> | number
+  }
+
+  export type TascoFLoadsWhereInput = {
+    AND?: TascoFLoadsWhereInput | TascoFLoadsWhereInput[]
+    OR?: TascoFLoadsWhereInput[]
+    NOT?: TascoFLoadsWhereInput | TascoFLoadsWhereInput[]
+    id?: IntFilter<"TascoFLoads"> | number
+    tascoLogId?: StringFilter<"TascoFLoads"> | string
+    weight?: FloatNullableFilter<"TascoFLoads"> | number | null
+    screenType?: EnumLoadTypeNullableFilter<"TascoFLoads"> | $Enums.LoadType | null
+    TascoLog?: XOR<TascoLogScalarRelationFilter, TascoLogWhereInput>
+  }
+
+  export type TascoFLoadsOrderByWithRelationInput = {
+    id?: SortOrder
+    tascoLogId?: SortOrder
+    weight?: SortOrderInput | SortOrder
+    screenType?: SortOrderInput | SortOrder
+    TascoLog?: TascoLogOrderByWithRelationInput
+  }
+
+  export type TascoFLoadsWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    AND?: TascoFLoadsWhereInput | TascoFLoadsWhereInput[]
+    OR?: TascoFLoadsWhereInput[]
+    NOT?: TascoFLoadsWhereInput | TascoFLoadsWhereInput[]
+    tascoLogId?: StringFilter<"TascoFLoads"> | string
+    weight?: FloatNullableFilter<"TascoFLoads"> | number | null
+    screenType?: EnumLoadTypeNullableFilter<"TascoFLoads"> | $Enums.LoadType | null
+    TascoLog?: XOR<TascoLogScalarRelationFilter, TascoLogWhereInput>
+  }, "id">
+
+  export type TascoFLoadsOrderByWithAggregationInput = {
+    id?: SortOrder
+    tascoLogId?: SortOrder
+    weight?: SortOrderInput | SortOrder
+    screenType?: SortOrderInput | SortOrder
+    _count?: TascoFLoadsCountOrderByAggregateInput
+    _avg?: TascoFLoadsAvgOrderByAggregateInput
+    _max?: TascoFLoadsMaxOrderByAggregateInput
+    _min?: TascoFLoadsMinOrderByAggregateInput
+    _sum?: TascoFLoadsSumOrderByAggregateInput
+  }
+
+  export type TascoFLoadsScalarWhereWithAggregatesInput = {
+    AND?: TascoFLoadsScalarWhereWithAggregatesInput | TascoFLoadsScalarWhereWithAggregatesInput[]
+    OR?: TascoFLoadsScalarWhereWithAggregatesInput[]
+    NOT?: TascoFLoadsScalarWhereWithAggregatesInput | TascoFLoadsScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"TascoFLoads"> | number
+    tascoLogId?: StringWithAggregatesFilter<"TascoFLoads"> | string
+    weight?: FloatNullableWithAggregatesFilter<"TascoFLoads"> | number | null
+    screenType?: EnumLoadTypeNullableWithAggregatesFilter<"TascoFLoads"> | $Enums.LoadType | null
   }
 
   export type TascoMaterialTypesWhereInput = {
@@ -59245,6 +60521,7 @@ export namespace Prisma {
     LoadQuantity?: number
     screenType?: $Enums.LoadType | null
     RefuelLogs?: RefuelLogCreateNestedManyWithoutTascoLogInput
+    TascoFLoads?: TascoFLoadsCreateNestedManyWithoutTascoLogInput
     Equipment?: EquipmentCreateNestedOneWithoutTascoLogsInput
     TascoMaterialTypes?: TascoMaterialTypesCreateNestedOneWithoutTascoLogInput
     TimeSheet: TimeSheetCreateNestedOneWithoutTascoLogsInput
@@ -59260,6 +60537,7 @@ export namespace Prisma {
     screenType?: $Enums.LoadType | null
     timeSheetId: number
     RefuelLogs?: RefuelLogUncheckedCreateNestedManyWithoutTascoLogInput
+    TascoFLoads?: TascoFLoadsUncheckedCreateNestedManyWithoutTascoLogInput
   }
 
   export type TascoLogUpdateInput = {
@@ -59269,6 +60547,7 @@ export namespace Prisma {
     LoadQuantity?: IntFieldUpdateOperationsInput | number
     screenType?: NullableEnumLoadTypeFieldUpdateOperationsInput | $Enums.LoadType | null
     RefuelLogs?: RefuelLogUpdateManyWithoutTascoLogNestedInput
+    TascoFLoads?: TascoFLoadsUpdateManyWithoutTascoLogNestedInput
     Equipment?: EquipmentUpdateOneWithoutTascoLogsNestedInput
     TascoMaterialTypes?: TascoMaterialTypesUpdateOneWithoutTascoLogNestedInput
     TimeSheet?: TimeSheetUpdateOneRequiredWithoutTascoLogsNestedInput
@@ -59284,6 +60563,7 @@ export namespace Prisma {
     screenType?: NullableEnumLoadTypeFieldUpdateOperationsInput | $Enums.LoadType | null
     timeSheetId?: IntFieldUpdateOperationsInput | number
     RefuelLogs?: RefuelLogUncheckedUpdateManyWithoutTascoLogNestedInput
+    TascoFLoads?: TascoFLoadsUncheckedUpdateManyWithoutTascoLogNestedInput
   }
 
   export type TascoLogCreateManyInput = {
@@ -59314,6 +60594,51 @@ export namespace Prisma {
     LoadQuantity?: IntFieldUpdateOperationsInput | number
     screenType?: NullableEnumLoadTypeFieldUpdateOperationsInput | $Enums.LoadType | null
     timeSheetId?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type TascoFLoadsCreateInput = {
+    weight?: number | null
+    screenType?: $Enums.LoadType | null
+    TascoLog: TascoLogCreateNestedOneWithoutTascoFLoadsInput
+  }
+
+  export type TascoFLoadsUncheckedCreateInput = {
+    id?: number
+    tascoLogId: string
+    weight?: number | null
+    screenType?: $Enums.LoadType | null
+  }
+
+  export type TascoFLoadsUpdateInput = {
+    weight?: NullableFloatFieldUpdateOperationsInput | number | null
+    screenType?: NullableEnumLoadTypeFieldUpdateOperationsInput | $Enums.LoadType | null
+    TascoLog?: TascoLogUpdateOneRequiredWithoutTascoFLoadsNestedInput
+  }
+
+  export type TascoFLoadsUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    tascoLogId?: StringFieldUpdateOperationsInput | string
+    weight?: NullableFloatFieldUpdateOperationsInput | number | null
+    screenType?: NullableEnumLoadTypeFieldUpdateOperationsInput | $Enums.LoadType | null
+  }
+
+  export type TascoFLoadsCreateManyInput = {
+    id?: number
+    tascoLogId: string
+    weight?: number | null
+    screenType?: $Enums.LoadType | null
+  }
+
+  export type TascoFLoadsUpdateManyMutationInput = {
+    weight?: NullableFloatFieldUpdateOperationsInput | number | null
+    screenType?: NullableEnumLoadTypeFieldUpdateOperationsInput | $Enums.LoadType | null
+  }
+
+  export type TascoFLoadsUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    tascoLogId?: StringFieldUpdateOperationsInput | string
+    weight?: NullableFloatFieldUpdateOperationsInput | number | null
+    screenType?: NullableEnumLoadTypeFieldUpdateOperationsInput | $Enums.LoadType | null
   }
 
   export type TascoMaterialTypesCreateInput = {
@@ -62519,12 +63844,22 @@ export namespace Prisma {
     none?: RefuelLogWhereInput
   }
 
+  export type TascoFLoadsListRelationFilter = {
+    every?: TascoFLoadsWhereInput
+    some?: TascoFLoadsWhereInput
+    none?: TascoFLoadsWhereInput
+  }
+
   export type TascoMaterialTypesNullableScalarRelationFilter = {
     is?: TascoMaterialTypesWhereInput | null
     isNot?: TascoMaterialTypesWhereInput | null
   }
 
   export type RefuelLogOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type TascoFLoadsOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -62579,6 +63914,42 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedEnumLoadTypeNullableFilter<$PrismaModel>
     _max?: NestedEnumLoadTypeNullableFilter<$PrismaModel>
+  }
+
+  export type TascoLogScalarRelationFilter = {
+    is?: TascoLogWhereInput
+    isNot?: TascoLogWhereInput
+  }
+
+  export type TascoFLoadsCountOrderByAggregateInput = {
+    id?: SortOrder
+    tascoLogId?: SortOrder
+    weight?: SortOrder
+    screenType?: SortOrder
+  }
+
+  export type TascoFLoadsAvgOrderByAggregateInput = {
+    id?: SortOrder
+    weight?: SortOrder
+  }
+
+  export type TascoFLoadsMaxOrderByAggregateInput = {
+    id?: SortOrder
+    tascoLogId?: SortOrder
+    weight?: SortOrder
+    screenType?: SortOrder
+  }
+
+  export type TascoFLoadsMinOrderByAggregateInput = {
+    id?: SortOrder
+    tascoLogId?: SortOrder
+    weight?: SortOrder
+    screenType?: SortOrder
+  }
+
+  export type TascoFLoadsSumOrderByAggregateInput = {
+    id?: SortOrder
+    weight?: SortOrder
   }
 
   export type TascoMaterialTypesCountOrderByAggregateInput = {
@@ -65519,6 +66890,13 @@ export namespace Prisma {
     connect?: RefuelLogWhereUniqueInput | RefuelLogWhereUniqueInput[]
   }
 
+  export type TascoFLoadsCreateNestedManyWithoutTascoLogInput = {
+    create?: XOR<TascoFLoadsCreateWithoutTascoLogInput, TascoFLoadsUncheckedCreateWithoutTascoLogInput> | TascoFLoadsCreateWithoutTascoLogInput[] | TascoFLoadsUncheckedCreateWithoutTascoLogInput[]
+    connectOrCreate?: TascoFLoadsCreateOrConnectWithoutTascoLogInput | TascoFLoadsCreateOrConnectWithoutTascoLogInput[]
+    createMany?: TascoFLoadsCreateManyTascoLogInputEnvelope
+    connect?: TascoFLoadsWhereUniqueInput | TascoFLoadsWhereUniqueInput[]
+  }
+
   export type EquipmentCreateNestedOneWithoutTascoLogsInput = {
     create?: XOR<EquipmentCreateWithoutTascoLogsInput, EquipmentUncheckedCreateWithoutTascoLogsInput>
     connectOrCreate?: EquipmentCreateOrConnectWithoutTascoLogsInput
@@ -65544,6 +66922,13 @@ export namespace Prisma {
     connect?: RefuelLogWhereUniqueInput | RefuelLogWhereUniqueInput[]
   }
 
+  export type TascoFLoadsUncheckedCreateNestedManyWithoutTascoLogInput = {
+    create?: XOR<TascoFLoadsCreateWithoutTascoLogInput, TascoFLoadsUncheckedCreateWithoutTascoLogInput> | TascoFLoadsCreateWithoutTascoLogInput[] | TascoFLoadsUncheckedCreateWithoutTascoLogInput[]
+    connectOrCreate?: TascoFLoadsCreateOrConnectWithoutTascoLogInput | TascoFLoadsCreateOrConnectWithoutTascoLogInput[]
+    createMany?: TascoFLoadsCreateManyTascoLogInputEnvelope
+    connect?: TascoFLoadsWhereUniqueInput | TascoFLoadsWhereUniqueInput[]
+  }
+
   export type NullableEnumLoadTypeFieldUpdateOperationsInput = {
     set?: $Enums.LoadType | null
   }
@@ -65560,6 +66945,20 @@ export namespace Prisma {
     update?: RefuelLogUpdateWithWhereUniqueWithoutTascoLogInput | RefuelLogUpdateWithWhereUniqueWithoutTascoLogInput[]
     updateMany?: RefuelLogUpdateManyWithWhereWithoutTascoLogInput | RefuelLogUpdateManyWithWhereWithoutTascoLogInput[]
     deleteMany?: RefuelLogScalarWhereInput | RefuelLogScalarWhereInput[]
+  }
+
+  export type TascoFLoadsUpdateManyWithoutTascoLogNestedInput = {
+    create?: XOR<TascoFLoadsCreateWithoutTascoLogInput, TascoFLoadsUncheckedCreateWithoutTascoLogInput> | TascoFLoadsCreateWithoutTascoLogInput[] | TascoFLoadsUncheckedCreateWithoutTascoLogInput[]
+    connectOrCreate?: TascoFLoadsCreateOrConnectWithoutTascoLogInput | TascoFLoadsCreateOrConnectWithoutTascoLogInput[]
+    upsert?: TascoFLoadsUpsertWithWhereUniqueWithoutTascoLogInput | TascoFLoadsUpsertWithWhereUniqueWithoutTascoLogInput[]
+    createMany?: TascoFLoadsCreateManyTascoLogInputEnvelope
+    set?: TascoFLoadsWhereUniqueInput | TascoFLoadsWhereUniqueInput[]
+    disconnect?: TascoFLoadsWhereUniqueInput | TascoFLoadsWhereUniqueInput[]
+    delete?: TascoFLoadsWhereUniqueInput | TascoFLoadsWhereUniqueInput[]
+    connect?: TascoFLoadsWhereUniqueInput | TascoFLoadsWhereUniqueInput[]
+    update?: TascoFLoadsUpdateWithWhereUniqueWithoutTascoLogInput | TascoFLoadsUpdateWithWhereUniqueWithoutTascoLogInput[]
+    updateMany?: TascoFLoadsUpdateManyWithWhereWithoutTascoLogInput | TascoFLoadsUpdateManyWithWhereWithoutTascoLogInput[]
+    deleteMany?: TascoFLoadsScalarWhereInput | TascoFLoadsScalarWhereInput[]
   }
 
   export type EquipmentUpdateOneWithoutTascoLogsNestedInput = {
@@ -65602,6 +67001,34 @@ export namespace Prisma {
     update?: RefuelLogUpdateWithWhereUniqueWithoutTascoLogInput | RefuelLogUpdateWithWhereUniqueWithoutTascoLogInput[]
     updateMany?: RefuelLogUpdateManyWithWhereWithoutTascoLogInput | RefuelLogUpdateManyWithWhereWithoutTascoLogInput[]
     deleteMany?: RefuelLogScalarWhereInput | RefuelLogScalarWhereInput[]
+  }
+
+  export type TascoFLoadsUncheckedUpdateManyWithoutTascoLogNestedInput = {
+    create?: XOR<TascoFLoadsCreateWithoutTascoLogInput, TascoFLoadsUncheckedCreateWithoutTascoLogInput> | TascoFLoadsCreateWithoutTascoLogInput[] | TascoFLoadsUncheckedCreateWithoutTascoLogInput[]
+    connectOrCreate?: TascoFLoadsCreateOrConnectWithoutTascoLogInput | TascoFLoadsCreateOrConnectWithoutTascoLogInput[]
+    upsert?: TascoFLoadsUpsertWithWhereUniqueWithoutTascoLogInput | TascoFLoadsUpsertWithWhereUniqueWithoutTascoLogInput[]
+    createMany?: TascoFLoadsCreateManyTascoLogInputEnvelope
+    set?: TascoFLoadsWhereUniqueInput | TascoFLoadsWhereUniqueInput[]
+    disconnect?: TascoFLoadsWhereUniqueInput | TascoFLoadsWhereUniqueInput[]
+    delete?: TascoFLoadsWhereUniqueInput | TascoFLoadsWhereUniqueInput[]
+    connect?: TascoFLoadsWhereUniqueInput | TascoFLoadsWhereUniqueInput[]
+    update?: TascoFLoadsUpdateWithWhereUniqueWithoutTascoLogInput | TascoFLoadsUpdateWithWhereUniqueWithoutTascoLogInput[]
+    updateMany?: TascoFLoadsUpdateManyWithWhereWithoutTascoLogInput | TascoFLoadsUpdateManyWithWhereWithoutTascoLogInput[]
+    deleteMany?: TascoFLoadsScalarWhereInput | TascoFLoadsScalarWhereInput[]
+  }
+
+  export type TascoLogCreateNestedOneWithoutTascoFLoadsInput = {
+    create?: XOR<TascoLogCreateWithoutTascoFLoadsInput, TascoLogUncheckedCreateWithoutTascoFLoadsInput>
+    connectOrCreate?: TascoLogCreateOrConnectWithoutTascoFLoadsInput
+    connect?: TascoLogWhereUniqueInput
+  }
+
+  export type TascoLogUpdateOneRequiredWithoutTascoFLoadsNestedInput = {
+    create?: XOR<TascoLogCreateWithoutTascoFLoadsInput, TascoLogUncheckedCreateWithoutTascoFLoadsInput>
+    connectOrCreate?: TascoLogCreateOrConnectWithoutTascoFLoadsInput
+    upsert?: TascoLogUpsertWithoutTascoFLoadsInput
+    connect?: TascoLogWhereUniqueInput
+    update?: XOR<XOR<TascoLogUpdateToOneWithWhereWithoutTascoFLoadsInput, TascoLogUpdateWithoutTascoFLoadsInput>, TascoLogUncheckedUpdateWithoutTascoFLoadsInput>
   }
 
   export type TascoLogCreateNestedManyWithoutTascoMaterialTypesInput = {
@@ -68749,6 +70176,7 @@ export namespace Prisma {
     LoadQuantity?: number
     screenType?: $Enums.LoadType | null
     RefuelLogs?: RefuelLogCreateNestedManyWithoutTascoLogInput
+    TascoFLoads?: TascoFLoadsCreateNestedManyWithoutTascoLogInput
     TascoMaterialTypes?: TascoMaterialTypesCreateNestedOneWithoutTascoLogInput
     TimeSheet: TimeSheetCreateNestedOneWithoutTascoLogsInput
   }
@@ -68762,6 +70190,7 @@ export namespace Prisma {
     screenType?: $Enums.LoadType | null
     timeSheetId: number
     RefuelLogs?: RefuelLogUncheckedCreateNestedManyWithoutTascoLogInput
+    TascoFLoads?: TascoFLoadsUncheckedCreateNestedManyWithoutTascoLogInput
   }
 
   export type TascoLogCreateOrConnectWithoutEquipmentInput = {
@@ -71395,6 +72824,7 @@ export namespace Prisma {
     LoadQuantity?: number
     screenType?: $Enums.LoadType | null
     RefuelLogs?: RefuelLogCreateNestedManyWithoutTascoLogInput
+    TascoFLoads?: TascoFLoadsCreateNestedManyWithoutTascoLogInput
     Equipment?: EquipmentCreateNestedOneWithoutTascoLogsInput
     TascoMaterialTypes?: TascoMaterialTypesCreateNestedOneWithoutTascoLogInput
   }
@@ -71408,6 +72838,7 @@ export namespace Prisma {
     LoadQuantity?: number
     screenType?: $Enums.LoadType | null
     RefuelLogs?: RefuelLogUncheckedCreateNestedManyWithoutTascoLogInput
+    TascoFLoads?: TascoFLoadsUncheckedCreateNestedManyWithoutTascoLogInput
   }
 
   export type TascoLogCreateOrConnectWithoutTimeSheetInput = {
@@ -73028,6 +74459,27 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type TascoFLoadsCreateWithoutTascoLogInput = {
+    weight?: number | null
+    screenType?: $Enums.LoadType | null
+  }
+
+  export type TascoFLoadsUncheckedCreateWithoutTascoLogInput = {
+    id?: number
+    weight?: number | null
+    screenType?: $Enums.LoadType | null
+  }
+
+  export type TascoFLoadsCreateOrConnectWithoutTascoLogInput = {
+    where: TascoFLoadsWhereUniqueInput
+    create: XOR<TascoFLoadsCreateWithoutTascoLogInput, TascoFLoadsUncheckedCreateWithoutTascoLogInput>
+  }
+
+  export type TascoFLoadsCreateManyTascoLogInputEnvelope = {
+    data: TascoFLoadsCreateManyTascoLogInput | TascoFLoadsCreateManyTascoLogInput[]
+    skipDuplicates?: boolean
+  }
+
   export type EquipmentCreateWithoutTascoLogsInput = {
     id?: string
     qrId: string
@@ -73226,6 +74678,32 @@ export namespace Prisma {
     milesAtFueling?: IntNullableFilter<"RefuelLog"> | number | null
   }
 
+  export type TascoFLoadsUpsertWithWhereUniqueWithoutTascoLogInput = {
+    where: TascoFLoadsWhereUniqueInput
+    update: XOR<TascoFLoadsUpdateWithoutTascoLogInput, TascoFLoadsUncheckedUpdateWithoutTascoLogInput>
+    create: XOR<TascoFLoadsCreateWithoutTascoLogInput, TascoFLoadsUncheckedCreateWithoutTascoLogInput>
+  }
+
+  export type TascoFLoadsUpdateWithWhereUniqueWithoutTascoLogInput = {
+    where: TascoFLoadsWhereUniqueInput
+    data: XOR<TascoFLoadsUpdateWithoutTascoLogInput, TascoFLoadsUncheckedUpdateWithoutTascoLogInput>
+  }
+
+  export type TascoFLoadsUpdateManyWithWhereWithoutTascoLogInput = {
+    where: TascoFLoadsScalarWhereInput
+    data: XOR<TascoFLoadsUpdateManyMutationInput, TascoFLoadsUncheckedUpdateManyWithoutTascoLogInput>
+  }
+
+  export type TascoFLoadsScalarWhereInput = {
+    AND?: TascoFLoadsScalarWhereInput | TascoFLoadsScalarWhereInput[]
+    OR?: TascoFLoadsScalarWhereInput[]
+    NOT?: TascoFLoadsScalarWhereInput | TascoFLoadsScalarWhereInput[]
+    id?: IntFilter<"TascoFLoads"> | number
+    tascoLogId?: StringFilter<"TascoFLoads"> | string
+    weight?: FloatNullableFilter<"TascoFLoads"> | number | null
+    screenType?: EnumLoadTypeNullableFilter<"TascoFLoads"> | $Enums.LoadType | null
+  }
+
   export type EquipmentUpsertWithoutTascoLogsInput = {
     update: XOR<EquipmentUpdateWithoutTascoLogsInput, EquipmentUncheckedUpdateWithoutTascoLogsInput>
     create: XOR<EquipmentCreateWithoutTascoLogsInput, EquipmentUncheckedCreateWithoutTascoLogsInput>
@@ -73414,6 +74892,70 @@ export namespace Prisma {
     Maintenance?: mechanicProjectsUncheckedUpdateManyWithoutTimeSheetNestedInput
   }
 
+  export type TascoLogCreateWithoutTascoFLoadsInput = {
+    id?: string
+    shiftType: string
+    laborType?: string | null
+    LoadQuantity?: number
+    screenType?: $Enums.LoadType | null
+    RefuelLogs?: RefuelLogCreateNestedManyWithoutTascoLogInput
+    Equipment?: EquipmentCreateNestedOneWithoutTascoLogsInput
+    TascoMaterialTypes?: TascoMaterialTypesCreateNestedOneWithoutTascoLogInput
+    TimeSheet: TimeSheetCreateNestedOneWithoutTascoLogsInput
+  }
+
+  export type TascoLogUncheckedCreateWithoutTascoFLoadsInput = {
+    id?: string
+    shiftType: string
+    equipmentId?: string | null
+    laborType?: string | null
+    materialType?: string | null
+    LoadQuantity?: number
+    screenType?: $Enums.LoadType | null
+    timeSheetId: number
+    RefuelLogs?: RefuelLogUncheckedCreateNestedManyWithoutTascoLogInput
+  }
+
+  export type TascoLogCreateOrConnectWithoutTascoFLoadsInput = {
+    where: TascoLogWhereUniqueInput
+    create: XOR<TascoLogCreateWithoutTascoFLoadsInput, TascoLogUncheckedCreateWithoutTascoFLoadsInput>
+  }
+
+  export type TascoLogUpsertWithoutTascoFLoadsInput = {
+    update: XOR<TascoLogUpdateWithoutTascoFLoadsInput, TascoLogUncheckedUpdateWithoutTascoFLoadsInput>
+    create: XOR<TascoLogCreateWithoutTascoFLoadsInput, TascoLogUncheckedCreateWithoutTascoFLoadsInput>
+    where?: TascoLogWhereInput
+  }
+
+  export type TascoLogUpdateToOneWithWhereWithoutTascoFLoadsInput = {
+    where?: TascoLogWhereInput
+    data: XOR<TascoLogUpdateWithoutTascoFLoadsInput, TascoLogUncheckedUpdateWithoutTascoFLoadsInput>
+  }
+
+  export type TascoLogUpdateWithoutTascoFLoadsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    shiftType?: StringFieldUpdateOperationsInput | string
+    laborType?: NullableStringFieldUpdateOperationsInput | string | null
+    LoadQuantity?: IntFieldUpdateOperationsInput | number
+    screenType?: NullableEnumLoadTypeFieldUpdateOperationsInput | $Enums.LoadType | null
+    RefuelLogs?: RefuelLogUpdateManyWithoutTascoLogNestedInput
+    Equipment?: EquipmentUpdateOneWithoutTascoLogsNestedInput
+    TascoMaterialTypes?: TascoMaterialTypesUpdateOneWithoutTascoLogNestedInput
+    TimeSheet?: TimeSheetUpdateOneRequiredWithoutTascoLogsNestedInput
+  }
+
+  export type TascoLogUncheckedUpdateWithoutTascoFLoadsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    shiftType?: StringFieldUpdateOperationsInput | string
+    equipmentId?: NullableStringFieldUpdateOperationsInput | string | null
+    laborType?: NullableStringFieldUpdateOperationsInput | string | null
+    materialType?: NullableStringFieldUpdateOperationsInput | string | null
+    LoadQuantity?: IntFieldUpdateOperationsInput | number
+    screenType?: NullableEnumLoadTypeFieldUpdateOperationsInput | $Enums.LoadType | null
+    timeSheetId?: IntFieldUpdateOperationsInput | number
+    RefuelLogs?: RefuelLogUncheckedUpdateManyWithoutTascoLogNestedInput
+  }
+
   export type TascoLogCreateWithoutTascoMaterialTypesInput = {
     id?: string
     shiftType: string
@@ -73421,6 +74963,7 @@ export namespace Prisma {
     LoadQuantity?: number
     screenType?: $Enums.LoadType | null
     RefuelLogs?: RefuelLogCreateNestedManyWithoutTascoLogInput
+    TascoFLoads?: TascoFLoadsCreateNestedManyWithoutTascoLogInput
     Equipment?: EquipmentCreateNestedOneWithoutTascoLogsInput
     TimeSheet: TimeSheetCreateNestedOneWithoutTascoLogsInput
   }
@@ -73434,6 +74977,7 @@ export namespace Prisma {
     screenType?: $Enums.LoadType | null
     timeSheetId: number
     RefuelLogs?: RefuelLogUncheckedCreateNestedManyWithoutTascoLogInput
+    TascoFLoads?: TascoFLoadsUncheckedCreateNestedManyWithoutTascoLogInput
   }
 
   export type TascoLogCreateOrConnectWithoutTascoMaterialTypesInput = {
@@ -74520,6 +76064,7 @@ export namespace Prisma {
     laborType?: string | null
     LoadQuantity?: number
     screenType?: $Enums.LoadType | null
+    TascoFLoads?: TascoFLoadsCreateNestedManyWithoutTascoLogInput
     Equipment?: EquipmentCreateNestedOneWithoutTascoLogsInput
     TascoMaterialTypes?: TascoMaterialTypesCreateNestedOneWithoutTascoLogInput
     TimeSheet: TimeSheetCreateNestedOneWithoutTascoLogsInput
@@ -74534,6 +76079,7 @@ export namespace Prisma {
     LoadQuantity?: number
     screenType?: $Enums.LoadType | null
     timeSheetId: number
+    TascoFLoads?: TascoFLoadsUncheckedCreateNestedManyWithoutTascoLogInput
   }
 
   export type TascoLogCreateOrConnectWithoutRefuelLogsInput = {
@@ -74628,6 +76174,7 @@ export namespace Prisma {
     laborType?: NullableStringFieldUpdateOperationsInput | string | null
     LoadQuantity?: IntFieldUpdateOperationsInput | number
     screenType?: NullableEnumLoadTypeFieldUpdateOperationsInput | $Enums.LoadType | null
+    TascoFLoads?: TascoFLoadsUpdateManyWithoutTascoLogNestedInput
     Equipment?: EquipmentUpdateOneWithoutTascoLogsNestedInput
     TascoMaterialTypes?: TascoMaterialTypesUpdateOneWithoutTascoLogNestedInput
     TimeSheet?: TimeSheetUpdateOneRequiredWithoutTascoLogsNestedInput
@@ -74642,6 +76189,7 @@ export namespace Prisma {
     LoadQuantity?: IntFieldUpdateOperationsInput | number
     screenType?: NullableEnumLoadTypeFieldUpdateOperationsInput | $Enums.LoadType | null
     timeSheetId?: IntFieldUpdateOperationsInput | number
+    TascoFLoads?: TascoFLoadsUncheckedUpdateManyWithoutTascoLogNestedInput
   }
 
   export type TruckingLogUpsertWithoutRefuelLogsInput = {
@@ -79051,6 +80599,7 @@ export namespace Prisma {
     LoadQuantity?: IntFieldUpdateOperationsInput | number
     screenType?: NullableEnumLoadTypeFieldUpdateOperationsInput | $Enums.LoadType | null
     RefuelLogs?: RefuelLogUpdateManyWithoutTascoLogNestedInput
+    TascoFLoads?: TascoFLoadsUpdateManyWithoutTascoLogNestedInput
     TascoMaterialTypes?: TascoMaterialTypesUpdateOneWithoutTascoLogNestedInput
     TimeSheet?: TimeSheetUpdateOneRequiredWithoutTascoLogsNestedInput
   }
@@ -79064,6 +80613,7 @@ export namespace Prisma {
     screenType?: NullableEnumLoadTypeFieldUpdateOperationsInput | $Enums.LoadType | null
     timeSheetId?: IntFieldUpdateOperationsInput | number
     RefuelLogs?: RefuelLogUncheckedUpdateManyWithoutTascoLogNestedInput
+    TascoFLoads?: TascoFLoadsUncheckedUpdateManyWithoutTascoLogNestedInput
   }
 
   export type TascoLogUncheckedUpdateManyWithoutEquipmentInput = {
@@ -79788,6 +81338,7 @@ export namespace Prisma {
     LoadQuantity?: IntFieldUpdateOperationsInput | number
     screenType?: NullableEnumLoadTypeFieldUpdateOperationsInput | $Enums.LoadType | null
     RefuelLogs?: RefuelLogUpdateManyWithoutTascoLogNestedInput
+    TascoFLoads?: TascoFLoadsUpdateManyWithoutTascoLogNestedInput
     Equipment?: EquipmentUpdateOneWithoutTascoLogsNestedInput
     TascoMaterialTypes?: TascoMaterialTypesUpdateOneWithoutTascoLogNestedInput
   }
@@ -79801,6 +81352,7 @@ export namespace Prisma {
     LoadQuantity?: IntFieldUpdateOperationsInput | number
     screenType?: NullableEnumLoadTypeFieldUpdateOperationsInput | $Enums.LoadType | null
     RefuelLogs?: RefuelLogUncheckedUpdateManyWithoutTascoLogNestedInput
+    TascoFLoads?: TascoFLoadsUncheckedUpdateManyWithoutTascoLogNestedInput
   }
 
   export type TascoLogUncheckedUpdateManyWithoutTimeSheetInput = {
@@ -79993,6 +81545,12 @@ export namespace Prisma {
     milesAtFueling?: number | null
   }
 
+  export type TascoFLoadsCreateManyTascoLogInput = {
+    id?: number
+    weight?: number | null
+    screenType?: $Enums.LoadType | null
+  }
+
   export type RefuelLogUpdateWithoutTascoLogInput = {
     id?: StringFieldUpdateOperationsInput | string
     gallonsRefueled?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -80017,6 +81575,23 @@ export namespace Prisma {
     milesAtFueling?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
+  export type TascoFLoadsUpdateWithoutTascoLogInput = {
+    weight?: NullableFloatFieldUpdateOperationsInput | number | null
+    screenType?: NullableEnumLoadTypeFieldUpdateOperationsInput | $Enums.LoadType | null
+  }
+
+  export type TascoFLoadsUncheckedUpdateWithoutTascoLogInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    weight?: NullableFloatFieldUpdateOperationsInput | number | null
+    screenType?: NullableEnumLoadTypeFieldUpdateOperationsInput | $Enums.LoadType | null
+  }
+
+  export type TascoFLoadsUncheckedUpdateManyWithoutTascoLogInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    weight?: NullableFloatFieldUpdateOperationsInput | number | null
+    screenType?: NullableEnumLoadTypeFieldUpdateOperationsInput | $Enums.LoadType | null
+  }
+
   export type TascoLogCreateManyTascoMaterialTypesInput = {
     id?: string
     shiftType: string
@@ -80034,6 +81609,7 @@ export namespace Prisma {
     LoadQuantity?: IntFieldUpdateOperationsInput | number
     screenType?: NullableEnumLoadTypeFieldUpdateOperationsInput | $Enums.LoadType | null
     RefuelLogs?: RefuelLogUpdateManyWithoutTascoLogNestedInput
+    TascoFLoads?: TascoFLoadsUpdateManyWithoutTascoLogNestedInput
     Equipment?: EquipmentUpdateOneWithoutTascoLogsNestedInput
     TimeSheet?: TimeSheetUpdateOneRequiredWithoutTascoLogsNestedInput
   }
@@ -80047,6 +81623,7 @@ export namespace Prisma {
     screenType?: NullableEnumLoadTypeFieldUpdateOperationsInput | $Enums.LoadType | null
     timeSheetId?: IntFieldUpdateOperationsInput | number
     RefuelLogs?: RefuelLogUncheckedUpdateManyWithoutTascoLogNestedInput
+    TascoFLoads?: TascoFLoadsUncheckedUpdateManyWithoutTascoLogNestedInput
   }
 
   export type TascoLogUncheckedUpdateManyWithoutTascoMaterialTypesInput = {
