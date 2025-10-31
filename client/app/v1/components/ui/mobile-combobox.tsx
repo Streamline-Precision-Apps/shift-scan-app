@@ -2,17 +2,17 @@
 
 import * as React from "react";
 import { CheckIcon, ChevronsUpDownIcon, SearchIcon, XIcon } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/app/v1/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
+} from "@/app/v1/components/ui/dialog";
+import { Input } from "@/app/v1/components/ui/input";
 import { useState, useEffect, useRef } from "react";
+import { cn } from "@/app/lib/utils/utils";
 
 export interface MobileComboboxOption {
   value: string;
@@ -72,7 +72,7 @@ export function MobileCombobox({
 
   // Filter options based on search input
   const filteredOptions = options.filter((option) =>
-    option.label.toLowerCase().includes(search.toLowerCase()),
+    option.label.toLowerCase().includes(search.toLowerCase())
   );
 
   const showError = required && touched && (!value || value.length === 0);
@@ -142,7 +142,7 @@ export function MobileCombobox({
               "w-full h-12 px-3 py-2 text-base justify-between",
               "flex items-center relative overflow-hidden ",
               showError ? "border-red-500" : "",
-              disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer",
+              disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
             )}
             disabled={disabled}
             onBlur={() => setTouched(true)}
@@ -194,7 +194,7 @@ export function MobileCombobox({
                       className={cn(
                         "w-full flex items-center px-4 py-3 text-left text-base",
                         "hover:bg-gray-100 focus:bg-gray-100 focus:outline-none",
-                        isSelected ? "bg-gray-50" : "",
+                        isSelected ? "bg-gray-50" : ""
                       )}
                       onClick={() => handleSelect(option.value)}
                     >
@@ -203,7 +203,7 @@ export function MobileCombobox({
                           "w-5 h-5 rounded-sm border mr-3 flex items-center justify-center",
                           isSelected
                             ? "bg-green-500 border-green-500"
-                            : "border-gray-300",
+                            : "border-gray-300"
                         )}
                       >
                         {isSelected && (

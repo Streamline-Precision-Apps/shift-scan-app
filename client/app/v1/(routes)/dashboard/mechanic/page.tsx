@@ -1,24 +1,17 @@
-"use server";
-import { Bases } from "@/components/(reusable)/bases";
-import { Contents } from "@/components/(reusable)/contents";
-import { auth } from "@/auth";
+"use client";
+import { Bases } from "@/app/v1/components/(reusable)/bases";
+import { Contents } from "@/app/v1/components/(reusable)/contents";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
-import { MechanicDisplayList } from "./_newComponents/mechanic-display-list";
-import { Grids } from "@/components/(reusable)/grids";
-import { Holds } from "@/components/(reusable)/holds";
-import { TitleBoxes } from "@/components/(reusable)/titleBoxes";
-import { Titles } from "@/components/(reusable)/titles";
-import { Buttons } from "@/components/(reusable)/buttons";
+import { MechanicDisplayList } from "./_components/mechanic-display-list";
+import { Grids } from "@/app/v1/components/(reusable)/grids";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
+import { TitleBoxes } from "@/app/v1/components/(reusable)/titleBoxes";
+import { Titles } from "@/app/v1/components/(reusable)/titles";
+import { Buttons } from "@/app/v1/components/(reusable)/buttons";
 import { getTranslations } from "next-intl/server";
 
 export default async function Mechanic() {
-  const session = await auth();
-
-  if (!session) {
-    return redirect("/login");
-  }
-
   // const permission = session.user.permission;
   // const isManager = ["ADMIN", "SUPERADMIN", "MANAGER"].includes(permission);
   const t = await getTranslations("MechanicWidget");

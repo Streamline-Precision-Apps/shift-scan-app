@@ -1,13 +1,13 @@
-import { Grids } from "@/components/(reusable)/grids";
-import { Holds } from "@/components/(reusable)/holds";
-import { Texts } from "@/components/(reusable)/texts";
+import { Grids } from "@/app/v1/components/(reusable)/grids";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
+import { Texts } from "@/app/v1/components/(reusable)/texts";
 import RefuelLogsList from "./RefuelLogsList";
-import { createRefuelLog } from "@/actions/tascoActions";
+import { createRefuelLog } from "@/app/lib/actions/tascoActions";
 import { useTranslations } from "next-intl";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/app/v1/components/ui/button";
 import { Plus } from "lucide-react";
 import { Suspense } from "react";
-import Spinner from "@/components/(animations)/spinner";
+import Spinner from "@/app/v1/components/(animations)/spinner";
 
 export type Refueled = {
   id: string;

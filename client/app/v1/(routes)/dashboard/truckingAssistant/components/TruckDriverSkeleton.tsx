@@ -1,13 +1,13 @@
 "use client";
 
-import { Holds } from "@/components/(reusable)/holds";
-import { Grids } from "@/components/(reusable)/grids";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
+import { Grids } from "@/app/v1/components/(reusable)/grids";
 import { useTranslations } from "next-intl";
-import { NewTab } from "@/components/(reusable)/newTabs";
-import { Titles } from "@/components/(reusable)/titles";
-import { Contents } from "@/components/(reusable)/contents";
-import { Buttons } from "@/components/(reusable)/buttons";
-import Sliders from "@/components/(reusable)/sliders";
+import { NewTab } from "@/app/v1/components/(reusable)/newTabs";
+import { Titles } from "@/app/v1/components/(reusable)/titles";
+import { Contents } from "@/app/v1/components/(reusable)/contents";
+import { Buttons } from "@/app/v1/components/(reusable)/buttons";
+import Sliders from "@/app/v1/components/(reusable)/sliders";
 
 export default function TruckDriverSkeleton() {
   const t = useTranslations("TruckingAssistant");

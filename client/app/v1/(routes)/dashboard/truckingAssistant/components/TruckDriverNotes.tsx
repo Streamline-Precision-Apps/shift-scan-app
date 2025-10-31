@@ -1,8 +1,8 @@
 "use client";
-import { updateTruckDrivingNotes } from "@/actions/truckingActions";
-import { TextAreas } from "@/components/(reusable)/textareas";
-import { Texts } from "@/components/(reusable)/texts";
-import { Titles } from "@/components/(reusable)/titles";
+import { updateTruckDrivingNotes } from "@/app/lib/actions/truckingActions";
+import { TextAreas } from "@/app/v1/components/(reusable)/textareas";
+import { Texts } from "@/app/v1/components/(reusable)/texts";
+import { Titles } from "@/app/v1/components/(reusable)/titles";
 import { useTranslations } from "next-intl";
 
 export default function TruckDriverNotes({

@@ -4,15 +4,15 @@ import { SingleCombobox } from "@/app/v1/components/ui/single-combobox";
 import RenderSearchPersonField, { Fields } from "./RenderSearchPersonField";
 import RenderSearchAssetField from "./RenderSearchAssetField";
 import RenderTimeField from "./RenderTimeField";
-import { FormIndividualTemplate } from "../../../admins/forms/[id]/_component/hooks/types";
-import RenderInputField from "../../../admins/forms/_components/RenderFields/RenderInputField";
-import RenderTextArea from "../../../admins/forms/_components/RenderFields/RenderTextAreaField";
-import RenderNumberField from "../../../admins/forms/_components/RenderFields/RenderNumberField";
-import RenderDateField from "../../../admins/forms/_components/RenderFields/RenderDateField";
-import RenderDropdownField from "../../../admins/forms/_components/RenderFields/RenderDropdownField";
-import RenderRadioField from "../../../admins/forms/_components/RenderFields/RenderRadioField";
-import RenderCheckboxField from "../../../admins/forms/_components/RenderFields/RenderCheckboxField";
-import RenderMultiselectField from "../../../admins/forms/_components/RenderFields/RenderMultiselectField";
+import { FormIndividualTemplate } from "../_adminComponents/types";
+import RenderInputField from "../_adminComponents/RenderFields/RenderInputField";
+import RenderTextArea from "../_adminComponents/RenderFields/RenderTextAreaField";
+import RenderNumberField from "../_adminComponents/RenderFields/RenderNumberField";
+import RenderDateField from "../_adminComponents/RenderFields/RenderDateField";
+import RenderDropdownField from "../_adminComponents/RenderFields/RenderDropdownField";
+import RenderRadioField from "../_adminComponents/RenderFields/RenderRadioField";
+import RenderCheckboxField from "../_adminComponents/RenderFields/RenderCheckboxField";
+import RenderMultiselectField from "../_adminComponents/RenderFields/RenderMultiselectField";
 
 // Define a FormFieldValue type to represent all possible field values
 type FormFieldValue =

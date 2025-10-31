@@ -1,6 +1,4 @@
-"use server";
-import prisma from "@/lib/prisma";
-import { revalidatePath, revalidateTag } from "next/cache";
+"use client";
 
 export interface UpdateRefuelLogParams extends RefuelLogBase {
   type: RefuelLogType;

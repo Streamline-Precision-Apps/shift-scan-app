@@ -2,20 +2,20 @@
 import {
   updateEquipmentLogs,
   updateEquipmentLogsEquipment,
-} from "@/actions/truckingActions";
-import { Holds } from "@/components/(reusable)/holds";
-import { Inputs } from "@/components/(reusable)/inputs";
+} from "@/app/lib/actions/truckingActions";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
+import { Inputs } from "@/app/v1/components/(reusable)/inputs";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { Contents } from "@/components/(reusable)/contents";
+import { Contents } from "@/app/v1/components/(reusable)/contents";
 import { useTranslations } from "next-intl";
-import { Texts } from "@/components/(reusable)/texts";
-import { NModals } from "@/components/(reusable)/newmodals";
-import { EquipmentSelector } from "@/components/(clock)/(General)/equipmentSelector";
-import { Buttons } from "@/components/(reusable)/buttons";
-import { Grids } from "@/components/(reusable)/grids";
-import { Titles } from "@/components/(reusable)/titles";
-import Spinner from "@/components/(animations)/spinner";
-import { Label } from "@/components/ui/label";
+import { Texts } from "@/app/v1/components/(reusable)/texts";
+import { NModals } from "@/app/v1/components/(reusable)/newmodals";
+import { EquipmentSelector } from "@/app/v1/components/(clock)/(General)/equipmentSelector";
+import { Buttons } from "@/app/v1/components/(reusable)/buttons";
+import { Grids } from "@/app/v1/components/(reusable)/grids";
+import { Titles } from "@/app/v1/components/(reusable)/titles";
+import Spinner from "@/app/v1/components/(animations)/spinner";
+import { Label } from "@/app/v1/components/ui/label";
 
 type EquipmentHauled = {
   id: string;
@@ -71,14 +71,14 @@ export default function EquipmentList({
   const handleFieldChange = (
     id: string,
     field: keyof EquipmentHauled,
-    value: string | number | null,
+    value: string | number | null
   ) => {
     setEquipmentHauled((prev) =>
       prev
         ? prev.map((item) =>
-            item.id === id ? { ...item, [field]: value } : item,
+            item.id === id ? { ...item, [field]: value } : item
           )
-        : [],
+        : []
     );
   };
 
@@ -102,7 +102,7 @@ export default function EquipmentList({
     setEquipmentLoading(true);
     try {
       const currentLog = equipmentHauled.find(
-        (item) => item.id === selectedIndex,
+        (item) => item.id === selectedIndex
       );
 
       const formData = new FormData();
@@ -124,9 +124,9 @@ export default function EquipmentList({
                       name: equipment.label,
                     },
                   }
-                : item,
+                : item
             )
-          : [],
+          : []
       );
       setIsEquipmentOpen(false);
       setSelectedIndex(null);
@@ -233,7 +233,7 @@ export default function EquipmentList({
                     handleFieldChange(
                       mat.id,
                       "startMileage",
-                      e.target.value === "" ? null : Number(e.target.value),
+                      e.target.value === "" ? null : Number(e.target.value)
                     )
                   }
                   onBlur={() => handleFieldBlur(mat.id)}
@@ -252,7 +252,7 @@ export default function EquipmentList({
                     handleFieldChange(
                       mat.id,
                       "endMileage",
-                      e.target.value === "" ? null : Number(e.target.value),
+                      e.target.value === "" ? null : Number(e.target.value)
                     )
                   }
                   onBlur={() => handleFieldBlur(mat.id)}

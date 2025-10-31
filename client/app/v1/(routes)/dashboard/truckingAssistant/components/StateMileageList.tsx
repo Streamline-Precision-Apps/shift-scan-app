@@ -2,14 +2,14 @@
 import {
   deleteStateMileage,
   updateStateMileage,
-} from "@/actions/truckingActions";
-import SlidingDiv from "@/components/(animations)/slideDelete";
-import { Contents } from "@/components/(reusable)/contents";
-import { Grids } from "@/components/(reusable)/grids";
-import { Holds } from "@/components/(reusable)/holds";
-import { Inputs } from "@/components/(reusable)/inputs";
-import { Selects } from "@/components/(reusable)/selects";
-import { Texts } from "@/components/(reusable)/texts";
+} from "@/app/lib/actions/truckingActions";
+import SlidingDiv from "@/app/v1/components/(animations)/slideDelete";
+import { Contents } from "@/app/v1/components/(reusable)/contents";
+import { Grids } from "@/app/v1/components/(reusable)/grids";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
+import { Inputs } from "@/app/v1/components/(reusable)/inputs";
+import { Selects } from "@/app/v1/components/(reusable)/selects";
+import { Texts } from "@/app/v1/components/(reusable)/texts";
 import { useTranslations } from "next-intl";
 import { useEffect, useState, useRef, useCallback } from "react";
 import { debounce } from "lodash";
@@ -40,7 +40,7 @@ export default function StateMileageList({
 }) {
   const t = useTranslations("TruckingAssistant");
   const [editedStateMileage, setEditedStateMileage] = useState<StateMileage[]>(
-    StateMileage || [],
+    StateMileage || []
   );
   const [validationErrors, setValidationErrors] = useState<{
     [key: string]: string;
@@ -49,7 +49,7 @@ export default function StateMileageList({
   // Helper function to get validation message for mileage input
   const getValidationMessage = (
     stateLineMileage: number | null | undefined,
-    itemId: string,
+    itemId: string
   ): string => {
     if (!startingMileage) return "";
 
@@ -72,7 +72,7 @@ export default function StateMileageList({
       formData.append("state", stateMileage.state || "");
       formData.append(
         "stateLineMileage",
-        stateMileage.stateLineMileage?.toString() || "0",
+        stateMileage.stateLineMileage?.toString() || "0"
       );
 
       try {
@@ -81,7 +81,7 @@ export default function StateMileageList({
         console.error("Error updating state mileage:", error);
       }
     }, 1000),
-    [],
+    []
   );
 
   // Handle Delete
@@ -109,7 +109,7 @@ export default function StateMileageList({
     formData.append("state", value);
     formData.append(
       "stateLineMileage",
-      newStateMileage[index].stateLineMileage?.toString() || "0",
+      newStateMileage[index].stateLineMileage?.toString() || "0"
     );
     await updateStateMileage(formData);
   };
@@ -145,7 +145,7 @@ export default function StateMileageList({
       editedStateMileage.forEach((item) => {
         const validationMessage = getValidationMessage(
           item.stateLineMileage,
-          item.id,
+          item.id
         );
         if (validationMessage) {
           newValidationErrors[item.id] = validationMessage;
@@ -212,11 +212,15 @@ export default function StateMileageList({
                       formData.append("state", sm.state || "");
                       formData.append(
                         "stateLineMileage",
-                        sm.stateLineMileage?.toString() || "0",
+                        sm.stateLineMileage?.toString() || "0"
                       );
                       updateStateMileage(formData);
                     }}
-                    className={`h-8 py-2 border-l-[3px] text-right mb-0 rounded-none border-black text-xs focus:outline-none focus:ring-0 placeholder:text-app-red ${sm.stateLineMileage ? "text-black" : "text-app-red placeholder:text-app-red"}`}
+                    className={`h-8 py-2 border-l-[3px] text-right mb-0 rounded-none border-black text-xs focus:outline-none focus:ring-0 placeholder:text-app-red ${
+                      sm.stateLineMileage
+                        ? "text-black"
+                        : "text-app-red placeholder:text-app-red"
+                    }`}
                   />
                   <span className="bg-white h-8 pr-3 flex justify-center items-center rounded-r-md text-xs text-black">
                     MI

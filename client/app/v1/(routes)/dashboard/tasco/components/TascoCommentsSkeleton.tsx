@@ -1,7 +1,7 @@
 "use client";
 
-import { TextAreas } from "@/components/(reusable)/textareas";
-import { Texts } from "@/components/(reusable)/texts";
+import { TextAreas } from "@/app/v1/components/(reusable)/textareas";
+import { Texts } from "@/app/v1/components/(reusable)/texts";
 import { useTranslations } from "next-intl";
 
 export default function TascoCommentsSkeleton() {

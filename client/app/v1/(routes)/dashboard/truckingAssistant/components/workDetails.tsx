@@ -1,11 +1,11 @@
-import { Buttons } from "@/components/(reusable)/buttons";
-import { Grids } from "@/components/(reusable)/grids";
-import { Holds } from "@/components/(reusable)/holds";
-import Sliders from "@/components/(reusable)/sliders";
+import { Buttons } from "@/app/v1/components/(reusable)/buttons";
+import { Grids } from "@/app/v1/components/(reusable)/grids";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
+import Sliders from "@/app/v1/components/(reusable)/sliders";
 
 import { EndingMileage } from "./EndingMileage";
 // import TruckDriverNotes from "./TruckDriverNotes";
-import { Contents } from "@/components/(reusable)/contents";
+import { Contents } from "@/app/v1/components/(reusable)/contents";
 import { useState } from "react";
 import TruckDriverNotes from "./TruckDriverNotes";
 import { useTranslations } from "next-intl";

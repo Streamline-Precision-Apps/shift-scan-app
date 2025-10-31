@@ -1,11 +1,14 @@
-import { Contents } from "@/components/(reusable)/contents";
+import { Contents } from "@/app/v1/components/(reusable)/contents";
 import { Suspense, useEffect, useState } from "react";
-import { deleteRefuelLog, updateRefuelLog } from "@/actions/tascoActions";
-import SlidingDiv from "@/components/(animations)/slideDelete";
-import { Holds } from "@/components/(reusable)/holds";
-import { Inputs } from "@/components/(reusable)/inputs";
+import {
+  deleteRefuelLog,
+  updateRefuelLog,
+} from "@/app/lib/actions/tascoActions";
+import SlidingDiv from "@/app/v1/components/(animations)/slideDelete";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
+import { Inputs } from "@/app/v1/components/(reusable)/inputs";
 import { useTranslations } from "next-intl";
-import Spinner from "@/components/(animations)/spinner";
+import Spinner from "@/app/v1/components/(animations)/spinner";
 
 export type Refueled = {
   id: string;
@@ -21,7 +24,7 @@ export default function RefuelLogsList({
   setRefuelLogs: React.Dispatch<React.SetStateAction<Refueled[] | undefined>>;
 }) {
   const [editedRefuel, setEditedRefuel] = useState<Refueled[]>(
-    refuelLogs || [],
+    refuelLogs || []
   );
   const t = useTranslations("Tasco");
   const handleDelete = async (id: string) => {

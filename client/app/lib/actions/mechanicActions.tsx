@@ -1,7 +1,4 @@
-"use server";
-import prisma from "@/lib/prisma";
-import { Priority } from "../../prisma/generated/prisma/client";
-import { revalidatePath, revalidateTag } from "next/cache";
+"use client";
 
 // This Updates the selected staus of the project in the database
 export async function setProjectSelected(id: string, selected: boolean) {
@@ -275,7 +272,7 @@ export async function SubmitEngineerProject(formData: FormData) {
     const problemDiagnosis = formData.get("diagnosedProblem") as string;
     const solution = formData.get("solution") as string;
     const totalHoursLaboured = parseFloat(
-      formData.get("totalHoursLaboured") as string,
+      formData.get("totalHoursLaboured") as string
     );
 
     // Check for open MaintenanceLogs (endTime is null) for this Maintenance

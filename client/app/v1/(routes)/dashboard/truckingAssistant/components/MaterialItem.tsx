@@ -1,9 +1,9 @@
 "use client";
-import { updateHaulingLogs } from "@/actions/truckingActions";
-import { Contents } from "@/components/(reusable)/contents";
-import { Holds } from "@/components/(reusable)/holds";
-import { Inputs } from "@/components/(reusable)/inputs";
-import { Selects } from "@/components/(reusable)/selects";
+import { updateHaulingLogs } from "@/app/lib/actions/truckingActions";
+import { Contents } from "@/app/v1/components/(reusable)/contents";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
+import { Inputs } from "@/app/v1/components/(reusable)/inputs";
+import { Selects } from "@/app/v1/components/(reusable)/selects";
 import {
   Dispatch,
   SetStateAction,
@@ -11,10 +11,10 @@ import {
   useEffect,
   useState,
 } from "react";
-import debounce from "lodash.debounce";
+import { debounce } from "lodash";
 import { useTranslations } from "next-intl";
-import { Buttons } from "@/components/(reusable)/buttons";
-import { Images } from "@/components/(reusable)/images";
+import { Buttons } from "@/app/v1/components/(reusable)/buttons";
+import { Images } from "@/app/v1/components/(reusable)/images";
 
 type Material = {
   id: string;
@@ -67,7 +67,7 @@ export default function MaterialItem({
       formData.append("name", updatedMaterial.name || "");
       formData.append(
         "LocationOfMaterial",
-        updatedMaterial.LocationOfMaterial || "",
+        updatedMaterial.LocationOfMaterial || ""
       );
       formData.append("unit", updatedMaterial.unit || "");
       formData.append("loadType", updatedMaterial.loadType?.toString() || "");
@@ -76,7 +76,7 @@ export default function MaterialItem({
 
       await updateHaulingLogs(formData);
     }, 1000),
-    [],
+    []
   );
 
   // Handle Input Change
@@ -93,8 +93,8 @@ export default function MaterialItem({
     // Update the parent state
     setMaterial((prev) =>
       prev?.map((mat) =>
-        mat.id === currentMaterial.id ? updatedMaterial : mat,
-      ),
+        mat.id === currentMaterial.id ? updatedMaterial : mat
+      )
     );
 
     // Trigger server action to update database

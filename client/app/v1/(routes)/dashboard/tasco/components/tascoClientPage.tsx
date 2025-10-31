@@ -1,18 +1,19 @@
 "use client";
-import { Holds } from "@/components/(reusable)/holds";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
 import { useEffect, useState, Suspense } from "react";
 import Counter from "./counter";
-import { NewTab } from "@/components/(reusable)/newTabs";
-import { Titles } from "@/components/(reusable)/titles";
-import { Grids } from "@/components/(reusable)/grids";
-import { Contents } from "@/components/(reusable)/contents";
+import { NewTab } from "@/app/v1/components/(reusable)/newTabs";
+import { Titles } from "@/app/v1/components/(reusable)/titles";
+import { Grids } from "@/app/v1/components/(reusable)/grids";
+import { Contents } from "@/app/v1/components/(reusable)/contents";
 import RefuelLayout from "./RefuelLayout";
 import TascoComments from "./tascoComments";
 import TascoCommentsSkeleton from "./TascoCommentsSkeleton";
-import { SetLoad } from "@/actions/tascoActions";
-import { useAutoSave } from "@/hooks/(inbox)/useAutoSave";
+import { SetLoad } from "@/app/lib/actions/tascoActions";
+
 import { useTranslations } from "next-intl";
-import { Texts } from "@/components/(reusable)/texts";
+import { Texts } from "@/app/v1/components/(reusable)/texts";
+import { useAutoSave } from "@/app/lib/hooks/useAutoSave";
 
 export type Refueled = {
   id: string;

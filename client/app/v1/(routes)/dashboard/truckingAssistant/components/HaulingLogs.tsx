@@ -1,19 +1,19 @@
-import { Buttons } from "@/components/(reusable)/buttons";
-import { Contents } from "@/components/(reusable)/contents";
-import { Grids } from "@/components/(reusable)/grids";
-import { Holds } from "@/components/(reusable)/holds";
-import Sliders from "@/components/(reusable)/sliders";
+import { Buttons } from "@/app/v1/components/(reusable)/buttons";
+import { Contents } from "@/app/v1/components/(reusable)/contents";
+import { Grids } from "@/app/v1/components/(reusable)/grids";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
+import Sliders from "@/app/v1/components/(reusable)/sliders";
 import { Dispatch, SetStateAction, useState } from "react";
 import MaterialList from "./MaterialList";
 import {
   createEquipmentHauled,
   createHaulingLogs,
   deleteEquipmentHauled,
-} from "@/actions/truckingActions";
+} from "@/app/lib/actions/truckingActions";
 import EquipmentList from "./EquipmentList";
 import { useTranslations } from "next-intl";
 import MaterialItem from "./MaterialItem";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/app/v1/components/ui/button";
 import { Minus, Plus } from "lucide-react";
 import {
   AlertDialog,
@@ -25,7 +25,7 @@ import {
   AlertDialogAction,
   AlertDialogCancel,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+} from "@/app/v1/components/ui/alert-dialog";
 
 type EquipmentHauled = {
   id: string;
@@ -90,7 +90,7 @@ export default function HaulingLogs({
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
   const [equipmentToDelete, setEquipmentToDelete] = useState<string | null>(
-    null,
+    null
   );
 
   // Add Temporary Equipment
@@ -162,7 +162,7 @@ export default function HaulingLogs({
     try {
       await deleteEquipmentHauled(id);
       setEquipmentHauled(
-        (prevLogs) => prevLogs?.filter((log) => log.id !== id) ?? [],
+        (prevLogs) => prevLogs?.filter((log) => log.id !== id) ?? []
       );
       setDeleteDialogOpen(false);
       setEquipmentToDelete(null);
@@ -190,7 +190,19 @@ export default function HaulingLogs({
           <Button
             size={"icon"}
             variant={"outline"}
-            className={`${activeTab === 1 ? "bg-app-green" : equipmentHauled?.length === 0 ? "bg-app-green" : "bg-app-red"} w-10  text-black py-1.5 px-3 border-[3px] border-black rounded-[10px] shadow-none focus:ring-0 hover:${activeTab === 1 ? "bg-app-green" : equipmentHauled?.length === 0 ? "bg-app-green" : "bg-app-red"}`}
+            className={`${
+              activeTab === 1
+                ? "bg-app-green"
+                : equipmentHauled?.length === 0
+                ? "bg-app-green"
+                : "bg-app-red"
+            } w-10  text-black py-1.5 px-3 border-[3px] border-black rounded-[10px] shadow-none focus:ring-0 hover:${
+              activeTab === 1
+                ? "bg-app-green"
+                : equipmentHauled?.length === 0
+                ? "bg-app-green"
+                : "bg-app-red"
+            }`}
             onClick={() => {
               if (activeTab === 1) {
                 addTempMaterial();

@@ -1,9 +1,9 @@
-import { Inputs } from "@/components/(reusable)/inputs";
-import { updateTruckingMileage } from "@/actions/truckingActions";
+import { Inputs } from "@/app/v1/components/(reusable)/inputs";
+import { updateTruckingMileage } from "@/app/lib/actions/truckingActions";
 import { useTranslations } from "next-intl";
 import { useState, useEffect } from "react";
-import { Texts } from "@/components/(reusable)/texts";
-import { Titles } from "@/components/(reusable)/titles";
+import { Texts } from "@/app/v1/components/(reusable)/texts";
+import { Titles } from "@/app/v1/components/(reusable)/titles";
 
 type StateMileage = {
   id: string;
@@ -83,7 +83,7 @@ export const EndingMileage = ({
     // Show validation message for empty/null values
     if (value === null || value === 0) {
       setValidationMessage(
-        `${t(`EndRequiredMileageMustBe`)} ${minRequired.toLocaleString()}`,
+        `${t(`EndRequiredMileageMustBe`)} ${minRequired.toLocaleString()}`
       );
       setIsValid(false);
       return false;
@@ -91,7 +91,7 @@ export const EndingMileage = ({
 
     if (value < minRequired) {
       setValidationMessage(
-        `${t(`EndMileageMustBe`)} ${minRequired.toLocaleString()}`,
+        `${t(`EndMileageMustBe`)} ${minRequired.toLocaleString()}`
       );
       setIsValid(false);
       return false;

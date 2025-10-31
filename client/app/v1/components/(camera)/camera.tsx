@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
-import { Buttons } from "@/components/(reusable)/buttons";
+import { Buttons } from "@/app/v1/components/(reusable)/buttons";
 import { Titles } from "../(reusable)/titles";
 import { Images } from "../(reusable)/images";
 import { useTranslations } from "next-intl";
@@ -36,7 +36,7 @@ const CameraComponent: React.FC<CameraComponentProps> = ({ setImageBlob }) => {
 
       if (!permissionGranted) {
         setError(
-          "Camera permission denied. Please grant camera access in your settings.",
+          "Camera permission denied. Please grant camera access in your settings."
         );
         return;
       }
@@ -45,8 +45,9 @@ const CameraComponent: React.FC<CameraComponentProps> = ({ setImageBlob }) => {
         setError("Camera not supported in this browser.");
         return;
       }
-      const mediaStream =
-        await navigator.mediaDevices.getUserMedia(constraints);
+      const mediaStream = await navigator.mediaDevices.getUserMedia(
+        constraints
+      );
       if (videoRef.current) {
         videoRef.current.srcObject = mediaStream;
       }
@@ -54,7 +55,7 @@ const CameraComponent: React.FC<CameraComponentProps> = ({ setImageBlob }) => {
       setError(null);
     } catch (err) {
       setError(
-        "Error accessing the camera. Please check permissions and try again.",
+        "Error accessing the camera. Please check permissions and try again."
       );
     }
   };
@@ -161,7 +162,9 @@ const CameraComponent: React.FC<CameraComponentProps> = ({ setImageBlob }) => {
             id="player"
             autoPlay
             playsInline
-            className={`absolute top-0 left-0 w-[250px] h-[250px] object-cover rounded-full border-8 border-black shadow-lg transition-all duration-300 ${cameraActive && !imageSrc ? "block" : "hidden"}`}
+            className={`absolute top-0 left-0 w-[250px] h-[250px] object-cover rounded-full border-8 border-black shadow-lg transition-all duration-300 ${
+              cameraActive && !imageSrc ? "block" : "hidden"
+            }`}
             style={{ margin: "0 auto" }}
           ></video>
           <canvas

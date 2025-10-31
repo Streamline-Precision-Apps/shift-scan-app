@@ -1,8 +1,8 @@
 "use server";
 import { auth } from "@/auth";
-import { Bases } from "@/components/(reusable)/bases";
-import { Contents } from "@/components/(reusable)/contents";
-import { Grids } from "@/components/(reusable)/grids";
+import { Bases } from "@/app/v1/components/(reusable)/bases";
+import { Contents } from "@/app/v1/components/(reusable)/contents";
+import { Grids } from "@/app/v1/components/(reusable)/grids";
 import { cookies } from "next/headers";
 import TruckingContexts from "./components/contents";
 

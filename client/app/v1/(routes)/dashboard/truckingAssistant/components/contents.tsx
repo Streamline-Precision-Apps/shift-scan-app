@@ -1,9 +1,9 @@
 "use client";
 
-import { Holds } from "@/components/(reusable)/holds";
-import { TitleBoxes } from "@/components/(reusable)/titleBoxes";
-import { Images } from "@/components/(reusable)/images";
-import { Titles } from "@/components/(reusable)/titles";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
+import { TitleBoxes } from "@/app/v1/components/(reusable)/titleBoxes";
+import { Images } from "@/app/v1/components/(reusable)/images";
+import { Titles } from "@/app/v1/components/(reusable)/titles";
 import TruckDriver from "../TruckingDriver";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
@@ -30,10 +30,10 @@ export default function TruckingContexts({
               {laborType === "truckDriver"
                 ? t("TruckDriver")
                 : laborType === "operator"
-                  ? t("Operator")
-                  : laborType === "manualLabor"
-                    ? t("ManualLabor")
-                    : t("TruckingAssistant")}
+                ? t("Operator")
+                : laborType === "manualLabor"
+                ? t("ManualLabor")
+                : t("TruckingAssistant")}
             </Titles>
             <Images
               className="max-w-8 h-auto object-contain"

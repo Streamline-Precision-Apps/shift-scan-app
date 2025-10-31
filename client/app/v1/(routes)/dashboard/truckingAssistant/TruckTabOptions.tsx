@@ -1,6 +1,6 @@
-import { Holds } from "@/components/(reusable)/holds";
-import { NewTab } from "@/components/(reusable)/newTabs";
-import { Titles } from "@/components/(reusable)/titles";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
+import { NewTab } from "@/app/v1/components/(reusable)/newTabs";
+import { Titles } from "@/app/v1/components/(reusable)/titles";
 import { useTranslations } from "next-intl";
 
 export default function TruckTabOptions({

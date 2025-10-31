@@ -1,11 +1,14 @@
 import { useEffect, useState, useCallback } from "react";
-import { deleteRefuelLog, updateRefuelLog } from "@/actions/truckingActions";
-import SlidingDiv from "@/components/(animations)/slideDelete";
-import { Holds } from "@/components/(reusable)/holds";
-import { Inputs } from "@/components/(reusable)/inputs";
+import {
+  deleteRefuelLog,
+  updateRefuelLog,
+} from "@/app/lib/actions/truckingActions";
+import SlidingDiv from "@/app/v1/components/(animations)/slideDelete";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
+import { Inputs } from "@/app/v1/components/(reusable)/inputs";
 import { useTranslations } from "next-intl";
-import { Grids } from "@/components/(reusable)/grids";
-import { Texts } from "@/components/(reusable)/texts";
+import { Grids } from "@/app/v1/components/(reusable)/grids";
+import { Texts } from "@/app/v1/components/(reusable)/texts";
 import { debounce } from "lodash";
 
 type Refueled = {
@@ -28,7 +31,7 @@ export default function RefuelLogsList({
 }) {
   const t = useTranslations("TruckingAssistant");
   const [editedRefuel, setEditedRefuel] = useState<Refueled[]>(
-    refuelLogs || [],
+    refuelLogs || []
   );
   const [validationErrors, setValidationErrors] = useState<{
     [key: string]: string;
@@ -37,7 +40,7 @@ export default function RefuelLogsList({
   // Helper function to get validation message for mileage input
   const getValidationMessage = (
     milesAtFueling: number | null | undefined,
-    itemId: string,
+    itemId: string
   ): string => {
     if (!startingMileage) return "";
 
@@ -63,11 +66,11 @@ export default function RefuelLogsList({
       formData.append("id", refuelLog.id);
       formData.append(
         "gallonsRefueled",
-        refuelLog.gallonsRefueled?.toString() || "0",
+        refuelLog.gallonsRefueled?.toString() || "0"
       );
       formData.append(
         "milesAtfueling",
-        refuelLog.milesAtFueling?.toString() || "0",
+        refuelLog.milesAtFueling?.toString() || "0"
       );
 
       try {
@@ -76,7 +79,7 @@ export default function RefuelLogsList({
         console.error("Error updating refuel log:", error);
       }
     }, 1000),
-    [],
+    []
   );
 
   const handleDelete = async (id: string) => {
@@ -130,7 +133,7 @@ export default function RefuelLogsList({
       editedRefuel.forEach((item) => {
         const validationMessage = getValidationMessage(
           item.milesAtFueling,
-          item.id,
+          item.id
         );
         if (validationMessage) {
           newValidationErrors[item.id] = validationMessage;
@@ -177,11 +180,11 @@ export default function RefuelLogsList({
                       formData.append("id", rL.id);
                       formData.append(
                         "gallonsRefueled",
-                        rL.gallonsRefueled?.toString() || "",
+                        rL.gallonsRefueled?.toString() || ""
                       );
                       formData.append(
                         "milesAtfueling",
-                        rL.milesAtFueling?.toString() || "",
+                        rL.milesAtFueling?.toString() || ""
                       );
                       updateRefuelLog(formData);
                     }}
@@ -208,11 +211,11 @@ export default function RefuelLogsList({
                       formData.append("id", rL.id);
                       formData.append(
                         "gallonsRefueled",
-                        rL.gallonsRefueled?.toString() || "",
+                        rL.gallonsRefueled?.toString() || ""
                       );
                       formData.append(
                         "milesAtfueling",
-                        rL.milesAtFueling?.toString() || "",
+                        rL.milesAtFueling?.toString() || ""
                       );
                       updateRefuelLog(formData);
                     }}

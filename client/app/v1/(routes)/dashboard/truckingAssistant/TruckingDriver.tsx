@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Holds } from "@/components/(reusable)/holds";
-import { Grids } from "@/components/(reusable)/grids";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
+import { Grids } from "@/app/v1/components/(reusable)/grids";
 import { useTranslations } from "next-intl";
 import HaulingLogs from "./components/HaulingLogs";
 import StateLog from "./components/StateLog";
@@ -122,13 +122,13 @@ export default function TruckDriver() {
         equipmentHauled &&
           equipmentHauled.length >= 0 &&
           equipmentHauled.every(
-            (item) => item.equipmentId && item.source && item.destination,
+            (item) => item.equipmentId && item.source && item.destination
           ) &&
           material &&
           material.length >= 0 &&
           material.every(
-            (item) => item.LocationOfMaterial && item.name && item.unit,
-          ),
+            (item) => item.LocationOfMaterial && item.name && item.unit
+          )
       ),
       notesTab: isEndMileageValid(),
       stateMileageTab: Boolean(
@@ -140,8 +140,8 @@ export default function TruckDriver() {
               item.stateLineMileage !== null &&
               item.stateLineMileage !== undefined &&
               startingMileage !== null &&
-              item.stateLineMileage >= startingMileage,
-          ),
+              item.stateLineMileage >= startingMileage
+          )
       ),
       refuelLogsTab: Boolean(
         refuelLogs &&
@@ -152,8 +152,8 @@ export default function TruckDriver() {
               item.milesAtFueling !== null &&
               item.milesAtFueling !== undefined &&
               startingMileage !== null &&
-              item.milesAtFueling >= startingMileage,
-          ),
+              item.milesAtFueling >= startingMileage
+          )
       ),
     });
   };

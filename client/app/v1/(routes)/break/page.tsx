@@ -1,8 +1,8 @@
 "use server";
 import { auth } from "@/auth";
-import NewClockProcess from "@/components/(clock)/newclockProcess";
-import { Bases } from "@/components/(reusable)/bases";
-import { Contents } from "@/components/(reusable)/contents";
+import NewClockProcess from "@/app/v1/components/(clock)/newclockProcess";
+import { Bases } from "@/app/v1/components/(reusable)/bases";
+import { Contents } from "@/app/v1/components/(reusable)/contents";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
