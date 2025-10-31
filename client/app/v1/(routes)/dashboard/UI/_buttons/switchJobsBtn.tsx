@@ -1,17 +1,61 @@
-import { Buttons } from "@/components/(reusable)/buttons";
-import { Grids } from "@/components/(reusable)/grids";
-import { Holds } from "@/components/(reusable)/holds";
-import { Images } from "@/components/(reusable)/images";
-import { NModals } from "@/components/(reusable)/newmodals";
-import { Texts } from "@/components/(reusable)/texts";
-import { Titles } from "@/components/(reusable)/titles";
-import useModalState from "@/hooks/(dashboard)/useModalState";
-import { LogItem } from "@/lib/types";
+import { Buttons } from "@/app/v1/components/(reusable)/buttons";
+import { Grids } from "@/app/v1/components/(reusable)/grids";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
+import { Images } from "@/app/v1/components/(reusable)/images";
+import { NModals } from "@/app/v1/components/(reusable)/newmodals";
+import { Texts } from "@/app/v1/components/(reusable)/texts";
+import { Titles } from "@/app/v1/components/(reusable)/titles";
+
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import HorizontalLayout from "./horizontalLayout";
 import VerticalLayout from "./verticalLayout";
 import { useEffect } from "react";
+import useModalState from "@/app/lib/hooks/useModalState";
+
+type LogItem = {
+  id: string;
+  userId: string;
+  submitted: boolean;
+  type: "equipment" | "mechanic" | "Trucking Assistant";
+} & (
+  | {
+      type: "equipment";
+      equipment: {
+        id: string;
+        qrId: string;
+        name: string;
+      };
+      maintenanceId?: never;
+      laborType?: never;
+      stateMileage?: never;
+      refueled?: never;
+      material?: never;
+      equipmentHauled?: never;
+    }
+  | {
+      type: "mechanic";
+      maintenanceId: string;
+      equipment?: never;
+      laborType?: never;
+      stateMileage?: never;
+      refueled?: never;
+      material?: never;
+      equipmentHauled?: never;
+    }
+  | {
+      type: "trucking";
+      laborType: string;
+      comment: string | null;
+      endingMileage: number | null;
+      stateMileage: boolean;
+      refueled: boolean;
+      material: boolean;
+      equipmentHauled: boolean;
+      equipment?: never;
+      maintenanceId?: never;
+    }
+);
 
 export default function SwitchJobsBtn({
   permission,
@@ -35,19 +79,19 @@ export default function SwitchJobsBtn({
   useEffect(() => {
     if (modalState.isModalOpen) {
       // Add a style to disable pointer events on the body
-      document.body.style.pointerEvents = 'none';
+      document.body.style.pointerEvents = "none";
       // Also add a class to make sure
-      document.body.classList.add('modal-open');
+      document.body.classList.add("modal-open");
     } else {
       // Re-enable pointer events
-      document.body.style.pointerEvents = 'auto';
-      document.body.classList.remove('modal-open');
+      document.body.style.pointerEvents = "auto";
+      document.body.classList.remove("modal-open");
     }
 
     // Cleanup
     return () => {
-      document.body.style.pointerEvents = 'auto';
-      document.body.classList.remove('modal-open');
+      document.body.style.pointerEvents = "auto";
+      document.body.classList.remove("modal-open");
     };
   }, [modalState.isModalOpen]);
 
@@ -118,17 +162,17 @@ export default function SwitchJobsBtn({
         }}
         size="screen"
         background="takeABreak"
-        className="z-[9999] pointer-events-auto"
-        style={{ pointerEvents: 'auto' }}
+        className="z-9999 pointer-events-auto"
+        style={{ pointerEvents: "auto" }}
       >
-        <Holds 
-          background="white" 
-          className="h-full relative z-[9999] pointer-events-auto"
+        <Holds
+          background="white"
+          className="h-full relative z-9999 pointer-events-auto"
           onClick={(e) => e.stopPropagation()}
-          style={{ 
-            pointerEvents: 'auto',
-            position: 'relative',
-            zIndex: 10000
+          style={{
+            pointerEvents: "auto",
+            position: "relative",
+            zIndex: 10000,
           }}
         >
           <Holds className="h-full p-4">
@@ -137,7 +181,7 @@ export default function SwitchJobsBtn({
                 <Grids rows="2" cols="5" gap="3" className="h-full w-full">
                   <button
                     type="button"
-                    className="row-start-1 row-end-2 col-start-1 col-end-2 h-full w-full flex justify-center items-center z-[10000] cursor-pointer relative bg-transparent border-none p-0 m-0"
+                    className="row-start-1 row-end-2 col-start-1 col-end-2 h-full w-full flex justify-center items-center z-10000 cursor-pointer relative bg-transparent border-none p-0 m-0"
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
@@ -178,21 +222,21 @@ export default function SwitchJobsBtn({
                           type === "equipment"
                             ? "/dashboard/equipment"
                             : type === "mechanic"
-                              ? `/dashboard/mechanic/projects/${
-                                  logs.find((log) => log.type === type)
-                                    ?.maintenanceId
-                                }`
-                              : type === "Trucking Assistant"
-                                ? "/dashboard/truckingAssistant"
-                                : type === "tasco"
-                                  ? "/dashboard/tasco"
-                                  : undefined
+                            ? `/dashboard/mechanic/projects/${
+                                logs.find((log) => log.type === type)
+                                  ?.maintenanceId
+                              }`
+                            : type === "Trucking Assistant"
+                            ? "/dashboard/truckingAssistant"
+                            : type === "tasco"
+                            ? "/dashboard/tasco"
+                            : undefined
                         }
                         className="w-full py-3"
                       >
                         <Texts size="p3">{type} </Texts>
                       </Buttons>
-                    ),
+                    )
                   )}
                 </Holds>
               </Holds>

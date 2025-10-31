@@ -1,5 +1,6 @@
 "use client";
 import { getCookies, setPrevTimeSheet } from "@/app/lib/actions/cookieActions";
+import { apiRequest, getUserId } from "@/app/lib/utils/api-Utils";
 
 import React, {
   createContext,
@@ -68,21 +69,22 @@ export const TimeSheetDataProvider: React.FC<{ children: ReactNode }> = ({
   // Manual trigger to refetch timesheet data
   const refetchTimesheet = async () => {
     try {
-      const prevTimeSheet = await fetch("/api/getRecentTimecard");
-      if (!prevTimeSheet.ok) {
-        throw new Error(
-          `Failed to fetch recent timecard: ${prevTimeSheet.statusText}`
-        );
+      const userId = getUserId();
+      if (!userId) {
+        setTimeSheetData(null);
+        return;
       }
-
-      const data = await prevTimeSheet.json();
-      if (data && data.id) {
-        setTimeSheetData(data);
+      const response = await apiRequest(
+        `/api/v1/timesheet/user/${userId}/recent`,
+        "GET"
+      );
+      if (response && response.success && response.data && response.data.id) {
+        setTimeSheetData(response.data);
       } else {
         setTimeSheetData(null);
       }
     } catch (error) {
-      console.error("Error fetching recent timecard:", error);
+      console.error("Error fetching recent timesheet:", error);
       setTimeSheetData(null);
     }
   };

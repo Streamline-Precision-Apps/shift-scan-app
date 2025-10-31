@@ -1,8 +1,8 @@
 "use client";
-import Spinner from "@/components/(animations)/spinner";
-import { Contents } from "@/components/(reusable)/contents";
-import { Grids } from "@/components/(reusable)/grids";
-import { Holds } from "@/components/(reusable)/holds";
+import Spinner from "@/app/v1/components/(animations)/spinner";
+import { Contents } from "@/app/v1/components/(reusable)/contents";
+import { Grids } from "@/app/v1/components/(reusable)/grids";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
 
 export default function DashboardLoadingView() {
   return (

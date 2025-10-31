@@ -1,18 +1,17 @@
 "use client";
 
 import Slider from "react-slick";
-import React, { useEffect, useState } from "react";
-import { Titles } from "./titles";
+import { useEffect, useState } from "react";
 import { Holds } from "./holds";
-
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { Texts } from "./texts";
+import "@/app/globals.css";
 import Spinner from "../(animations)/spinner";
 import { useTranslations } from "next-intl";
-import { formatDuration } from "@/utils/formatDuration";
-import { Images } from "./images";
-import { useTimeSheetData } from "@/app/context/TimeSheetIdContext";
+import { formatDuration } from "@/app/lib/utils/formatDuration";
+import { useTimeSheetData } from "@/app/lib/context/TimeSheetIdContext";
+import { apiRequest } from "@/app/lib/utils/api-Utils";
+import { useUserStore } from "@/app/lib/store/userStore";
 // Type for Equipment
 interface Equipment {
   id: string;
@@ -31,7 +30,7 @@ interface EmployeeEquipmentLog {
 // Type for Tasco Logs
 interface TascoLog {
   shiftType: string;
-  laborType: string;
+  laborType: string | null;
   equipment?: Equipment;
 }
 
@@ -52,22 +51,23 @@ interface Jobsite {
 interface CostCode {
   id: string;
   name: string;
-  description: string;
 }
 
 // Type for API Response
 interface BannerData {
   id: string;
   startTime: string;
-  jobsite: Jobsite;
-  costCode: CostCode;
-  employeeEquipmentLog: EmployeeEquipmentLog[];
+  jobsite: Jobsite | null;
+  costCode: CostCode | null;
   tascoLogs: TascoLog[];
   truckingLogs: TruckingLog[];
+  employeeEquipmentLogs: EmployeeEquipmentLog[];
 }
 
 export default function BannerRotating() {
   const t = useTranslations("BannerRotating");
+  const { user } = useUserStore();
+
   const [bannerData, setBannerData] = useState<BannerData | null>(null);
   const [newDate, setNewDate] = useState(new Date());
   const { savedTimeSheetData, refetchTimesheet } = useTimeSheetData();
@@ -101,6 +101,150 @@ export default function BannerRotating() {
     return formatDuration(bannerData?.startTime, newDate);
   };
 
+  // Build slides array to control order and filtering
+  const buildSlides = () => {
+    if (!bannerData) return [];
+
+    const slides: React.ReactNode[] = [];
+    let slideKey = 0;
+
+    // 1. Jobsite
+    if (bannerData.jobsite) {
+      slides.push(
+        <div
+          key={`jobsite-${slideKey++}`}
+          className=" text-white flex flex-col"
+        >
+          <h3>{t("CurrentSite")}</h3>
+          <p>{bannerData.jobsite.name}</p>
+        </div>
+      );
+    }
+
+    // 2. Cost Code
+    if (bannerData.costCode && bannerData.costCode.name) {
+      console.log("Adding costCode slide:", bannerData.costCode);
+      slides.push(
+        <div
+          key={`costcode-${slideKey++}`}
+          className="text-white flex flex-col justify-center items-center space-y-1"
+        >
+          <h3>{t("CurrentCostCode")}</h3>
+          <p className="text-white ">{bannerData.costCode.name}</p>
+        </div>
+      );
+    }
+
+    // 3. Tasco Logs - Labor Type Slides
+    bannerData.tascoLogs.forEach((equipment, index) => {
+      if (
+        equipment.shiftType === "ABCD Shift" &&
+        equipment.laborType === "Operator"
+      ) {
+        slides.push(
+          <div
+            key={`tasco-labor-${slideKey++}`}
+            className="text-white flex flex-col justify-center items-center space-y-1"
+          >
+            <h3>{t("AbcdShift")}</h3>
+            <p>{t("EquipmentOperator")}</p>
+          </div>
+        );
+      } else if (equipment.shiftType === "E shift") {
+        slides.push(
+          <div
+            key={`tasco-labor-${slideKey++}`}
+            className="text-white flex flex-col justify-center items-center space-y-1"
+          >
+            <h3>{t("EShift")}</h3>
+            <p>{t("MudConditioning")}</p>
+          </div>
+        );
+      } else if (
+        equipment.shiftType === "ABCD Shift" &&
+        equipment.laborType === "Manual Labor"
+      ) {
+        slides.push(
+          <div
+            key={`tasco-labor-${slideKey++}`}
+            className="text-white flex flex-col justify-center items-center space-y-1"
+          >
+            <h3>{t("AbcdShift")}</h3>
+            <p>{t("ManualLabor")}</p>
+          </div>
+        );
+      }
+    });
+
+    // 4. Tasco Equipment (non-manual labor)
+    bannerData.tascoLogs
+      .filter((log) => log.laborType !== "Manual Labor" && log.equipment)
+      .forEach((log, index) => {
+        slides.push(
+          <div
+            key={`tasco-equipment-${slideKey++}`}
+            className="text-white flex flex-col justify-center items-center space-y-1"
+          >
+            <h3>{t("CurrentlyOperating")}</h3>
+            <p>{log.equipment?.name}</p>
+          </div>
+        );
+      });
+
+    // 5. Trucking Logs
+    bannerData.truckingLogs.forEach((log, index) => {
+      slides.push(
+        <div
+          key={`trucking-${slideKey++}`}
+          className="text-white flex flex-col justify-center items-center space-y-1"
+        >
+          <h3>{t("CurrentlyOperating")}</h3>
+          <p>{log.equipment?.name}</p>
+        </div>
+      );
+    });
+
+    // 6. Employee Equipment Logs
+    bannerData.employeeEquipmentLogs.forEach((equipment, index) => {
+      slides.push(
+        <div
+          key={`employee-equipment-${slideKey++}`}
+          className="text-white flex flex-col justify-center items-center space-y-1"
+        >
+          <h3>{equipment.equipment?.name || t("UnknownEquipment")}</h3>
+          <p>
+            {equipment.startTime
+              ? `${t("StartTime")} ${equipment.startTime}`
+              : t("NoStartTime")}
+          </p>
+        </div>
+      );
+    });
+
+    // 7. Active Time
+    slides.push(
+      <div
+        key={`active-time-${slideKey++}`}
+        className="text-white flex flex-col justify-center items-center space-y-1"
+      >
+        <div className="w-full flex flex-row justify-center gap-x-2">
+          <div className="max-w-8 h-8 rounded-full bg-white">
+            <img
+              src="/clock.svg"
+              alt="Clock Icon"
+              className="w-8 h-8 object-contain mx-auto"
+            />
+          </div>
+          <h3>{t("ActiveTime")}</h3>
+        </div>
+        <p>{calculateDuration()}</p>
+      </div>
+    );
+
+    console.log(`Building slider with ${slides.length} slides`);
+    return slides;
+  };
+
   // Fetch timeSheetId and banner data together with retry logic
   useEffect(() => {
     const fetchData = async () => {
@@ -109,137 +253,42 @@ export default function BannerRotating() {
         if (!timeSheetId) {
           console.log("No active timesheet in context, refetching...");
           await refetchTimesheet();
-          const ts = savedTimeSheetData?.id;
-          if (!ts) {
+          timeSheetId = savedTimeSheetData?.id;
+          if (!timeSheetId) {
             console.warn("No active timesheet found for banner.");
+            return;
           }
-          return (timeSheetId = ts);
         }
 
-        // Fetch banner data using the obtained timeSheetId
-        const bannerResponse = await fetch(
-          `/api/getBannerData?id=${timeSheetId}`,
+        // Fetch banner data using the backend API
+        const userId = user?.id;
+        if (!userId) {
+          return;
+        }
+        const response = await apiRequest(
+          `/api/v1/timesheet/${timeSheetId}/user/${userId}`,
+          "GET"
         );
+        console.log("BannerData for render:", response);
 
-        if (bannerResponse.ok) {
-          const bannerData = await bannerResponse.json();
-          setBannerData(bannerData);
-        } else {
-          console.error("Banner API error:", bannerResponse.status);
+        if (response && response.success && response.data) {
+          console.log("Full response data:", response.data);
+          console.log("costCode from response:", response.data.costCode);
+          setBannerData(response.data);
         }
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error("Error fetching banner data:", error);
       }
     };
 
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [savedTimeSheetData]);
 
   return (
-    <div className="w-[80%] h-full mx-auto">
+    <div className="w-[80%]  h-full mx-auto">
       {bannerData ? (
-        <Slider {...settings}>
-          {/* Jobsite Information */}
-          {bannerData.jobsite && (
-            <Holds className="">
-              <h3>{t("CurrentSite")}</h3>
-              <p>{bannerData.jobsite.name}</p>
-            </Holds>
-          )}
-
-          {/* Cost Code Information */}
-          {bannerData.costCode && (
-            <Holds className="h-full justify-center items-center space-y-1">
-              <h3>{t("CurrentCostCode")} </h3>
-              <p className="truncate-slick ">
-                {bannerData.costCode.name || ""}
-              </p>
-            </Holds>
-          )}
-
-          {/* Tasco Logs */}
-          {bannerData.tascoLogs &&
-            bannerData.tascoLogs.map((equipment, index) => (
-              <Holds key={index} className="h-full justify-center items-center">
-                {equipment.shiftType === "ABCD Shift" &&
-                equipment.laborType === "Operator" ? (
-                  <Holds className="h-full justify-center items-center space-y-1">
-                    <h3>{t("AbcdShift")} </h3>
-                    <p>{t("EquipmentOperator")}</p>
-                  </Holds>
-                ) : equipment.shiftType === "E shift" ? (
-                  <Holds className="h-full justify-center items-center space-y-1">
-                    <h3>{t("EShift")} </h3>
-
-                    <p>{t("MudConditioning")}</p>
-                  </Holds>
-                ) : equipment.shiftType === "ABCD Shift" &&
-                  equipment.laborType === "Manual Labor" ? (
-                  <Holds className="h-full justify-center items-center space-y-1">
-                    <h3>{t("AbcdShift")} </h3>
-                    <p>{t("ManualLabor")}</p>
-                  </Holds>
-                ) : null}
-              </Holds>
-            ))}
-
-          {bannerData.tascoLogs &&
-            bannerData.tascoLogs
-              .filter((log) => log.laborType !== "Manual Labor")
-              .map((log, index) => {
-                if (!log.equipment) return null;
-                return (
-                  <Holds
-                    key={index}
-                    className="h-full justify-center items-center"
-                  >
-                    <Holds className="h-full justify-center items-center space-y-1">
-                      <h3>{t("CurrentlyOperating")} </h3>
-                      <p>{log.equipment?.name}</p>
-                    </Holds>
-                  </Holds>
-                );
-              })}
-
-          {/* Trucking Logs */}
-          {bannerData.truckingLogs &&
-            bannerData.truckingLogs.map((equipment, index) => (
-              <Holds
-                key={index}
-                className="h-full justify-center items-center space-y-1"
-              >
-                <h3>{t("CurrentlyOperating")} </h3>
-                <p>{equipment.equipment?.name}</p>
-              </Holds>
-            ))}
-
-          {/* Employee Equipment Logs */}
-          {bannerData.employeeEquipmentLog &&
-            bannerData.employeeEquipmentLog.map((equipment, index) => (
-              <Holds key={index}>
-                <h3>{equipment.equipment?.name || t("UnknownEquipment")}</h3>
-                <p>
-                  {equipment.startTime
-                    ? `${t("StartTime")} ${equipment.startTime}`
-                    : t("NoStartTime")}
-                </p>
-              </Holds>
-            ))}
-
-          <Holds className="w-full flex items-center space-y-1">
-            <Holds position={"row"} className="w-full justify-center gap-x-2 ">
-              <div className="max-w-8 h-auto rounded-full bg-white ">
-                <img
-                  src="/clock.svg"
-                  alt="Clock Icon"
-                  className="w-8 h-8 object-contain mx-auto "
-                />
-              </div>
-              <h3>{t("ActiveTime")} </h3>
-            </Holds>
-            <p>{calculateDuration()}</p>
-          </Holds>
-        </Slider>
+        <Slider {...settings}>{buildSlides()}</Slider>
       ) : (
         <Holds className="w-[80%] h-full mx-auto justify-center items-center">
           <Spinner size={40} color="white" />

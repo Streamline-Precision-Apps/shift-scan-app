@@ -212,37 +212,46 @@ ul.slick-dots {
 .slick-track {
   height: 100% !important;
   display: flex !important;
-  align-items: stretch !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 
-.slick-track div {
+/* Direct slide children - preserve width and height */
+.slick-slide {
   height: 100% !important;
   display: inline-flex !important;
   justify-content: center !important;
   align-items: center !important;
+  width: 100% !important;
 }
 
-.slick-track div div {
-  height: fit-content !important;
-  display: inline-flex !important;
+.slick-slide > div {
+  height: 100% !important;
+  width: 100% !important;
+  display: flex !important;
   justify-content: center !important;
   align-items: center !important;
 }
 
-.slick-track div div h3 {
+.slick-slide h3 {
   color: white !important;
   font-family: anton !important;
   font-size: 1.5rem !important;
+  display: block !important;
+  text-align: center !important;
 }
 
-.slick-track div div p {
+.slick-slide p {
   color: white !important;
   font-family: mako !important;
   font-size: 1.1rem !important;
-  max-width: 250px; /* Adjust as needed */
+  max-width: 250px !important;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  display: block !important;
+  text-align: center !important;
+  margin: 0 auto !important;
 }
 
 .animate-spin-custom {

@@ -1,6 +1,7 @@
 "use client";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { apiRequest } from "@/app/lib/utils/api-Utils";
 
 type ActiveTimesheetCheckProps = {
   userId: string;
@@ -14,29 +15,15 @@ export default function ActiveTimesheetCheck({
   useEffect(() => {
     const checkActiveTimesheet = async () => {
       try {
-        // Check if user has any active timesheets (draft status and no endTime)
-        const response = await fetch(`/api/check-active-timesheet`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            userId,
-          }),
-        });
-
-        if (!response.ok) {
-          throw new Error("Failed to check active timesheet status");
-        }
-
-        const data = await response.json();
-
+        // Call backend API to check active timesheet status
+        const response = await apiRequest(
+          `/api/v1/timesheet/user/${userId}/active-status`,
+          "GET"
+        );
         // If no active timesheet found, clear all cookies and redirect to home
-        if (!data.hasActiveTimesheet) {
+        if (!response?.data?.hasActiveTimesheet) {
           // Clear all timesheet cookies
-          await fetch("/api/clear-timesheet-cookies", {
-            method: "POST",
-          });
+          await apiRequest(`/api/cookies/clear-all`, "DELETE");
 
           // Redirect to home page
           router.replace("/");

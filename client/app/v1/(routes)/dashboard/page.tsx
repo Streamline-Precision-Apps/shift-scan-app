@@ -1,49 +1,90 @@
-"use server";
-import { auth } from "@/auth";
-import { Bases } from "@/components/(reusable)/bases";
-import { Contents } from "@/components/(reusable)/contents";
-import { Holds } from "@/components/(reusable)/holds";
-import { redirect } from "next/navigation";
+"use client";
+
+import { Bases } from "@/app/v1/components/(reusable)/bases";
+import { Contents } from "@/app/v1/components/(reusable)/contents";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
 import DbWidgetSection from "./dbWidgetSection";
-import { Grids } from "@/components/(reusable)/grids";
-import BannerRotating from "@/components/(reusable)/bannerRotating";
-import BannerRotatingSkeleton from "@/components/(reusable)/BannerRotatingSkeleton";
-import { Suspense } from "react";
-import { cookies } from "next/headers";
-import HamburgerMenuNew from "@/components/(animations)/hamburgerMenuNew";
-import ActiveTimesheetCheck from "@/components/ActiveTimesheetCheck";
+import { Grids } from "@/app/v1/components/(reusable)/grids";
+import BannerRotating from "@/app/v1/components/(reusable)/bannerRotating";
+import BannerRotatingSkeleton from "@/app/v1/components/(reusable)/BannerRotatingSkeleton";
+import { Suspense, useEffect, useState } from "react";
+import HamburgerMenuNew from "@/app/v1/components/(animations)/hamburgerMenuNew";
+import ActiveTimesheetCheck from "@/app/v1/components/ActiveTimesheetCheck";
 import DashboardLoadingView from "./UI/_dashboards/dashboardLoadingView";
-import LoadingHamburgerMenuNew from "@/components/(animations)/loadingHamburgerMenuNew";
+import LoadingHamburgerMenuNew from "@/app/v1/components/(animations)/loadingHamburgerMenuNew";
+import { useUserStore } from "@/app/lib/store/userStore";
+import { getCookies } from "@/app/lib/actions/cookieActions";
+import { useRouter } from "next/navigation";
 
-export default async function Dashboard() {
-  //------------------------------------------------------------------------
-  // Authentication: Get the current user
-  const session = await auth();
-  if (!session) {
-    // Redirect or return an error if the user is not authenticated
-    redirect("/signin");
+export default function Dashboard() {
+  const router = useRouter();
+  const { user } = useUserStore();
+
+  // State for cookies
+  const [cookiesState, setCookiesState] = useState({
+    currentPageView: "",
+    mechanicProjectID: "",
+    workRole: "general",
+    laborType: "",
+    loading: true,
+  });
+
+  useEffect(() => {
+    async function fetchCookies() {
+      const [currentPageView, mechanicProjectID, workRole, laborType] =
+        await Promise.all([
+          getCookies({ cookieName: "currentPageView" }),
+          getCookies({ cookieName: "mechanicProjectID" }),
+          getCookies({ cookieName: "workRole" }),
+          getCookies({ cookieName: "laborType" }),
+        ]);
+      setCookiesState({
+        currentPageView: currentPageView || "",
+        mechanicProjectID: mechanicProjectID || "",
+        workRole: workRole || "general",
+        laborType: laborType || "",
+        loading: false,
+      });
+    }
+    fetchCookies();
+  }, []);
+
+  useEffect(() => {
+    if (!cookiesState.loading && cookiesState.currentPageView !== "dashboard") {
+      router.push("/v1");
+    }
+  }, [cookiesState.loading, cookiesState.currentPageView, router]);
+
+  if (cookiesState.loading) {
+    return <div>Loading...</div>;
   }
 
-  // kicks user out if they are not clocked in
-  const currentPageView = (await cookies()).get("currentPageView")?.value;
-  if (currentPageView !== "dashboard") {
-    redirect("/");
+  // You can't use redirect() in client components, so you could use router.push if needed
+  if (cookiesState.currentPageView !== "dashboard") {
+    return <div>Redirecting...</div>;
   }
 
-  const mechanicProjectID =
-    (await cookies()).get("mechanicProjectID")?.value || "";
+  if (!user)
+    return (
+      <Bases>
+        <Contents>
+          <Holds className="h-full">
+            <div className="flex justify-center items-center h-full">
+              <p className="text-red-500">User not found. Please log in.</p>
+            </div>
+          </Holds>
+        </Contents>
+      </Bases>
+    );
 
-  // const user = session.user;
-  const view = (await cookies()).get("workRole")?.value || "general"; // Default to general view if not set
-  const laborType = (await cookies()).get("laborType")?.value || "";
-
+  // Main return component (unchanged)
   return (
     <Bases>
       <Contents>
         <Grids rows={"8"} gap={"5"}>
           {/* Active timesheet check component - runs on dashboard load */}
 
-          <ActiveTimesheetCheck userId={session.user.id} />
+          <ActiveTimesheetCheck userId={user.id} />
 
           <Suspense fallback={<LoadingHamburgerMenuNew />}>
             <HamburgerMenuNew isHome={false} />
@@ -56,10 +97,9 @@ export default async function Dashboard() {
           <Holds background={"white"} className="row-start-4 row-end-9 h-full">
             <Suspense fallback={<DashboardLoadingView />}>
               <DbWidgetSection
-                session={session}
-                view={view}
-                mechanicProjectID={mechanicProjectID}
-                laborType={laborType}
+                view={cookiesState.workRole}
+                mechanicProjectID={cookiesState.mechanicProjectID}
+                laborType={cookiesState.laborType}
               />
             </Suspense>
           </Holds>

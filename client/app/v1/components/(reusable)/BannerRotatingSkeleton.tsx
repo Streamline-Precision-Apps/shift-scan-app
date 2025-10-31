@@ -1,6 +1,6 @@
 "use client";
 
-import { Holds } from "@/components/(reusable)/holds";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
 import Spinner from "../(animations)/spinner";
 
 export default function BannerRotatingSkeleton() {

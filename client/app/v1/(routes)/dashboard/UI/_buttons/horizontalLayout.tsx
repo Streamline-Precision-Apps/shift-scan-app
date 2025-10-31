@@ -1,11 +1,7 @@
-import { Buttons } from "@/components/(reusable)/buttons";
-import { Holds } from "@/components/(reusable)/holds";
-import { Images } from "@/components/(reusable)/images";
-import { Texts } from "@/components/(reusable)/texts";
+import { Buttons } from "@/app/v1/components/(reusable)/buttons";
+import { Holds } from "@/app/v1/components/(reusable)/holds";
 import { useTranslations } from "next-intl";
-import { ButtonVariants } from "@/components/(reusable)/buttons";
-import { Grids } from "@/components/(reusable)/grids";
-import { Titles } from "@/components/(reusable)/titles";
+import { Titles } from "@/app/v1/components/(reusable)/titles";
 
 export default function HorizontalLayout({
   color,

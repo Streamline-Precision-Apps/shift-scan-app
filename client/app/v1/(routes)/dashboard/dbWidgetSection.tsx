@@ -3,25 +3,69 @@ import { useTranslations } from "next-intl";
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import React from "react";
-import { Session } from "next-auth";
-import { useCurrentView } from "@/app/context/CurrentViewContext";
+
+import { useCurrentView } from "@/app/lib/context/CurrentViewContext";
 import TascoDashboardView from "./UI/_dashboards/tascoDashboardView";
 import TruckDriverDashboardView from "./UI/_dashboards/truckDriverDashboardView";
 import MechanicDashboardView from "./UI/_dashboards/mechanicDashboardView";
 import GeneralDashboardView from "./UI/_dashboards/generalDashboardView";
-import { LogItem } from "@/lib/types";
-import { useModalState } from "@/hooks/(dashboard)/useModalState";
+
+import { useUserStore } from "@/app/lib/store/userStore";
+import useModalState from "@/app/lib/hooks/useModalState";
 
 type props = {
-  session: Session;
   view: string;
   mechanicProjectID: string;
   laborType: string;
 };
 
+export type LogItem = {
+  id: string;
+  userId: string;
+  submitted: boolean;
+  type: "equipment" | "mechanic" | "Trucking Assistant";
+} & (
+  | {
+      type: "equipment";
+      equipment: {
+        id: string;
+        qrId: string;
+        name: string;
+      };
+      maintenanceId?: never;
+      laborType?: never;
+      stateMileage?: never;
+      refueled?: never;
+      material?: never;
+      equipmentHauled?: never;
+    }
+  | {
+      type: "mechanic";
+      maintenanceId: string;
+      equipment?: never;
+      laborType?: never;
+      stateMileage?: never;
+      refueled?: never;
+      material?: never;
+      equipmentHauled?: never;
+    }
+  | {
+      type: "trucking";
+      laborType: string;
+      comment: string | null;
+      endingMileage: number | null;
+      stateMileage: boolean;
+      refueled: boolean;
+      material: boolean;
+      equipmentHauled: boolean;
+      equipment?: never;
+      maintenanceId?: never;
+    }
+);
+
 // Verifies if there are any unSubmitted logs
 const useFetchLogs = (
-  setLogs: React.Dispatch<React.SetStateAction<LogItem[]>>,
+  setLogs: React.Dispatch<React.SetStateAction<LogItem[]>>
 ) => {
   const e = useTranslations("Err-Msg");
 
@@ -40,12 +84,12 @@ const useFetchLogs = (
 };
 
 export default function DbWidgetSection({
-  session,
   view,
   mechanicProjectID,
   laborType,
 }: props) {
-  const permission = session.user.permission;
+  const { user } = useUserStore();
+  const permission = user?.permission as string;
   const [logs, setLogs] = useState<LogItem[]>([]);
 
   const [comment, setComment] = useState("");

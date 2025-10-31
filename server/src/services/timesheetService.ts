@@ -514,3 +514,134 @@ export async function createTruckDriverTimesheetService({}) {
 export async function createTascoTimesheetService({}) {
   // Implementation for creating a tasco timesheet
 }
+
+export async function getRecentTimeSheetForUser(userId: string) {
+  // Implementation for fetching recent timesheet for a user
+  // Fetch the most recent active (unfinished) timesheet for the user
+  const timesheet = await prisma.timeSheet.findFirst({
+    where: {
+      userId,
+      endTime: null, // Ensure timesheet is still active
+    },
+    orderBy: {
+      createdAt: "desc", // Sort by most recent submission date
+    },
+    select: {
+      id: true,
+      endTime: true,
+    },
+  });
+
+  return timesheet;
+}
+
+export async function getTimesheetActiveStatus({ userId }: { userId: string }) {
+  // Implementation for checking active timesheet status
+  const activeTimesheet = await prisma.timeSheet.findFirst({
+    where: {
+      userId: userId,
+      endTime: null, // No end time means still active
+    },
+    select: {
+      id: true,
+      startTime: true,
+    },
+  });
+
+  const hasActiveTimesheet = activeTimesheet ? true : false;
+  return {
+    hasActiveTimesheet: hasActiveTimesheet,
+    timesheetId: activeTimesheet?.id || null,
+  };
+}
+
+export async function getBannerDataForTimesheet(
+  timesheetId: number,
+  userId: string
+) {
+  // Implementation for fetching banner data
+  const jobCode = await prisma.timeSheet.findFirst({
+    where: { userId, id: timesheetId },
+    select: {
+      id: true,
+      startTime: true,
+      Jobsite: {
+        select: { id: true, qrId: true, name: true },
+      },
+      CostCode: {
+        select: { id: true, name: true, code: true },
+      },
+    },
+  });
+  if (!jobCode) {
+    throw new Error("No active timesheet found.");
+  }
+  // Parallelize queries for performance
+  const [tascoLogs, truckingLogs, eqLogs] = await Promise.all([
+    prisma.tascoLog.findMany({
+      where: { timeSheetId: timesheetId },
+      select: {
+        shiftType: true,
+        laborType: true,
+        Equipment: { select: { qrId: true, name: true } },
+      },
+    }),
+    prisma.truckingLog.findMany({
+      where: { timeSheetId: timesheetId },
+      select: {
+        laborType: true,
+        Truck: { select: { qrId: true, name: true } },
+        Equipment: { select: { qrId: true, name: true } },
+      },
+    }),
+    prisma.employeeEquipmentLog.findMany({
+      where: { timeSheetId: timesheetId, endTime: null },
+      select: {
+        id: true,
+        startTime: true,
+        endTime: true,
+        Equipment: { select: { id: true, name: true } },
+      },
+    }),
+  ]);
+
+  // Format Logs
+  const formattedTascoLogs = tascoLogs.map((log) => ({
+    laborType: log.laborType,
+    shiftType: log.shiftType,
+    equipment: log.Equipment || { qrId: null, name: "Unknown" },
+  }));
+
+  const formattedTruckingLogs = truckingLogs.map((log) => ({
+    laborType: log.laborType,
+    equipment: log.Truck || { qrId: null, name: "Unknown" },
+  }));
+
+  const formattedEmployeeEquipmentLogs = eqLogs.map((log) => ({
+    id: log.id,
+    startTime: log.startTime,
+    endTime: log.endTime,
+    equipment: log.Equipment || { id: null, name: "Unknown" },
+  }));
+
+  return {
+    id: jobCode.id,
+    startTime: jobCode.startTime,
+    jobsite: jobCode.Jobsite
+      ? {
+          id: jobCode.Jobsite.id,
+          qrId: jobCode.Jobsite.qrId,
+          name: jobCode.Jobsite.name,
+        }
+      : null,
+    costCode: jobCode.CostCode
+      ? {
+          id: jobCode.CostCode.id,
+          name: jobCode.CostCode.name,
+        }
+      : null,
+    tascoLogs: formattedTascoLogs,
+    truckingLogs: formattedTruckingLogs,
+    employeeEquipmentLogs: formattedEmployeeEquipmentLogs,
+  };
+}

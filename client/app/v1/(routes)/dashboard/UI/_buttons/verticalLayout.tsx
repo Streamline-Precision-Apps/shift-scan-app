@@ -1,9 +1,5 @@
-import { Buttons } from "@/components/(reusable)/buttons";
-import { Grids } from "@/components/(reusable)/grids";
-import { Holds } from "@/components/(reusable)/holds";
-import { Images } from "@/components/(reusable)/images";
-import { Texts } from "@/components/(reusable)/texts";
-import { Titles } from "@/components/(reusable)/titles";
+import { Buttons } from "@/app/v1/components/(reusable)/buttons";
+import { Titles } from "@/app/v1/components/(reusable)/titles";
 import { useTranslations } from "next-intl";
 
 export default function VerticalLayout({
@@ -53,7 +49,7 @@ export default function VerticalLayout({
       <img
         src={titleImg}
         alt={titleImgAlt}
-        className="h-full w-full max-h-[40px] max-w-[40px] object-contain"
+        className="h-full w-full max-h-10 max-w-10 object-contain"
       />
 
       <Titles size={textSize}>{t(text)}</Titles>

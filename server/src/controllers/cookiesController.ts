@@ -97,3 +97,13 @@ export function deleteCookie(req: express.Request, res: express.Response) {
   }
   res.json({ message: "All cookies deleted" });
 }
+
+export function deleteAllCookie(req: express.Request, res: express.Response) {
+  // Always delete all cookies, regardless of query params
+  if (req.cookies) {
+    Object.keys(req.cookies).forEach((cookieName) => {
+      res.clearCookie(cookieName);
+    });
+  }
+  res.json({ message: "All cookies deleted" });
+}

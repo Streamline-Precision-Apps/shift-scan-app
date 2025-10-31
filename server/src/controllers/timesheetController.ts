@@ -9,9 +9,50 @@ import {
   createMechanicTimesheetService,
   createTascoTimesheetService,
   createTruckDriverTimesheetService,
+  getRecentTimeSheetForUser,
+  getTimesheetActiveStatus,
+  getBannerDataForTimesheet,
 } from "../services/timesheetService.js";
+// GET /v1/timesheet/user/:userId/active-status
+export async function getTimesheetActiveStatusController(
+  req: Express.Request,
+  res: Express.Response
+) {
+  try {
+    const userId = req.params.userId;
+    if (!userId) {
+      return res.status(400).json({ error: "userId parameter is required." });
+    }
+    const status = await getTimesheetActiveStatus({ userId });
+    return res.json({ success: true, data: status });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ error: "Failed to fetch active timesheet status." });
+  }
+}
 
 import Express from "express";
+
+// GET /v1/timesheet/user/:userId/recent
+export async function getRecentTimesheetController(
+  req: Express.Request,
+  res: Express.Response
+) {
+  try {
+    const userId = req.params.userId;
+    if (!userId) {
+      return res.status(400).json({ error: "userId parameter is required." });
+    }
+    const timesheet = await getRecentTimeSheetForUser(userId);
+    if (!timesheet) {
+      return res.status(404).json({ error: "No recent timesheet found." });
+    }
+    return res.json({ success: true, data: timesheet });
+  } catch (error) {
+    return res.status(500).json({ error: "Failed to fetch recent timesheet." });
+  }
+}
 
 // PUT /v1/timesheet/:id
 export async function updateTimesheet(
@@ -257,5 +298,24 @@ export async function createTimesheetAndSwitchJobsController(
   } catch (error) {
     console.error("[createTimesheetController] Error:", error);
     return res.status(500).json({ error: "Failed to create timesheet." });
+  }
+}
+// GET /v1/timesheet/:id/user/:userId
+export async function getBannerDataController(
+  req: Express.Request,
+  res: Express.Response
+) {
+  try {
+    const timesheetId = Number(req.params.id);
+    const userId = req.params.userId;
+    if (!timesheetId || !userId) {
+      return res
+        .status(400)
+        .json({ error: "Both timesheet id and userId are required." });
+    }
+    const bannerData = await getBannerDataForTimesheet(timesheetId, userId);
+    return res.json({ success: true, data: bannerData });
+  } catch (error) {
+    return res.status(500).json({ error: "Failed to fetch banner data." });
   }
 }

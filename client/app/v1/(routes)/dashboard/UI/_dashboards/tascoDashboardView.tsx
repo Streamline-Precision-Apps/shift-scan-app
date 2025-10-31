@@ -1,15 +1,59 @@
 "use client";
-import { Contents } from "@/components/(reusable)/contents";
-import { Grids } from "@/components/(reusable)/grids";
+import { Contents } from "@/app/v1/components/(reusable)/contents";
+import { Grids } from "@/app/v1/components/(reusable)/grids";
 import ClockOutBtn from "../_buttons/clockOutBtn";
 import GeneratorBtn from "../_buttons/generatorBtn";
 import MyTeamWidget from "../_buttons/myTeamBtn";
 import SwitchJobsBtn from "../_buttons/switchJobsBtn";
 import { Dispatch, SetStateAction, use, useEffect } from "react";
 import TascoBtn from "../_buttons/TascoBtn";
-import { LogItem } from "@/lib/types";
-import { useModalState } from "@/hooks/(dashboard)/useModalState";
+
 import EquipmentBtn from "../_buttons/equipmentBtn";
+import useModalState from "@/app/lib/hooks/useModalState";
+
+export type LogItem = {
+  id: string;
+  userId: string;
+  submitted: boolean;
+  type: "equipment" | "mechanic" | "Trucking Assistant";
+} & (
+  | {
+      type: "equipment";
+      equipment: {
+        id: string;
+        qrId: string;
+        name: string;
+      };
+      maintenanceId?: never;
+      laborType?: never;
+      stateMileage?: never;
+      refueled?: never;
+      material?: never;
+      equipmentHauled?: never;
+    }
+  | {
+      type: "mechanic";
+      maintenanceId: string;
+      equipment?: never;
+      laborType?: never;
+      stateMileage?: never;
+      refueled?: never;
+      material?: never;
+      equipmentHauled?: never;
+    }
+  | {
+      type: "trucking";
+      laborType: string;
+      comment: string | null;
+      endingMileage: number | null;
+      stateMileage: boolean;
+      refueled: boolean;
+      material: boolean;
+      equipmentHauled: boolean;
+      equipment?: never;
+      maintenanceId?: never;
+    }
+);
 
 export default function TascoDashboardView({
   verifyLogsCompletion,
